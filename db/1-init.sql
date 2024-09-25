@@ -50,7 +50,7 @@ CREATE TABLE
     products (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255),
-        imageURL VARCHAR,
+        image_url VARCHAR,
         description VARCHAR,
         price DECIMAL(10, 2),
         quantity INT DEFAULT 1,

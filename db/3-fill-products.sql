@@ -6,7 +6,7 @@ VALUES
 
 -- Insert products
 INSERT INTO
-    products (name, imageURL, description, price, quantity)
+    products (name, image_url, description, price, quantity)
 VALUES
     (
         'Laptop',
