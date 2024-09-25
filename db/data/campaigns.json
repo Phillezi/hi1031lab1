@@ -1,0 +1,12 @@
+[
+  {
+    "name": "name of campaign",
+    "start_time": "2024-09-25",
+    "end_time": "2024-10-25",
+    "discount_percent": 10,
+    "in_campaign": [
+      { "type": "category", "name": "name of the category" },
+      { "type": "product", "name": "name of the product" }
+    ]
+  }
+]
