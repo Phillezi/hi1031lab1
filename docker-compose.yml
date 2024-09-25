@@ -34,7 +34,7 @@ services:
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: webshop
     volumes:
-      - ./db/:/docker-entrypoint-initdb.d/
+      - ./db/init/:/docker-entrypoint-initdb.d/
       - dbdata:/var/lib/postgresql/data
     restart: unless-stopped
 

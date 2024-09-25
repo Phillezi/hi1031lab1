@@ -1,0 +1,12 @@
+[
+  {
+    "name": "name of the product",
+    "price": "price of the product",
+    "image_url": "url to the image",
+    "description": "description of the product",
+    "quantity": 2,
+    "images": ["example_image_1.png", "example_image_2.png"],
+    "category": ["product category"],
+    "properties": [{ "key": "key", "value": "value" }]
+  }
+]

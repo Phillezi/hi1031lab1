@@ -1,0 +1,8 @@
+[
+  {
+    "email": "email@example.com",
+    "name": "John Smith",
+    "text_pw": "example123",
+    "roles": ["admin"]
+  }
+]

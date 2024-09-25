@@ -8,7 +8,13 @@
 ----
 --
 CREATE TABLE
-    user_t (id SERIAL PRIMARY KEY);
+    user_t (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255),
+        name VARCHAR(255),
+        hashed_pw VARCHAR,
+        UNIQUE (email)
+    );
 
 CREATE TABLE
     available_permissions (
@@ -50,7 +56,6 @@ CREATE TABLE
     products (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255),
-        image_url VARCHAR,
         description VARCHAR,
         price DECIMAL(10, 2),
         quantity INT DEFAULT 1,
@@ -58,7 +63,14 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    properties (
+    product_images (
+        image_url VARCHAR,
+        product_id INT,
+        FOREIGN KEY (product_id) REFERENCES products (id),
+    );
+
+CREATE TABLE
+    product_properties (
         key VARCHAR(255),
         value VARCHAR(255),
         product_id INT,
@@ -67,7 +79,7 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    categories (
+    product_categories (
         product_id INT,
         category VARCHAR(255),
         FOREIGN KEY (product_id) REFERENCES products (id),
