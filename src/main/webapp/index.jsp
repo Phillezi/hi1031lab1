@@ -56,7 +56,6 @@
                       for (Product product : products) {
               %>
                           <div class="product-item">
-                              <img src="<%= product.getImageUrl() %>" alt="<%= product.getName() %>" />
                               <h3><%= product.getName() %></h3>
                               <p><%= product.getDescription() %></p>
                               <p>Price: <%= product.getPrice() %></p>

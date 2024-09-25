@@ -21,16 +21,15 @@ public class ProductDAO {
     }
 
     public void addProduct(Product product) throws SQLException {
-        String query = "INSERT INTO products (id, name, image_url, description, price, quantity) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO products (id, name, description, price, quantity) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = dbConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, product.getId());
             stmt.setString(2, product.getName());
-            stmt.setString(3, product.getImageUrl());
-            stmt.setString(4, product.getDescription());
-            stmt.setDouble(5, product.getPrice());
-            stmt.setInt(6, product.getQuantity());
+            stmt.setString(3, product.getDescription());
+            stmt.setDouble(4, product.getPrice());
+            stmt.setInt(5, product.getQuantity());
             stmt.executeUpdate();
         }
     }
@@ -46,7 +45,6 @@ public class ProductDAO {
                 return new Product(
                         rs.getInt("id"),
                         rs.getString("name"),
-                        rs.getString("image_url"),
                         rs.getString("description"),
                         rs.getDouble("price"),
                         rs.getInt("quantity"));
@@ -66,7 +64,6 @@ public class ProductDAO {
                 Product product = new Product(
                         rs.getInt("id"),
                         rs.getString("name"),
-                        rs.getString("image_url"),
                         rs.getString("description"),
                         rs.getDouble("price"),
                         rs.getInt("quantity"));
@@ -77,16 +74,15 @@ public class ProductDAO {
     }
 
     public void updateProduct(Product product) throws SQLException {
-        String query = "UPDATE products SET name = ?, image_url = ?, description = ?, price = ?, quantity = ? WHERE id = ?";
+        String query = "UPDATE products SET name = ?, description = ?, price = ?, quantity = ? WHERE id = ?";
         try (Connection conn = dbConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, product.getName());
-            stmt.setString(2, product.getImageUrl());
-            stmt.setString(3, product.getDescription());
-            stmt.setDouble(4, product.getPrice());
-            stmt.setInt(5, product.getQuantity());
-            stmt.setInt(6, product.getId());
+            stmt.setString(2, product.getDescription());
+            stmt.setDouble(3, product.getPrice());
+            stmt.setInt(4, product.getQuantity());
+            stmt.setInt(5, product.getId());
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected == 0) {
                 throw new IllegalArgumentException("Product not found");

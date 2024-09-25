@@ -66,7 +66,7 @@ CREATE TABLE
     product_images (
         image_url VARCHAR,
         product_id INT,
-        FOREIGN KEY (product_id) REFERENCES products (id),
+        FOREIGN KEY (product_id) REFERENCES products (id)
     );
 
 CREATE TABLE
