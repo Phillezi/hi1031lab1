@@ -1,0 +1,49 @@
+services:
+  # The webshop is our java application that uses tomcat to serve jsp files
+  webshop:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_URI: jdbc:postgresql://db:5432/webshop
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - cdn
+    restart: unless-stopped
+
+  # The cdn here is used to serve static content such as images for products etc
+  cdn:
+    build:
+      context: cdn/.
+      dockerfile: Dockerfile
+    ports:
+      - "3000:8080"
+    volumes:
+      - ./uploads:/app/uploads
+      - cdn_dbdata:/app/db_data
+
+  # The db is our database that we use in our application
+  # It is exposed on localhost:5432 when running this docker compose
+  # But this is not neccesary since the container running our java app already has access to it
+  # through the network of this compose config. It is only exposed on localhost for development
+  # and can be removed when development is done
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: webshop
+    ports:
+      - "5432:5432" # For local dev
+    volumes:
+      - ./db/:/docker-entrypoint-initdb.d/
+      - dbdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  dbdata:
+  cdn_dbdata:
