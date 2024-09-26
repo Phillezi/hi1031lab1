@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="se.kth.hi1031.lab1.dao.ProductDAO" %>
-<%@ page import="se.kth.hi1031.lab1.model.Product" %>
+<%@ page import="se.kth.hi1031.lab1.db.ProductDAO" %>
+<%@ page import="se.kth.hi1031.lab1.bo.Product" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.sql.SQLException" %>
 <!DOCTYPE html>
@@ -34,22 +34,14 @@
             <h2>Featured Products</h2>
             <div class="featured-products">
               <%
-                  ProductDAO productDAO = null;
-
-                  try {
-                    productDAO = new ProductDAO();
-                  } catch (SQLException e) {
-                    out.println("<div class=\"error\">Could not connect to the database: " + e.getMessage() + "</div>");
-                    return;
-                  }
-
                   List<Product> products = null;
       
                   try {
-                      products = productDAO.getAllProducts();
+                      products = ProductDAO.getAllProducts();
                   } catch (SQLException e) {
                       e.printStackTrace();
                       out.println("<p>Error retrieving products.</p>");
+                      return;
                   }
       
                   if (products != null && !products.isEmpty()) {
