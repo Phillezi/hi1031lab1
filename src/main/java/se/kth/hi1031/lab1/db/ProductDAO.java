@@ -1,7 +1,6 @@
-package se.kth.hi1031.lab1.dao;
+package se.kth.hi1031.lab1.db;
 
-import se.kth.hi1031.lab1.DBConnection;
-import se.kth.hi1031.lab1.model.Product;
+import se.kth.hi1031.lab1.bo.Product;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,15 +13,10 @@ import java.util.List;
  * ProductDAO is a Data Access Object for products.
  */
 public class ProductDAO {
-    private final DBConnection dbConnection;
 
-    public ProductDAO() throws SQLException {
-        this.dbConnection = new DBConnection();
-    }
-
-    public void addProduct(Product product) throws SQLException {
+    public static void addProduct(Product product) throws SQLException {
         String query = "INSERT INTO products (id, name, description, price, quantity) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = dbConnection.getConnection();
+        try (Connection conn = DBConnectionManager.getInstance().getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, product.getId());
@@ -34,9 +28,9 @@ public class ProductDAO {
         }
     }
 
-    public Product getProductById(int id) throws SQLException {
+    public static Product getProductById(int id) throws SQLException {
         String query = "SELECT * FROM products WHERE id = ?";
-        try (Connection conn = dbConnection.getConnection();
+        try (Connection conn = DBConnectionManager.getInstance().getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, id);
@@ -53,10 +47,10 @@ public class ProductDAO {
         return null;
     }
 
-    public List<Product> getAllProducts() throws SQLException {
+    public static List<Product> getAllProducts() throws SQLException {
         List<Product> products = new ArrayList<>();
         String query = "SELECT * FROM products";
-        try (Connection conn = dbConnection.getConnection();
+        try (Connection conn = DBConnectionManager.getInstance().getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query);
                 ResultSet rs = stmt.executeQuery()) {
 
@@ -73,9 +67,9 @@ public class ProductDAO {
         return products;
     }
 
-    public void updateProduct(Product product) throws SQLException {
+    public static void updateProduct(Product product) throws SQLException {
         String query = "UPDATE products SET name = ?, description = ?, price = ?, quantity = ? WHERE id = ?";
-        try (Connection conn = dbConnection.getConnection();
+        try (Connection conn = DBConnectionManager.getInstance().getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, product.getName());
@@ -90,9 +84,9 @@ public class ProductDAO {
         }
     }
 
-    public void deleteProduct(int id) throws SQLException {
+    public static void deleteProduct(int id) throws SQLException {
         String query = "DELETE FROM products WHERE id = ?";
-        try (Connection conn = dbConnection.getConnection();
+        try (Connection conn = DBConnectionManager.getInstance().getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, id);

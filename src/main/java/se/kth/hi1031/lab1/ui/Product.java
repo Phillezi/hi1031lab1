@@ -1,6 +1,4 @@
-package se.kth.hi1031.lab1.model;
-
-import java.sql.Timestamp;
+package se.kth.hi1031.lab1.ui;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,11 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Campaign {
+public class Product {
     private int id;
     private String name;
     private String description;
-    private Timestamp start;
-    private Timestamp end;
-    private int discountPercent;
+    private double price;
+    private int quantity;
 }

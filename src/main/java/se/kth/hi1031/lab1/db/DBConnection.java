@@ -1,4 +1,4 @@
-package se.kth.hi1031.lab1;
+package se.kth.hi1031.lab1.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
