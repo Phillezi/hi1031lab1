@@ -8,7 +8,7 @@ import java.util.List;
 public class DBConnectionManager {
 
     private static DBConnectionManager instance;
-    private List<DBConnection> connectionPool;
+    private final List<DBConnection> connectionPool;
     private final int MAX_POOL_SIZE;
     private int currentConnections = 0;
 

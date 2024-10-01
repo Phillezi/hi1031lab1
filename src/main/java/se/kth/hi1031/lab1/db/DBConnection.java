@@ -1,5 +1,7 @@
 package se.kth.hi1031.lab1.db;
 
+import lombok.Getter;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -7,9 +9,10 @@ import java.sql.SQLException;
 /**
  * Class for connections with the database
  */
+@Getter
 public class DBConnection {
 
-    private Connection connection;
+    private final Connection connection;
 
     public DBConnection() throws SQLException {
         String dbUri = System.getenv("DB_URI") != null ? System.getenv("DB_URI")
@@ -27,10 +30,6 @@ public class DBConnection {
         } catch (SQLException e) {
             throw new SQLException("Connection failed. Check DB credentials or URL.", e);
         }
-    }
-
-    public Connection getConnection() {
-        return connection;
     }
 
     public void closeConnection() throws SQLException {
