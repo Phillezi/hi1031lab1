@@ -8,25 +8,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Webshop</title>
-    <link rel="stylesheet" href="/styles/styles.css" />
+    <title>Web shop</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css" />
   </head>
   <body>
     <header>
       <a href="/"><div class="logo">WebSHOP</div></a>
       <div class="search">
-        <img class="icon" src="/assets/magnifying-glass.svg"></img>
-        <input
-          type="text"
-          class="search-field"
-          placeholder="Search products..."
-        />
-        <button class="search-button">Search</button>
+        <img class="icon" src="${pageContext.request.contextPath}/assets/magnifying-glass.svg" alt="search icon"></img>
+          <label>
+              <input
+                type="text"
+                class="search-field"
+                placeholder="Search products..."
+              />
+          </label>
+          <button class="search-button">Search</button>
       </div>
       <div class="navbar">
-        <a href="/shop"><img class="icon"></img></a>
-        <a href="/contact"><img class="icon" src="/assets/contact.svg"></img></a>
-        <a href="/cart"><img class="icon" src="/assets/shopping-cart.svg"></img></a>
+        <a href="${pageContext.request.contextPath}/shop"><img class="icon" alt="icon"></img></a>
+        <a href="${pageContext.request.contextPath}/contact"><img class="icon" src="${pageContext.request.contextPath}/assets/contact.svg" alt="icon"></img></a>
+        <a href="${pageContext.request.contextPath}/cart"><img class="icon" src="${pageContext.request.contextPath}/assets/shopping-cart.svg" alt="icon"></img></a>
       </div>
     </header>
     <div class="root">
@@ -39,12 +41,11 @@
                   try {
                       products = ProductDAO.getAllProducts();
                   } catch (SQLException e) {
-                      e.printStackTrace();
                       out.println("<p>Error retrieving products.</p>");
                       return;
                   }
       
-                  if (products != null && !products.isEmpty()) {
+                  if (!products.isEmpty()) {
                       for (Product product : products) {
               %>
                           <div class="product-item">

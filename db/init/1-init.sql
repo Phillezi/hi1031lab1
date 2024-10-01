@@ -91,7 +91,6 @@ CREATE TABLE
     orders (
         id SERIAL PRIMARY KEY,
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        product_id INT,
         customer_id INT,
         FOREIGN KEY (product_id) REFERENCES products (id),
         FOREIGN KEY (customer_id) REFERENCES user_t (id)
