@@ -9,10 +9,7 @@ import java.util.ArrayList;
 @Getter
 @Setter
 @AllArgsConstructor
-public class User {
-    private final int id;
+public class Role {
     private final String name;
-    private final String email;
-    private final String password;
-    private final ArrayList<Role> roles;
+    private final ArrayList<Permission> permissions;
 }
