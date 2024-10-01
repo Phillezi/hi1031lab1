@@ -92,7 +92,6 @@ CREATE TABLE
         id SERIAL PRIMARY KEY,
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         customer_id INT,
-        FOREIGN KEY (product_id) REFERENCES products (id),
         FOREIGN KEY (customer_id) REFERENCES user_t (id)
     );
 

@@ -10,7 +10,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class Campaign {
-    private int id;
     private String name;
     private String description;
     private Timestamp start;

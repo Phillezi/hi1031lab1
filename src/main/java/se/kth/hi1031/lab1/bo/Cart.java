@@ -4,14 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class Order {
-    private final Timestamp timestamp;
-    private final User customer;
+public class Cart {
     private final ArrayList<Product> products;
 }
