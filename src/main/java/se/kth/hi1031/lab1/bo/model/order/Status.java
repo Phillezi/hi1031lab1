@@ -1,4 +1,4 @@
-package se.kth.hi1031.lab1.bo.order;
+package se.kth.hi1031.lab1.bo.model.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package se.kth.hi1031.lab1.bo.user;
+package se.kth.hi1031.lab1.bo.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
