@@ -16,7 +16,7 @@ public class DBRole extends Role implements DBObject<DBRole>{
 
     private Integer userId;
 
-    public DBRole(Integer userId, String name, ArrayList<Permission> permissions) {
+    private DBRole(Integer userId, String name, ArrayList<Permission> permissions) {
         super(name, permissions);
         this.userId = userId;
     }

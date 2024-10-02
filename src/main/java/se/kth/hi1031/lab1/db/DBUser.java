@@ -16,7 +16,7 @@ public class DBUser extends User implements DBObject<DBUser>  {
 
     private Integer id;
 
-    public DBUser(Integer id,
+    private DBUser(Integer id,
                   String name,
                   String email,
                   String password,
