@@ -3,6 +3,7 @@ package se.kth.hi1031.lab1.db.dao.product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import se.kth.hi1031.lab1.bo.model.product.Product;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.DBConnectionManager;
 
@@ -169,6 +170,20 @@ public static ProductDAO toDAO(ResultSet rs) throws SQLException {
         }
 
         return daos;
+    }
+
+    public Product toProduct() {
+        return new Product(
+                this.id,
+                this.name,
+                this.description,
+                this.price,
+                this.quantity,
+                this.removed,
+                this.categories.stream().map(CategoryDAO::toCategory).toList(),
+                this.images,
+                this.properties.stream().map(PropertyDAO::toProperty).toList()
+        );
     }
 
 }

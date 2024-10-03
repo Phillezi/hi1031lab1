@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,5 +14,6 @@ public class UserDTO {
     private String name;
     private String email;
     private String password;
-    private ArrayList<RoleDTO> roles;
+    private List<RoleDTO> roles;
+    private List<PermissionDTO> permissions;
 }

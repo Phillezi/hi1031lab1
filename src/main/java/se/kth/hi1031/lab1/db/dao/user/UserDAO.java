@@ -2,6 +2,9 @@ package se.kth.hi1031.lab1.db.dao.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import se.kth.hi1031.lab1.bo.model.user.Permission;
+import se.kth.hi1031.lab1.bo.model.user.Role;
+import se.kth.hi1031.lab1.bo.model.user.User;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.DBConnectionManager;
 
@@ -152,5 +155,11 @@ public class UserDAO {
         }
 
         return daos;
+    }
+
+    public User toUser() {
+        List<Role> roles = this.roles.stream().map(RoleDAO::toRole).toList();
+        List<Permission> permissions = this.permissions.stream().map(PermissionDAO::toPermission).toList();
+        return new User(this.id, this.name, this.email, this.password, roles, permissions);
     }
 }

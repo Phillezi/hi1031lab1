@@ -6,6 +6,7 @@ import lombok.Setter;
 import se.kth.hi1031.lab1.bo.model.order.Order;
 import se.kth.hi1031.lab1.bo.model.order.Status;
 import se.kth.hi1031.lab1.bo.model.product.Product;
+import se.kth.hi1031.lab1.bo.model.user.User;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.DBConnectionManager;
 import se.kth.hi1031.lab1.db.dao.product.ProductDAO;
@@ -33,8 +34,8 @@ public class OrderDAO {
         this.created = order.getCreated();
         this.delivered = order.getDelivered();
         this.deliveryAddress = order.getDeliveryAddress();
-        this.customer = order.getCustomer();
-        this.products = order.getProducts();
+        this.customer = new UserDAO(order.getCustomer());
+        this.products = order.getProducts().stream().map((Product p) -> new ProductDAO(p.getId(), p.getName(), p.getDescription(), p.getPrice(), p.getQuantity(), p.isRemoved(), p));
         this.statuses = order.getStatuses();
     }
 
@@ -133,6 +134,55 @@ public class OrderDAO {
         return order;
     }
 
+    public static List<OrderDAO> getOrdersByCustomer(User customer) {
+        List<OrderDAO> orders = new ArrayList<>();
+        Connection conn = null;
+        try {
+            conn = DBConnectionManager.getInstance().getConnection();
+            String query = "SELECT " +
+                    "o.id AS order_id, " +
+                    "o.created_at AS order_created_at, " +
+                    "o.delivered_at AS order_delivered_at, " +
+                    "o.delivery_address AS order_delivery_address, " +
+                    "ARRAY_AGG(DISTINCT p.id) AS products_id, " +
+                    "ARRAY_AGG(DISTINCT p.name) AS products_name, " +
+                    "ARRAY_AGG(DISTINCT p.description) AS products_description, " +
+                    "ARRAY_AGG(DISTINCT p.price) AS products_price, " +
+                    "ARRAY_AGG(DISTINCT p.quantity) AS products_quantity, " +
+                    "ARRAY_AGG(DISTINCT p.removed) AS products_removed, " +
+                    "ARRAY_AGG(DISTINCT os.status) AS statuses_status, " +
+                    "ARRAY_AGG(DISTINCT os.timestamp) AS statuses_timestamp, " +
+                    "u.id AS user_id, u.email AS user_email, u.name AS user_name, u.hashed_pw AS user_hashed_pw " +
+                    "FROM orders o " +
+                    "LEFT JOIN ordered_products op ON o.id = op.order_id " +
+                    "LEFT JOIN products p ON op.product_id = p.id " +
+                    "LEFT JOIN order_status os ON o.id = os.order_id " +
+                    "LEFT JOIN user_t u ON o.customer_id = u.id " +
+                    "WHERE o.customer_id = ?" +
+                    "GROUP BY o.id";
+
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, customer.getId());
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                orders.add(toDAO(rs));
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                // TODO: mark as free to use
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return orders;
+    }
+
     public static OrderDAO createOrder(Order order) throws DAOException {
         Connection conn = null;
         try {
@@ -196,6 +246,18 @@ public class OrderDAO {
                 customer,
                 products,
                 statuses
+        );
+    }
+
+    public Order toOrder() {
+        return new Order(
+                this.id,
+                this.created,
+                this.delivered,
+                this.deliveryAddress,
+                this.customer.toUser(),
+                this.products.stream().map(ProductDAO::toProduct).toList(),
+                this.statuses.stream().map(StatusDAO::toStatus).toList()
         );
     }
 }

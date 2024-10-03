@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ public class ProductDTO {
     private double price;
     private int quantity;
     private boolean removed;
-    private ArrayList<CategoryDTO> categories;
-    private ArrayList<String> images;
-    private ArrayList<PropertyDTO> properties;
+    private List<CategoryDTO> categories;
+    private List<String> images;
+    private List<PropertyDTO> properties;
 }

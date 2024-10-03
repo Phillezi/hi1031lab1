@@ -3,6 +3,7 @@ package se.kth.hi1031.lab1.db.dao.order;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import se.kth.hi1031.lab1.bo.model.order.Status;
 
 import java.sql.Array;
 import java.sql.ResultSet;
@@ -41,6 +42,10 @@ public class StatusDAO {
         }
 
         return daos;
+    }
+
+    public Status toStatus() {
+        return new Status(this.status, this.timestamp);
     }
 
 }
