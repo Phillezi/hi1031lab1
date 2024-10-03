@@ -9,8 +9,8 @@ public class DBConnectionManager {
 
     private static DBConnectionManager instance;
     private final List<DBConnection> connectionPool;
+    private final List<DBConnection> usedConnections;
     private final int MAX_POOL_SIZE;
-    private int currentConnections = 0;
 
     private DBConnectionManager() {
         String maxPoolSizeEnv = System.getenv("DB_MAX_POOL_SIZE");
@@ -31,7 +31,7 @@ public class DBConnectionManager {
             MAX_POOL_SIZE = 10;
         }
         connectionPool = new ArrayList<>(MAX_POOL_SIZE);
-        initializePool();
+        usedConnections = new ArrayList<>(MAX_POOL_SIZE / 2);
     }
 
     public static synchronized DBConnectionManager getInstance() {
@@ -44,9 +44,8 @@ public class DBConnectionManager {
     private void initializePool() {
         for (int i = 0; i < MAX_POOL_SIZE; i++) {
             try {
-                DBConnection dbConnection = new DBConnection();
+                DBConnection dbConnection = new DBConnection(DBConnectionManager.instance);
                 connectionPool.add(dbConnection);
-                currentConnections++;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -54,31 +53,33 @@ public class DBConnectionManager {
     }
 
     public synchronized Connection getConnection() throws SQLException {
-        if (connectionPool.isEmpty() && currentConnections < MAX_POOL_SIZE) {
-            connectionPool.add(new DBConnection());
-            currentConnections++;
-        }
+        if (connectionPool.isEmpty() && usedConnections.size() < MAX_POOL_SIZE) {
+            DBConnection dbConnection = new DBConnection(DBConnectionManager.instance);
+            usedConnections.add(dbConnection);
+            return dbConnection;
 
-        if (connectionPool.isEmpty()) {
+        } else if (!connectionPool.isEmpty()) {
+            DBConnection connection = connectionPool.removeLast();
+            usedConnections.add(connection);
+            return connection;
+        } else {
             throw new SQLException("No available connections");
         }
-
-        DBConnection dbConnection = connectionPool.remove(connectionPool.size() - 1);
-        return dbConnection.getConnection();
     }
 
     public synchronized void releaseConnection(Connection connection) {
         if (connection != null) {
-            for (DBConnection dbConnection : connectionPool) {
-                if (dbConnection.getConnection() == connection) {
-                    return;
+            DBConnection dbConnectionToRelease = null;
+            for (DBConnection dbConnection : usedConnections) {
+                if (dbConnection == connection) {
+                    dbConnectionToRelease = dbConnection;
+                    break;
                 }
             }
-            try {
-                DBConnection dbConnection = new DBConnection();
-                connectionPool.add(dbConnection);
-            } catch (SQLException e) {
-                e.printStackTrace();
+
+            if (dbConnectionToRelease != null) {
+                usedConnections.remove(dbConnectionToRelease);
+                connectionPool.add(dbConnectionToRelease);
             }
         }
     }
