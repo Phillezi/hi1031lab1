@@ -3,6 +3,7 @@ package se.kth.hi1031.lab1.bo.model.product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import se.kth.hi1031.lab1.db.dao.product.PropertyDAO;
 import se.kth.hi1031.lab1.ui.dto.product.PropertyDTO;
 
 @Getter
@@ -14,5 +15,9 @@ public class Property {
 
     public PropertyDTO toDTO() {
         return new PropertyDTO(key, value);
+    }
+
+    public PropertyDAO toDAO() {
+        return new PropertyDAO(key, value);
     }
 }

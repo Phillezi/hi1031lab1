@@ -19,7 +19,6 @@ public class OrderService {
         if (user.equals(customer)) {
             // order is created by the person ordering the items
 
-
         } else if (
                 user.getPermissions()
                 .contains(new Permission("update_orders"))
@@ -45,6 +44,7 @@ public class OrderService {
             List<OrderDAO> orders = OrderDAO.getOrdersByCustomer(user);
             return orders.stream().map(OrderDAO::toOrder).map(Order::toDTO).toList();
         }
+        throw new PermissionException("User " + user + " cant view orders");
     }
 
     public Optional<OrderDTO> getOrderById(int id) {

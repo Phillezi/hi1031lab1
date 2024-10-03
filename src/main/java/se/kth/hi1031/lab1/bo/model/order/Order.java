@@ -32,6 +32,6 @@ public class Order {
                 this.customer.toDTO(),
                 this.products.stream().map(Product::toDTO).toList(),
                 this.statuses.stream().map(Status::toDTO).toList()
-        )
+        );
     }
 }

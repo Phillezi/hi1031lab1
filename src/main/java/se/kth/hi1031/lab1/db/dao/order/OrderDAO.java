@@ -34,9 +34,9 @@ public class OrderDAO {
         this.created = order.getCreated();
         this.delivered = order.getDelivered();
         this.deliveryAddress = order.getDeliveryAddress();
-        this.customer = new UserDAO(order.getCustomer());
-        this.products = order.getProducts().stream().map((Product p) -> new ProductDAO(p.getId(), p.getName(), p.getDescription(), p.getPrice(), p.getQuantity(), p.isRemoved(), p));
-        this.statuses = order.getStatuses();
+        this.customer = order.getCustomer().toDAO();
+        this.products = order.getProducts().stream().map(Product::toDAO).toList();
+        this.statuses = order.getStatuses().stream().map(Status::toDAO).toList();
     }
 
     public static List<OrderDAO> getOrders() {

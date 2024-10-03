@@ -3,6 +3,7 @@ package se.kth.hi1031.lab1.bo.model.product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import se.kth.hi1031.lab1.db.dao.product.ProductDAO;
 import se.kth.hi1031.lab1.ui.dto.product.ProductDTO;
 
 import java.util.ArrayList;
@@ -33,6 +34,20 @@ public class Product {
                 this.categories.stream().map(Category::toDTO).toList(),
                 new ArrayList<>(this.images),
                 this.properties.stream().map(Property::toDTO).toList()
+        );
+    }
+
+    public ProductDAO toDAO() {
+        return new ProductDAO(
+                this.id,
+                this.name,
+                this.description,
+                this.price,
+                this.quantity,
+                this.removed,
+                this.categories.stream().map(Category::toDAO).toList(),
+                new ArrayList<>(this.images),
+                this.properties.stream().map(Property::toDAO).toList()
         );
     }
 }
