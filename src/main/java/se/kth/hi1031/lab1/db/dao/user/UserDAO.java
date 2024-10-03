@@ -109,27 +109,30 @@ public class UserDAO {
      */
     public static UserDAO createUser(User user) throws DAOException {
         Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
             conn = DBConnectionManager.getInstance().getConnection();
             conn.setAutoCommit(false);
 
             String query = "INSERT INTO user_t (name, email, hashed_pw) VALUES (?, ?, ?) RETURNING id";
-            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt = conn.prepareStatement(query);
             stmt.setString(1, user.getName());
             stmt.setString(2, user.getEmail());
             stmt.setString(3, user.getPassword());
 
-            // TODO: Check if this is correct
-            int id = stmt.executeUpdate();
-            user.setId(id);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                int userId = rs.getInt("id");
+                user.setId(userId);
 
-            for (Role role : user.getRoles()) {
                 String roleQuery = "INSERT INTO roles (role, user_id) VALUES (?, ?)";
-                PreparedStatement roleStmt = conn.prepareStatement(roleQuery);
-                roleStmt.setString(1, role.getName());
-                roleStmt.setInt(2, id);
-
-                stmt.executeUpdate();
+                for (Role role : user.getRoles()) {
+                    stmt = conn.prepareStatement(roleQuery);
+                    stmt.setString(1, role.getName());
+                    stmt.setInt(2, userId);
+                    stmt.executeUpdate();
+                }
             }
 
             conn.commit();
@@ -142,6 +145,14 @@ public class UserDAO {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            }
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 

@@ -5,6 +5,7 @@ import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 import se.kth.hi1031.lab1.bo.model.user.User;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -12,8 +13,14 @@ public class UserService {
 
     public static UserDTO createUser(UserDTO user) {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-        return new UserDTO(user.getId(), user.getName(), user.getEmail(), hashedPassword, user.getRoles(),
-                user.getPermissions());
+        UserDAO created = UserDAO.createUser(new User(user.getId(),
+                user.getName(),
+                user.getEmail(),
+                hashedPassword,
+                new ArrayList<>(),
+                new ArrayList<>()));
+
+        return created.toUser().toDTO();
     }
 
     public static List<UserDTO> getUsers() {

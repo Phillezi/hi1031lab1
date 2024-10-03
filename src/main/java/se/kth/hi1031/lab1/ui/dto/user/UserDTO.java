@@ -16,4 +16,22 @@ public class UserDTO {
     private String password;
     private List<RoleDTO> roles;
     private List<PermissionDTO> permissions;
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("id: " + id)
+                .append("\nname: " + name)
+                .append("\nemail: " + email)
+                .append("\npassword: " + password)
+                .append("\nroles: ");
+        for (RoleDTO role : roles) {
+            sb.append("\n\t" + role.toString());
+        }
+        sb.append("\npermissions: ");
+        for (PermissionDTO perm : permissions) {
+            sb.append("\n\t" + perm.toString());
+        }
+        return sb.toString();
+    }
 }
