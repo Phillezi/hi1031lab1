@@ -1,13 +1,11 @@
 package se.kth.hi1031.lab1.ui;
 
-import se.kth.hi1031.lab1.bo.service.order.OrderService;
-import se.kth.hi1031.lab1.bo.service.user.UserService;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import se.kth.hi1031.lab1.ui.controllers.LoginController;
 import se.kth.hi1031.lab1.ui.controllers.RegisterController;
 import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
@@ -43,6 +41,9 @@ public class ControllerServlet extends HttpServlet {
         switch (action) {
             case "register":
                 RegisterController.post(req, resp);
+                break;
+            case "login":
+                LoginController.post(req, resp);
                 break;
             default:
                 resp.getWriter().write("Invalid action!");

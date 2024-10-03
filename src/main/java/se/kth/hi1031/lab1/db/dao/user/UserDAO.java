@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 @Data
 @AllArgsConstructor
 public class UserDAO {
@@ -72,11 +74,12 @@ public class UserDAO {
                     "u.email AS user_email, " +
                     "u.hashed_pw AS user_hashed_pw, " +
                     "ARRAY_AGG(DISTINCT r.role) AS user_roles, " +
-                    "ARRAY_AGG(DISTINCT p.permission) AS user_role_permissions, " +
+                    "ARRAY_AGG(DISTINCT p.permission) AS user_role_permissions " +
                     "FROM user_t u " +
                     "LEFT JOIN roles r ON u.id = r.user_id " +
-                    "LEFT JOIN permissions_t p ON r.role = p.role" +
-                    "WHERE u.id = ?";
+                    "LEFT JOIN permissions_t p ON r.role = p.role " +
+                    "WHERE u.id = ? " +
+                    "GROUP BY u.id";
 
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, id);
@@ -95,6 +98,61 @@ public class UserDAO {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+        return user;
+    }
+
+    public static Optional<UserDAO> login(User credentials) throws DAOException {
+        Optional<UserDAO> user = Optional.empty();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnectionManager.getInstance().getConnection();
+            String query = "SELECT " +
+                    "u.id AS user_id, " +
+                    "u.name AS user_name, " +
+                    "u.email AS user_email, " +
+                    "u.hashed_pw AS user_hashed_pw, " +
+                    "ARRAY_AGG(DISTINCT r.role) AS user_roles, " +
+                    "ARRAY_AGG(DISTINCT p.permission) AS user_role_permissions " +
+                    "FROM user_t u " +
+                    "LEFT JOIN roles r ON u.id = r.user_id " +
+                    "LEFT JOIN permissions_t p ON r.role = p.role " +
+                    "WHERE u.email = ? " +
+                    "GROUP BY u.id";
+
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, credentials.getEmail());
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String hashedPW = rs.getString("user_hashed_pw");
+                if (BCrypt.checkpw(credentials.getPassword(), hashedPW)) {
+                    user = Optional.of(toDAO(rs));
+                } else {
+                    return user;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                // TODO: mark as free to use
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return user;

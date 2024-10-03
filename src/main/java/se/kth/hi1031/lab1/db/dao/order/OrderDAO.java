@@ -185,43 +185,48 @@ public class OrderDAO {
 
     public static OrderDAO createOrder(Order order) throws DAOException {
         Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
             conn = DBConnectionManager.getInstance().getConnection();
             conn.setAutoCommit(false);
 
             String query = "INSERT INTO orders (created_at, delivered_at, delivery_address, customer_id) VALUES (?, ?, ?, ?) RETURNING id";
-            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt = conn.prepareStatement(query);
             stmt.setTimestamp(1, order.getCreated());
             stmt.setTimestamp(2, order.getDelivered());
             stmt.setString(3, order.getDeliveryAddress());
             stmt.setInt(4, order.getCustomer().getId());
 
-            // TODO: Check if this is correct
-            int id = stmt.executeUpdate();
-            order.setId(id);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                Integer id = rs.getInt("id");
+                order.setId(id);
 
-            for (Product product : order.getProducts()) {
-                String productsQuery = "INSERT INTO ordered_products (order_id, product_id) VALUES (?, ?)";
-                PreparedStatement productsStmt = conn.prepareStatement(productsQuery);
-                productsStmt.setInt(1, id);
-                productsStmt.setInt(2, product.getId());
+                for (Product product : order.getProducts()) {
+                    String productsQuery = "INSERT INTO ordered_products (order_id, product_id) VALUES (?, ?)";
+                    stmt = conn.prepareStatement(productsQuery);
+                    stmt.setInt(1, id);
+                    stmt.setInt(2, product.getId());
 
-                productsStmt.executeUpdate();
-            }
+                    stmt.executeUpdate();
+                }
 
-            // TODO: maybe insert into available status if not present there before inserting
-            for (Status status : order.getStatuses()) {
-                String statusQuery = "INSERT INTO order_status (order_id, status, timestamp) VALUES (?, ?, ?)";
-                PreparedStatement statusStmt = conn.prepareStatement(statusQuery);
-                statusStmt.setInt(1, id);
-                statusStmt.setString(2, status.getStatus());
-                statusStmt.setTimestamp(3, status.getTimestamp());
+                // TODO: maybe insert into available status if not present there before
+                // inserting
+                for (Status status : order.getStatuses()) {
+                    String statusQuery = "INSERT INTO order_status (order_id, status, timestamp) VALUES (?, ?, ?)";
+                    stmt = conn.prepareStatement(statusQuery);
+                    stmt.setInt(1, id);
+                    stmt.setString(2, status.getStatus());
+                    stmt.setTimestamp(3, status.getTimestamp());
 
-                statusStmt.executeUpdate();
+                    stmt.executeUpdate();
+                }
             }
 
             conn.commit();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {
@@ -230,6 +235,14 @@ public class OrderDAO {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            }
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return order.toDAO();
@@ -247,8 +260,7 @@ public class OrderDAO {
                 rs.getString("order_delivery_address"),
                 customer,
                 products,
-                statuses
-        );
+                statuses);
     }
 
     public Order toOrder() {
@@ -259,7 +271,6 @@ public class OrderDAO {
                 this.deliveryAddress,
                 this.customer.toUser(),
                 this.products.stream().map(ProductDAO::toProduct).toList(),
-                this.statuses.stream().map(StatusDAO::toStatus).toList()
-        );
+                this.statuses.stream().map(StatusDAO::toStatus).toList());
     }
 }

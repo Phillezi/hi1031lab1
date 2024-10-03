@@ -6,6 +6,7 @@ import se.kth.hi1031.lab1.bo.model.user.User;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -27,6 +28,16 @@ public class UserService {
         List<UserDAO> users = UserDAO.getUsers();
         System.out.println(users);
         return users.stream().map(UserDAO::toUser).map(User::toDTO).toList();
+    }
+
+    public static UserDTO login(UserDTO user) {
+        Optional<UserDAO> userOptional = UserDAO
+                .login(new User(null, null, user.getEmail(), user.getPassword(), null, null));
+        if (userOptional.isPresent()) {
+            return userOptional.get().toUser().toDTO();
+        } else {
+            return null;
+        }
     }
 
     // ToDo
