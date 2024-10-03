@@ -2,7 +2,6 @@ package se.kth.hi1031.lab1.ui;
 
 
 import se.kth.hi1031.lab1.bo.service.order.OrderService;
-import se.kth.hi1031.lab1.bo.service.product.ProductService;
 import se.kth.hi1031.lab1.bo.service.user.UserService;
 
 import jakarta.servlet.ServletException;
