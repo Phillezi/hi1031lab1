@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.DBConnectionManager;
-import se.kth.hi1031.lab1.db.dao.order.StatusDAO;
 
 import java.sql.*;
 import java.util.*;

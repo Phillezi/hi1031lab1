@@ -10,9 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class OrderService {
-    private final List<Order> orders = new ArrayList<>();
 
-    public Order createOrder(User customer, String deliveryAddress, ArrayList<Product> products) {
+    public static Order createOrder(User customer, String deliveryAddress, ArrayList<Product> products) {
         Order newOrder = new Order(null, new Timestamp(System.currentTimeMillis()), null, deliveryAddress, customer, products, new ArrayList<>());
         orders.add(newOrder);
         return newOrder;

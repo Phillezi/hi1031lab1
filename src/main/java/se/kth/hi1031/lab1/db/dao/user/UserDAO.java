@@ -63,7 +63,10 @@ public class UserDAO {
         try {
             conn = DBConnectionManager.getInstance().getConnection();
             String query = "SELECT " +
-                    "u.id AS user_id, u.name AS user_name, u.email AS user_email, u.hashed_pw AS user_hashed_pw, " +
+                    "u.id AS user_id, " +
+                    "u.name AS user_name, " +
+                    "u.email AS user_email, " +
+                    "u.hashed_pw AS user_hashed_pw, " +
                     "ARRAY_AGG(DISTINCT r.role) AS user_roles, " +
                     "ARRAY_AGG(DISTINCT p.permission) AS user_role_permissions, " +
                     "FROM user_t u " +
