@@ -2,15 +2,11 @@ package se.kth.hi1031.lab1.db.dao.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import se.kth.hi1031.lab1.bo.model.order.Order;
-import se.kth.hi1031.lab1.bo.model.order.Status;
-import se.kth.hi1031.lab1.bo.model.product.Product;
 import se.kth.hi1031.lab1.bo.model.user.Permission;
 import se.kth.hi1031.lab1.bo.model.user.Role;
 import se.kth.hi1031.lab1.bo.model.user.User;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.DBConnectionManager;
-import se.kth.hi1031.lab1.db.dao.order.OrderDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -37,16 +33,17 @@ public class UserDAO {
             String query = "SELECT " +
                     "u.id AS user_id, u.name AS user_name, u.email AS user_email, u.hashed_pw AS user_hashed_pw, " +
                     "ARRAY_AGG(DISTINCT r.role) AS user_roles, " +
-                    "ARRAY_AGG(DISTINCT p.permission) AS user_role_permissions, " +
+                    "ARRAY_AGG(DISTINCT p.permission) AS user_role_permissions " +
                     "FROM user_t u " +
                     "LEFT JOIN roles r ON u.id = r.user_id " +
-                    "LEFT JOIN permissions_t p ON r.role = p.role" +
+                    "LEFT JOIN permissions_t p ON r.role = p.role " +
                     "GROUP BY u.id";
 
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                System.out.print("user found");
                 users.add(toDAO(rs));
             }
         } catch (SQLException e) {
@@ -105,6 +102,7 @@ public class UserDAO {
 
     /**
      * Expects a hashed password!
+     * 
      * @param user
      * @return
      * @throws DAOException
@@ -135,7 +133,7 @@ public class UserDAO {
             }
 
             conn.commit();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {
@@ -168,19 +166,19 @@ public class UserDAO {
                 rs.getString("user_email"),
                 rs.getString("user_hashed_pw"),
                 roles,
-                permissions
-        );
+                permissions);
     }
 
     /**
      * Gets multiple Users from a ResultSet
      * TODO: get roles and permissions for each user somehow (array in array)
+     * 
      * @param rs The resultset.
      * @return A List of the UserDAOs
      * @throws SQLException
      */
     public static List<UserDAO> toDAOs(ResultSet rs) throws SQLException {
-        Integer[] ids = (Integer[])rs.getArray("users_id").getArray();
+        Integer[] ids = (Integer[]) rs.getArray("users_id").getArray();
         String[] emails = (String[]) rs.getArray("users_email").getArray();
         String[] names = (String[]) rs.getArray("users_name").getArray();
         String[] passwords = (String[]) rs.getArray("users_password").getArray();
@@ -188,8 +186,7 @@ public class UserDAO {
         if (ids == null ||
                 names == null ||
                 emails == null ||
-                passwords == null
-        ) {
+                passwords == null) {
             return null;
         }
 
@@ -201,8 +198,7 @@ public class UserDAO {
                     names[i],
                     passwords[i],
                     null,
-                    null
-                    ));
+                    null));
         }
 
         return daos;

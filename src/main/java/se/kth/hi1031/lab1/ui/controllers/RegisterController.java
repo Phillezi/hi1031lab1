@@ -19,6 +19,7 @@ public class RegisterController extends HttpServlet {
         String name = req.getParameter("name");
         String email = req.getParameter("email");
         String password = req.getParameter("password");
+        System.out.println("registering user: " + name + " , " + email + " , " + password);
 
         UserService.createUser(new UserDTO(null, name, email, password, new ArrayList<>(), new ArrayList<>()));
         // add session here

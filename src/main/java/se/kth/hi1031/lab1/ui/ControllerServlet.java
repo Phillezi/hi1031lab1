@@ -1,6 +1,5 @@
 package se.kth.hi1031.lab1.ui;
 
-
 import se.kth.hi1031.lab1.bo.service.order.OrderService;
 import se.kth.hi1031.lab1.bo.service.user.UserService;
 
@@ -15,7 +14,7 @@ import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 
 import java.io.IOException;
 
-@WebServlet(name = "MainServlet", urlPatterns = {"/main"})
+@WebServlet(name = "MainServlet", urlPatterns = { "/main" })
 public class ControllerServlet extends HttpServlet {
 
     @Override
@@ -24,9 +23,11 @@ public class ControllerServlet extends HttpServlet {
         UserDTO currentUser = getCurrentUser(req);
 
         switch (action) {
-            case "register": RegisterController.post(req, resp);
+            case "register":
+                RegisterController.post(req, resp);
                 break;
-            case "users": resp.sendRedirect(req.getContextPath() + "/users");
+            case "users":
+                resp.sendRedirect(req.getContextPath() + "/users");
                 break;
             default:
                 resp.getWriter().write("Invalid action!");
@@ -40,7 +41,8 @@ public class ControllerServlet extends HttpServlet {
         UserDTO currentUser = getCurrentUser(req);
 
         switch (action) {
-            case "register": RegisterController.get(req, resp);
+            case "register":
+                RegisterController.post(req, resp);
                 break;
             default:
                 resp.getWriter().write("Invalid action!");
