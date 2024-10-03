@@ -1,12 +1,6 @@
 <%@ page import="se.kth.hi1031.lab1.bo.service.user.UserService" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.user.UserDTO" %>
-<%@ page import="java.util.List" %><%--
-  Created by IntelliJ IDEA.
-  User: emil
-  Date: 2024-10-03
-  Time: 19:00
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
