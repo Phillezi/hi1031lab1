@@ -71,11 +71,10 @@ public class DBConnectionManager {
         if (connection != null) {
             for (DBConnection dbConnection : connectionPool) {
                 if (dbConnection.getConnection() == connection) {
-                    return; // Connection is already in the pool
+                    return;
                 }
             }
             try {
-                // Wrap the released connection in a new DBConnection
                 DBConnection dbConnection = new DBConnection();
                 connectionPool.add(dbConnection);
             } catch (SQLException e) {

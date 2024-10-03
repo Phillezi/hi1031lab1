@@ -11,7 +11,7 @@ public class UserService {
     private final List<User> users = new ArrayList<>();
 
     public User createUser(Integer id, String name, String email, String password) {
-        User user = new User(id, name, email, password, new ArrayList<>());
+        User user = new User(id, name, email, password, new ArrayList<>(), new ArrayList<>());
         users.add(user);
         return user;
     }
@@ -58,7 +58,7 @@ public class UserService {
         return Optional.empty();
     }
 
-    public List<Role> getUserRoles(User user) {
+    public static List<Role> getUserRoles(User user) {
         if (user != null) {
             return new ArrayList<>(user.getRoles());
         }
