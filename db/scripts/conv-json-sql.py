@@ -113,50 +113,19 @@ def generate_product_statements(products):
         generate_insert_statements(category_statements, 'product_categories')
     )
 
-def generate_campaign_statements(campaigns):
-    campaign_statements = []
-    in_campaign_statements = []
-
-    for campaign in campaigns:
-        campaign_stmt = {
-            "name": campaign['name'],
-            "start_time": campaign['start_time'],
-            "end_time": campaign['end_time'],
-            "discount_percent": campaign['discount_percent']
-        }
-        campaign_statements.append(campaign_stmt)
-
-        # TODO: Make sure name is unique
-        campaign_id = "(SELECT id FROM campaign WHERE name = " + campaign['name'] + ")"
-
-        for entry in campaign['in_campaign']:
-            in_campaign_statements.append({
-                "product_id": entry.get('name'),
-                "campaign_id": campaign_id,
-                "category": entry.get('name') if entry['type'] == 'category' else None
-            })
-
-    return (
-        generate_insert_statements(campaign_statements, 'campaigns'),
-        generate_insert_statements(in_campaign_statements, 'in_campaign')
-    )
-
 def main():
     roles = load_json('../data/roles.json')
     products = load_json('../data/products.json')
-    campaigns = load_json('../data/campaigns.json')
     users = load_json('../data/users.json')
 
     avail_roles_inserts, avail_perms_inserts, perms_inserts = generate_role_statements(roles)
     user_inserts, role_inserts = generate_user_statements(users)
     product_inserts, image_inserts, property_inserts, category_inserts = generate_product_statements(products)
-    campaign_inserts, in_campaign_inserts = generate_campaign_statements(campaigns)
 
     all_statements = (
         avail_roles_inserts + avail_perms_inserts + perms_inserts +
         user_inserts + role_inserts +
-        product_inserts + image_inserts + property_inserts + category_inserts +
-        campaign_inserts + in_campaign_inserts
+        product_inserts + image_inserts + property_inserts + category_inserts
     )
 
     # Print all statements

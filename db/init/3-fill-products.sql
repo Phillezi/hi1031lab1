@@ -90,226 +90,226 @@ VALUES
     );
 
 -- Insert categories for the new products
-INSERT INTO
-    categories (product_id, category)
-VALUES
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Laptop'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Smartphone'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Tablet'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Headphones'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Smartwatch'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Desktop PC'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Gaming Console'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Smart TV'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Camera'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Bluetooth Speaker'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Drone'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'External Hard Drive'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Monitor'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Keyboard'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Mouse'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Router'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Printer'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'Smart Light Bulb'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'VR Headset'
-        ),
-        'electronics'
-    ),
-    (
-        (
-            SELECT
-                id
-            FROM
-                products
-            WHERE
-                name = 'E-Reader'
-        ),
-        'electronics'
-    );
+-- INSERT INTO
+--     product_categories (product_id, category)
+-- VALUES
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Laptop'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Smartphone'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Tablet'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Headphones'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Smartwatch'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Desktop PC'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Gaming Console'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Smart TV'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Camera'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Bluetooth Speaker'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Drone'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'External Hard Drive'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Monitor'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Keyboard'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Mouse'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Router'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Printer'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'Smart Light Bulb'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'VR Headset'
+--         ),
+--         'electronics'
+--     ),
+--     (
+--         (
+--             SELECT
+--                 id
+--             FROM
+--                 products
+--             WHERE
+--                 name = 'E-Reader'
+--         ),
+--         'electronics'
+--     );
