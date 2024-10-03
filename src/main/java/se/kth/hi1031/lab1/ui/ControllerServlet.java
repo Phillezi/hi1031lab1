@@ -18,10 +18,6 @@ import java.io.IOException;
 @WebServlet(name = "MainServlet", urlPatterns = {"/main"})
 public class ControllerServlet extends HttpServlet {
 
-    private final UserService userService = new UserService();
-    private final ProductService productService = new ProductService();
-    private final OrderService orderService = new OrderService();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
@@ -29,6 +25,8 @@ public class ControllerServlet extends HttpServlet {
 
         switch (action) {
             case "register": RegisterController.post(req, resp);
+                break;
+            case "users": resp.sendRedirect(req.getContextPath() + "/users");
                 break;
             default:
                 resp.getWriter().write("Invalid action!");
