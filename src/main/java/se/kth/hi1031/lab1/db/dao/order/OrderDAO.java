@@ -196,7 +196,9 @@ public class OrderDAO {
             stmt.setString(3, order.getDeliveryAddress());
             stmt.setInt(4, order.getCustomer().getId());
 
+            // TODO: Check if this is correct
             int id = stmt.executeUpdate();
+            order.setId(id);
 
             for (Product product : order.getProducts()) {
                 String productsQuery = "INSERT INTO ordered_products (order_id, product_id) VALUES (?, ?)";
@@ -230,7 +232,7 @@ public class OrderDAO {
                 }
             }
         }
-        return new OrderDAO(order);
+        return order.toDAO();
     }
 
     public static OrderDAO toDAO(ResultSet rs) throws SQLException {

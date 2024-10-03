@@ -2,11 +2,15 @@ package se.kth.hi1031.lab1.db.dao.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import se.kth.hi1031.lab1.bo.model.order.Order;
+import se.kth.hi1031.lab1.bo.model.order.Status;
+import se.kth.hi1031.lab1.bo.model.product.Product;
 import se.kth.hi1031.lab1.bo.model.user.Permission;
 import se.kth.hi1031.lab1.bo.model.user.Role;
 import se.kth.hi1031.lab1.bo.model.user.User;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.DBConnectionManager;
+import se.kth.hi1031.lab1.db.dao.order.OrderDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -97,6 +101,53 @@ public class UserDAO {
             }
         }
         return user;
+    }
+
+    /**
+     * Expects a hashed password!
+     * @param user
+     * @return
+     * @throws DAOException
+     */
+    public static UserDAO createUser(User user) throws DAOException {
+        Connection conn = null;
+        try {
+            conn = DBConnectionManager.getInstance().getConnection();
+            conn.setAutoCommit(false);
+
+            String query = "INSERT INTO user_t (name, email, hashed_pw) VALUES (?, ?, ?) RETURNING id";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, user.getName());
+            stmt.setString(2, user.getEmail());
+            stmt.setString(3, user.getPassword());
+
+            // TODO: Check if this is correct
+            int id = stmt.executeUpdate();
+            user.setId(id);
+
+            for (Role role : user.getRoles()) {
+                String roleQuery = "INSERT INTO roles (role, user_id) VALUES (?, ?)";
+                PreparedStatement roleStmt = conn.prepareStatement(roleQuery);
+                roleStmt.setString(1, role.getName());
+                roleStmt.setInt(2, id);
+
+                stmt.executeUpdate();
+            }
+
+            conn.commit();
+        } catch(SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return user.toDAO();
     }
 
     public static UserDAO toDAO(ResultSet rs) throws SQLException {

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import se.kth.hi1031.lab1.bo.model.product.Product;
 import se.kth.hi1031.lab1.bo.model.user.User;
+import se.kth.hi1031.lab1.db.dao.order.OrderDAO;
 import se.kth.hi1031.lab1.ui.dto.order.OrderDTO;
 
 import java.sql.Timestamp;
@@ -32,6 +33,18 @@ public class Order {
                 this.customer.toDTO(),
                 this.products.stream().map(Product::toDTO).toList(),
                 this.statuses.stream().map(Status::toDTO).toList()
+        );
+    }
+
+    public OrderDAO toDAO() {
+        return new OrderDAO(
+                this.id,
+                this.created,
+                this.delivered,
+                this.deliveryAddress,
+                this.customer.toDAO(),
+                this.products.stream().map(Product::toDAO).toList(),
+                this.statuses.stream().map(Status::toDAO).toList()
         );
     }
 }
