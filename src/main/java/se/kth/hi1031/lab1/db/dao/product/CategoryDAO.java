@@ -1,6 +1,4 @@
-package se.kth.hi1031.lab1.bo;
-
-import java.sql.Timestamp;
+package se.kth.hi1031.lab1.db.dao.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Campaign {
+public class CategoryDAO {
     private String name;
     private String description;
-    private Timestamp start;
-    private Timestamp end;
-    private int discountPercent;
 }

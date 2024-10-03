@@ -1,12 +1,3 @@
--- CREATE DATABASE webshop;
---\c webshop;
--- Jag tänker att vi kör snake case här
--- Så slipper vi dumma misstag / ändringar
--- mellan camelCase o casing på saker.
--- Dvs allt lowercase och separerat med _
---
-----
---
 CREATE TABLE
     user_t (
         id SERIAL PRIMARY KEY,
@@ -88,11 +79,34 @@ CREATE TABLE
     );
 
 CREATE TABLE
+    available_status (
+        name VARCHAR PRIMARY KEY
+    );
+
+INSERT INTO available_status (name) VALUES ( 'received' );
+INSERT INTO available_status (name) VALUES ( 'packed' );
+INSERT INTO available_status (name) VALUES ( 'shipped' );
+INSERT INTO available_status (name) VALUES ( 'delivered' );
+INSERT INTO available_status (name) VALUES ( 'error' );
+
+CREATE TABLE
     orders (
         id SERIAL PRIMARY KEY,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        delivered_at TIMESTAMP,
+        delivery_address VARCHAR,
         customer_id INT,
         FOREIGN KEY (customer_id) REFERENCES user_t (id)
+    );
+
+CREATE TABLE
+    order_status (
+        order_id INT,
+        status VARCHAR,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (order_id) REFERENCES orders (id),
+        FOREIGN KEY (status) REFERENCES available_status (name),
+        PRIMARY KEY (order_id, timestamp)
     );
 
 CREATE TABLE
@@ -102,28 +116,4 @@ CREATE TABLE
         FOREIGN KEY (product_id) REFERENCES products (id),
         FOREIGN KEY (order_id) REFERENCES orders (id),
         PRIMARY KEY (product_id, order_id)
-    );
-
-CREATE TABLE
-    campaigns (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255),
-        description VARCHAR(255),
-        start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        end_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP + INTERVAL '1 week',
-        discount_percent INT,
-        UNIQUE (name, start_time)
-    );
-
--- either whole product categories are in a campaign or a products
-CREATE TABLE
-    in_campaign (
-        id SERIAL PRIMARY KEY,
-        product_id INT,
-        campaign_id INT,
-        category VARCHAR(255),
-        FOREIGN KEY (product_id) REFERENCES products (id),
-        FOREIGN KEY (campaign_id) REFERENCES campaigns (id),
-        FOREIGN KEY (category) REFERENCES available_categories (name),
-        UNIQUE (product_id, campaign_id, category)
     );

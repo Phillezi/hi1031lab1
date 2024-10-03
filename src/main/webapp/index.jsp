@@ -1,6 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="se.kth.hi1031.lab1.db.ProductDAO" %>
-<%@ page import="se.kth.hi1031.lab1.bo.Product" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.sql.SQLException" %>
 <!DOCTYPE html>
@@ -35,31 +33,7 @@
         <div class="featured">
             <h2>Featured Products</h2>
             <div class="featured-products">
-              <%
-                  List<Product> products = null;
-      
-                  try {
-                      products = ProductDAO.getAllProducts();
-                  } catch (SQLException e) {
-                      out.println("<p>Error retrieving products.</p>");
-                      return;
-                  }
-      
-                  if (!products.isEmpty()) {
-                      for (Product product : products) {
-              %>
-                          <div class="product-item">
-                              <h3><%= product.getName() %></h3>
-                              <p><%= product.getDescription() %></p>
-                              <p>Price: <%= product.getPrice() %></p>
-                              <p>Quantity: <%= product.getQuantity() %></p>
-                          </div>
-              <%
-                      }
-                  } else {
-                      out.println("<p>No featured products available.</p>");
-                  }
-              %>
+
             </div>
           </div>
           
@@ -81,5 +55,6 @@
       <div class="footer-content">
       </div>
     </footer>
+  </body>
 </html>
 

@@ -1,15 +1,12 @@
-package se.kth.hi1031.lab1.bo;
+package se.kth.hi1031.lab1.bo.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-
 @Getter
 @Setter
 @AllArgsConstructor
-public class Role {
+public class Permission {
     private final String name;
-    private final ArrayList<Permission> permissions;
 }

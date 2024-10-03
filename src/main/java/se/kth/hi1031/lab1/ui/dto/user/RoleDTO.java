@@ -1,4 +1,4 @@
-package se.kth.hi1031.lab1.bo;
+package se.kth.hi1031.lab1.ui.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,7 @@ import java.util.ArrayList;
 @Getter
 @Setter
 @AllArgsConstructor
-public class User {
+public class RoleDTO {
     private final String name;
-    private final String email;
-    private final String password;
-    private final ArrayList<Role> roles;
+    private final ArrayList<PermissionDTO> permissions;
 }
