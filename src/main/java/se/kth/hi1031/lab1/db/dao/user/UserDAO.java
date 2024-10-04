@@ -214,6 +214,8 @@ public class UserDAO {
             }
         }
 
+        user.setPermissions(new ArrayList<>());
+
         return user.toDAO();
     }
 

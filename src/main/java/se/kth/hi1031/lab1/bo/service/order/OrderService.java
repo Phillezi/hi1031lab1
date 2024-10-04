@@ -7,6 +7,10 @@ import se.kth.hi1031.lab1.bo.model.user.User;
 import se.kth.hi1031.lab1.bo.service.PermissionException;
 import se.kth.hi1031.lab1.db.dao.order.OrderDAO;
 import se.kth.hi1031.lab1.ui.dto.order.OrderDTO;
+import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
+import se.kth.hi1031.lab1.bo.model.user.Role;
+import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
+import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -32,16 +36,21 @@ public class OrderService {
         OrderDAO.createOrder(newOrder);
         return newOrder.toDTO();
     }
-    public List<OrderDTO> getAllOrders(User user) {
+    public static List<OrderDTO> getAllOrders(UserDTO user) {
+        System.out.println("getallorders: " +user);
         if (
                 user.getPermissions()
                         .contains(new Permission("view_orders"))
         ) {
             List<OrderDAO> orders = OrderDAO.getOrders();
+            System.out.println("found: " +orders);
             return orders.stream().map(OrderDAO::toOrder).map(Order::toDTO).toList();
         } else if (user != null && user.getId() != null) {
-
-            List<OrderDAO> orders = OrderDAO.getOrdersByCustomer(user);
+            List<Permission> permissions = user.getPermissions().stream().map((PermissionDTO p) -> new Permission(p.getName())).toList();
+            List<Role> roles = user.getRoles().stream().map((RoleDTO r) -> new Role(r.getName(), permissions)).toList();
+            User user_ = new User(user.getId(), user.getName(), user.getEmail(), user.getPassword(), roles, permissions);
+            List<OrderDAO> orders = OrderDAO.getOrdersByCustomer(user_);
+            System.out.println("found: " +orders);
             return orders.stream().map(OrderDAO::toOrder).map(Order::toDTO).toList();
         }
         throw new PermissionException("User " + user + " cant view orders");

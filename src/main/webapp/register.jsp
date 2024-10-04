@@ -18,6 +18,10 @@
     <input type="password" id="password" name="password" required>
     <br><br>
 
+    <label for="name">Role:</label>
+    <input type="text" id="role" name="role" required>
+    <br><br>
+
     <input type="submit" value="Register">
 </form>
 </body>

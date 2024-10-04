@@ -1,6 +1,8 @@
 package se.kth.hi1031.lab1.bo.service.user;
 
 import se.kth.hi1031.lab1.db.dao.user.UserDAO;
+import se.kth.hi1031.lab1.bo.model.user.Role;
+import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 import se.kth.hi1031.lab1.bo.model.user.User;
 
@@ -14,11 +16,12 @@ public class UserService {
 
     public static UserDTO createUser(UserDTO user) {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        List<Role> roles = user.getRoles().stream().map((RoleDTO r) -> new Role(r.getName(), null)).toList();
         UserDAO created = UserDAO.createUser(new User(user.getId(),
                 user.getName(),
                 user.getEmail(),
                 hashedPassword,
-                new ArrayList<>(),
+                roles,
                 new ArrayList<>()));
 
         return created.toUser().toDTO();

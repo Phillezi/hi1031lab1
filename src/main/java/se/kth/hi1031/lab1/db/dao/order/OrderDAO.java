@@ -158,8 +158,8 @@ public class OrderDAO {
                     "LEFT JOIN products p ON op.product_id = p.id " +
                     "LEFT JOIN order_status os ON o.id = os.order_id " +
                     "LEFT JOIN user_t u ON o.customer_id = u.id " +
-                    "WHERE o.customer_id = ?" +
-                    "GROUP BY o.id";
+                    "WHERE o.customer_id = ? " +
+                    "GROUP BY o.id, u.id";
 
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, customer.getId());

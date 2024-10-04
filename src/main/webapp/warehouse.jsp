@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.order.OrderDTO" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.user.UserDTO" %>
 <%@ page import="se.kth.hi1031.lab1.bo.service.order.OrderService" %>
@@ -29,15 +30,21 @@
           out.print("not logged in");
           return;
         }       
-        List<OrderDTO> orders = OrderService.getAllOrders(user);
+        List<OrderDTO> orders = null;
+        if (user != null) {
+          OrderService.getAllOrders(user);
+        } else {
+          orders = new ArrayList<>();
+        }
+        if (orders == null) {
+          out.print("no orders present");
+        } else {
         for (OrderDTO order : orders) {
-        
-          
         %>
           <div class="product">
             <h2><%= order.getId() %></h2>
 
-            <h3><%= order.getStatus() %></h3>
+            <h3><%= order.getStatuses() %></h3>
             <h3><%= order.getCustomer().toString() %></h3>
 
             <!-- "Pack Order" Button -->
@@ -55,6 +62,7 @@
           </div>
         <%
           }
+        }
         %>
       </div>
     </div>
