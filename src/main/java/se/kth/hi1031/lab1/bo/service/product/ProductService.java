@@ -26,9 +26,6 @@ public class ProductService {
      */
     public static List<ProductDTO> getProducts() {
         List<ProductDAO> products = ProductDAO.getAllProducts();
-        products.stream()
-                .flatMap(product -> product.getCategories().stream())
-                .forEach(category -> System.out.println("cat: " + category.getName()));
         return products.stream().map(ProductDAO::toProduct).map(Product::toDTO).toList();
     }
 
@@ -44,9 +41,6 @@ public class ProductService {
      */
     public static List<ProductDTO> getProducts(List<Integer> ids) {
         List<ProductDAO> products = ProductDAO.getProductsByIds(ids);
-        products.stream()
-                .flatMap(product -> product.getCategories().stream())
-                .forEach(category -> System.out.println("cat: " + category));
         return products.stream().map(ProductDAO::toProduct).map(Product::toDTO).toList();
     }
 

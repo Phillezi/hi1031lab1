@@ -64,7 +64,7 @@ public class CartController extends HttpServlet {
 
         HttpSession session = req.getSession(false);
         Map<Integer, Integer> cart = null;
-        if (session == null) {
+        if (session == null || session.getAttribute("user") == null) {
             resp.sendRedirect("/login.jsp");
             return;
         }
