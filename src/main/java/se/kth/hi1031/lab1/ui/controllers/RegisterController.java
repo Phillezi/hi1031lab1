@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import se.kth.hi1031.lab1.bo.service.user.UserService;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
@@ -65,8 +66,9 @@ public class RegisterController extends HttpServlet {
         ArrayList<RoleDTO> roles = new ArrayList<>(1);
         roles.add(new RoleDTO(role, null));
 
-        UserService.createUser(new UserDTO(null, name, email, password, roles, new ArrayList<>()));
-        // add session here
+        UserDTO user = UserService.createUser(new UserDTO(null, name, email, password, roles, new ArrayList<>()));
+        HttpSession session = req.getSession();
+        session.setAttribute("user", user);
         resp.sendRedirect("/");
     }
 }
