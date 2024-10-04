@@ -22,6 +22,11 @@ public class Category {
     private String name;
     private String description;
 
+    public Category(CategoryDTO category) {
+        this.name = category.getName();
+        this.description = category.getDescription();
+    }
+
 
     /**
      * Converts this {@code Category} object into a {@link CategoryDTO}, which is a Data Transfer Object (DTO)

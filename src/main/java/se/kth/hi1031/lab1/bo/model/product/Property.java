@@ -22,6 +22,11 @@ public class Property {
     private String key;
     private String value;
 
+    public Property(PropertyDTO property) {
+        this.key = property.getKey();
+        this.value = property.getValue();
+    }
+
     /**
      * Converts this {@code Property} object into a {@link PropertyDTO}, 
      * which is a Data Transfer Object (DTO) used for transferring property data across 

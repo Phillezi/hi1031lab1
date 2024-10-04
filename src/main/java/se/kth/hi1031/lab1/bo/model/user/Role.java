@@ -27,7 +27,7 @@ public class Role {
     private final String name;
     private final List<Permission> permissions;
 
-    Role(RoleDTO role) {
+    public Role(RoleDTO role) {
         this.name = role.getName();
         this.permissions = role.getPermissions() != null ? role.getPermissions()
                                 .stream()

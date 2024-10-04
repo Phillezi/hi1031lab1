@@ -25,6 +25,11 @@ public class Status {
     private String status;
     private Timestamp timestamp;
 
+    public Status(StatusDTO status) {
+        this.status = status.getStatus();
+        this.timestamp = status.getTimestamp();
+    }
+
     /**
      * Converts this {@code Status} object into a {@link StatusDTO}, 
      * which is a Data Transfer Object (DTO) used for transferring status data across 

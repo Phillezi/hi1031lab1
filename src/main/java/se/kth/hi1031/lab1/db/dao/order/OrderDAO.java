@@ -104,13 +104,14 @@ public class OrderDAO {
                     "ARRAY_AGG(DISTINCT p.removed) AS products_removed, " +
                     "ARRAY_AGG(DISTINCT os.status) AS statuses_status, " +
                     "ARRAY_AGG(DISTINCT os.timestamp) AS statuses_timestamp, " +
-                    "u.id AS user_id, u.email AS user_email, u.name AS user_name, u.hashed_pw AS user_hashed_pw, " +
+                    "u.id AS user_id, u.email AS user_email, u.name AS user_name, u.hashed_pw AS user_hashed_pw " +
                     "FROM orders o " +
                     "LEFT JOIN ordered_products op ON o.id = op.order_id " +
                     "LEFT JOIN products p ON op.product_id = p.id " +
                     "LEFT JOIN order_status os ON o.id = os.order_id " +
                     "LEFT JOIN user_t u ON o.customer_id = u.id " +
-                    "WHERE o.id = ?";
+                    "WHERE o.id = ? " +
+                    "GROUP BY o.id, u.id";
 
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, id);
@@ -212,8 +213,6 @@ public class OrderDAO {
                     stmt.executeUpdate();
                 }
 
-                // TODO: maybe insert into available status if not present there before
-                // inserting
                 for (Status status : order.getStatuses()) {
                     String statusQuery = "INSERT INTO order_status (order_id, status, timestamp) VALUES (?, ?, ?)";
                     stmt = conn.prepareStatement(statusQuery);
@@ -226,6 +225,66 @@ public class OrderDAO {
             }
 
             conn.commit();
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return order.toDAO();
+    }
+
+    public static OrderDAO createOrder(Order order, Connection conn) throws DAOException {
+        if (conn == null) {
+            throw new DAOException("No connection to database");
+        }
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            String query = "INSERT INTO orders (created_at, delivered_at, delivery_address, customer_id) VALUES (?, ?, ?, ?) RETURNING id";
+            stmt = conn.prepareStatement(query);
+            stmt.setTimestamp(1, order.getCreated());
+            stmt.setTimestamp(2, order.getDelivered());
+            stmt.setString(3, order.getDeliveryAddress());
+            stmt.setInt(4, order.getCustomer().getId());
+
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                Integer id = rs.getInt("id");
+                order.setId(id);
+
+                for (Product product : order.getProducts()) {
+                    String productsQuery = "INSERT INTO ordered_products (order_id, product_id) VALUES (?, ?)";
+                    stmt = conn.prepareStatement(productsQuery);
+                    stmt.setInt(1, id);
+                    stmt.setInt(2, product.getId());
+
+                    stmt.executeUpdate();
+                }
+
+                for (Status status : order.getStatuses()) {
+                    String statusQuery = "INSERT INTO order_status (order_id, status, timestamp) VALUES (?, ?, ?)";
+                    stmt = conn.prepareStatement(statusQuery);
+                    stmt.setInt(1, id);
+                    stmt.setString(2, status.getStatus());
+                    stmt.setTimestamp(3, status.getTimestamp());
+
+                    stmt.executeUpdate();
+                }
+            }
         } catch (SQLException e) {
             throw new DAOException(e.getMessage());
         } finally {

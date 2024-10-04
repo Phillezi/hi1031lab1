@@ -52,7 +52,7 @@ public class OrderService {
 
         } else if (
                 user.getPermissions()
-                .contains(new Permission("update_orders"))
+                .contains(new PermissionDTO("update_orders"))
         ) {
             // user has permission to edit orders
         } else {

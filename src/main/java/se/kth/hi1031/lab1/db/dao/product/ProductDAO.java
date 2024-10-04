@@ -6,7 +6,11 @@ import lombok.Setter;
 import se.kth.hi1031.lab1.bo.model.product.Product;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.DBConnectionManager;
+import se.kth.hi1031.lab1.bo.model.order.Status;
+import se.kth.hi1031.lab1.bo.model.product.*;
 import java.math.BigDecimal;
+
+
 
 import java.sql.*;
 import java.util.*;
@@ -103,6 +107,91 @@ public static Optional<ProductDAO> getProductById(int id) throws DAOException {
     return product;
 }
 
+public static ProductDAO createProduct(Product product) {
+    Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnectionManager.getInstance().getConnection();
+            conn.setAutoCommit(false);
+
+            String query = "INSERT INTO products (name, description, price, quantity) VALUES (?, ?, ?, ?) RETURNING id";
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, product.getName());
+            stmt.setString(2, product.getDescription());
+            stmt.setBigDecimal(3, BigDecimal.valueOf(product.getPrice()));
+            stmt.setInt(4, product.getQuantity());
+
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                Integer id = rs.getInt("id");
+                product.setId(id);
+
+                for (Category category : product.getCategories()) {
+                    String availableCategoriesQuery = "SELECT name FROM available_categories WHERE name = ?";
+                    stmt = conn.prepareStatement(availableCategoriesQuery);
+                    stmt.setString(1, category.getName());
+                    rs = stmt.executeQuery();
+                    if (!rs.next()) {
+                        String insertCategoryQuery = "INSERT INTO available_categories (name, description) VALUES (?, ?)";
+                        stmt = conn.prepareStatement(insertCategoryQuery);
+                        stmt.setString(1, category.getName());
+                        stmt.setString(2, category.getDescription());
+
+                        stmt.executeUpdate();
+                    }
+                    
+                    String categoriesQuery = "INSERT INTO product_categories (product_id, category) VALUES (?, ?)";
+                    stmt = conn.prepareStatement(categoriesQuery);
+                    stmt.setInt(1, id);
+                    stmt.setInt(2, product.getId());
+
+                    stmt.executeUpdate();
+                }
+
+                for (Property property : product.getProperties()) {
+                    String propertyQuery = "INSERT INTO product_properties (key, value) VALUES (?, ? )";
+                    stmt = conn.prepareStatement(propertyQuery);
+                    stmt.setString(1, property.getKey());
+
+                    stmt.setString(2, property,getValue());
+
+                 
+
+                for (String image : product.getProperties()) {
+                    String propertyQuery = "INSERT INTO product_properties (key, value) VALUES (?, ? )";
+                    stmt = conn.prepareStatement(propertyQuery);
+                    stmt.setString(1, property.getKey());                    
+                    stmt.setString(2, property.getValue());
+
+                    stmt.executeUpdate();
+                }   stmt.executeUpdate();
+                }
+            }
+
+            conn.commit();
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return order.toDAO();
+}
+
 public static List<ProductDAO> getProductsByIds(List<Integer> ids) throws DAOException {
     List<ProductDAO> products = new ArrayList<>();
     Connection conn = null;
@@ -158,6 +247,9 @@ public static List<ProductDAO> getProductsByIds(List<Integer> ids) throws DAOExc
     return products;
 }
 
+public static boolean updateProduct(Product product) throws DAOException {
+
+}
 
 public static ProductDAO toDAO(ResultSet rs) throws SQLException {
     Array categoriesArray = rs.getArray("categories");

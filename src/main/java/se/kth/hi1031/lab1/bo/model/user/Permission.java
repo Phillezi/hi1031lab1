@@ -20,7 +20,7 @@ import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 public class Permission implements Comparable<Permission> {
     private final String name;
 
-    Permission(PermissionDTO permission) {
+    public Permission(PermissionDTO permission) {
         this.name = permission.getName();
     }
 

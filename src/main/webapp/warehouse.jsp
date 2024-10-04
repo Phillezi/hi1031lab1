@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.order.OrderDTO" %>
+<%@ page import="se.kth.hi1031.lab1.ui.dto.order.StatusDTO" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.user.UserDTO" %>
 <%@ page import="se.kth.hi1031.lab1.bo.service.order.OrderService" %>
 
@@ -40,11 +41,16 @@
           out.print("no orders present");
         } else {
         for (OrderDTO order : orders) {
+          String latestStatus = null;
+          List<StatusDTO> statuses = order.getStatuses();
+          if (statuses != null && !statuses.isEmpty()) {
+            latestStatus = statuses.get(statuses.size()-1).getStatus();
+          }
         %>
           <div class="product">
             <h2><%= order.getId() %></h2>
 
-            <h3><%= order.getStatuses() %></h3>
+            <h3><%= latestStatus != null ? latestStatus : "no status" %></h3>
             <h3><%= order.getCustomer().getName() %></h3>
 
             <!-- "Pack Order" Button -->

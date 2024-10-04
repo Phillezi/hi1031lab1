@@ -19,7 +19,7 @@ public class WarehouseController extends HttpServlet {
         }
         // TODO: check user permissions from the database later
         if (user != null) {
-            String orderIdStr = req.getParameter("status");
+            String orderIdStr = req.getParameter("orderid");
             String status = req.getParameter("status");
 
             Integer orderId = null;
