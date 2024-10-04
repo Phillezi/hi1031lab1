@@ -35,7 +35,7 @@
       }
       if (user.getPermissions().stream().anyMatch((PermissionDTO p) -> "update_orders".equals(p.getName()))) {
     %>
-    <a href="${pageContext.request.contextPath}/warehouse.jsp">
+    <a href="${pageContext.request.contextPath}/warehouse/index.jsp">
       <img class="icon" src="${pageContext.request.contextPath}/assets/warehouse.svg" alt="icon" />
     </a>
     <%
