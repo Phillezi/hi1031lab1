@@ -28,7 +28,7 @@
             <div style="min-height: 1rem;"></div>
             <hr style="border: 1px solid #000; width: 100%;">
             <div style="min-height: 1rem;"></div>
-            <form action="${pageContext.request.contextPath}/login.jsp.jsp" method="get">
+            <form action="${pageContext.request.contextPath}/login.jsp" method="get">
                 <button type="submit">Login instead</button>
             </form>
         </div>
