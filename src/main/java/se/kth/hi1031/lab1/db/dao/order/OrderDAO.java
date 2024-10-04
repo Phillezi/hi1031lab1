@@ -63,7 +63,7 @@ public class OrderDAO {
                     "LEFT JOIN products p ON op.product_id = p.id " +
                     "LEFT JOIN order_status os ON o.id = os.order_id " +
                     "LEFT JOIN user_t u ON o.customer_id = u.id " +
-                    "GROUP BY o.id";
+                    "GROUP BY o.id, u.id";
 
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
@@ -104,7 +104,7 @@ public class OrderDAO {
                     "ARRAY_AGG(DISTINCT p.removed) AS products_removed, " +
                     "ARRAY_AGG(DISTINCT os.status) AS statuses_status, " +
                     "ARRAY_AGG(DISTINCT os.timestamp) AS statuses_timestamp, " +
-                    "u.id AS user_id, u.email AS user_email, u.name AS user_name, u.hashed_pw AS user_hashed_pw " +
+                    "u.id AS user_id, u.email AS user_email, u.name AS user_name, u.hashed_pw AS user_hashed_pw, " +
                     "FROM orders o " +
                     "LEFT JOIN ordered_products op ON o.id = op.order_id " +
                     "LEFT JOIN products p ON op.product_id = p.id " +
@@ -269,8 +269,9 @@ public class OrderDAO {
                 this.created,
                 this.delivered,
                 this.deliveryAddress,
-                this.customer.toUser(),
-                this.products.stream().map(ProductDAO::toProduct).toList(),
-                this.statuses.stream().map(StatusDAO::toStatus).toList());
+                this.customer != null ? this.customer.toUser() : null,
+                this.products != null ? this.products.stream().map(ProductDAO::toProduct).toList() : null,
+                this.statuses != null ? this.statuses.stream().map(StatusDAO::toStatus).toList() : null
+                );
     }
 }

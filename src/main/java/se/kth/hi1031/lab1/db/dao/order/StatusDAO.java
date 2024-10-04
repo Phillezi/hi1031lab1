@@ -5,14 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import se.kth.hi1031.lab1.bo.model.order.Status;
 
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -30,7 +27,7 @@ public class StatusDAO {
 
     public static List<StatusDAO> toDAOs(ResultSet rs) throws SQLException {
         String[] statusArr = (String[])rs.getArray("statuses_status").getArray();
-        Timestamp[] timestampArr = (Timestamp[]) rs.getArray("statuses_status").getArray();
+        Timestamp[] timestampArr = (Timestamp[]) rs.getArray("statuses_timestamp").getArray();
 
         if (statusArr == null || timestampArr == null) {
             return null;

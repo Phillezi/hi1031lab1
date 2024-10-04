@@ -220,16 +220,25 @@ public class UserDAO {
     }
 
     public static UserDAO toDAO(ResultSet rs) throws SQLException {
-
+        List<PermissionDAO> permissions = null;
+        try {
         Array permsArr = rs.getArray("user_role_permissions");
-        List<PermissionDAO> permissions = Arrays.stream((String[]) permsArr.getArray())
+        permissions = Arrays.stream((String[]) permsArr.getArray())
                 .map(PermissionDAO::new)
                 .collect(Collectors.toList());
+        } catch(SQLException e) {
+            
+        }
 
+        List<RoleDAO> roles = null;
+        try {
         Array rolesArr = rs.getArray("user_roles");
-        List<RoleDAO> roles = Arrays.stream((String[]) rolesArr.getArray())
+        roles = Arrays.stream((String[]) rolesArr.getArray())
                 .map((String role) -> new RoleDAO(role, new ArrayList<>()))
                 .collect(Collectors.toList());
+        } catch(SQLException e) {
+            
+        }
 
         return new UserDAO(
                 rs.getInt("user_id"),
@@ -276,8 +285,8 @@ public class UserDAO {
     }
 
     public User toUser() {
-        List<Role> roles = this.roles.stream().map(RoleDAO::toRole).toList();
-        List<Permission> permissions = this.permissions.stream().map(PermissionDAO::toPermission).toList();
+        List<Role> roles = this.roles != null ? this.roles.stream().map(RoleDAO::toRole).toList() : null;
+        List<Permission> permissions = this.permissions != null ? this.permissions.stream().map(PermissionDAO::toPermission).toList() : null;
         return new User(this.id, this.name, this.email, this.password, roles, permissions);
     }
 }

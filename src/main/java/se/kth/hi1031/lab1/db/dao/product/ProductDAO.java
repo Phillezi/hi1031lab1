@@ -6,6 +6,7 @@ import lombok.Setter;
 import se.kth.hi1031.lab1.bo.model.product.Product;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.DBConnectionManager;
+import java.math.BigDecimal;
 
 import java.sql.*;
 import java.util.*;
@@ -196,16 +197,16 @@ public static ProductDAO toDAO(ResultSet rs) throws SQLException {
         Integer[] ids = (Integer[])rs.getArray("products_id").getArray();
         String[] names = (String[]) rs.getArray("products_name").getArray();
         String[] descriptions = (String[]) rs.getArray("products_description").getArray();
-        Double[] prices = (Double[]) rs.getArray("products_prices").getArray();
-        Integer[] quantities = (Integer[]) rs.getArray("products_quantities").getArray();
-        Boolean[] isRemoveds = (Boolean[]) rs.getArray("products_isremoveds").getArray();
+        BigDecimal[] prices = (BigDecimal[]) rs.getArray("products_price").getArray();
+        Integer[] quantities = (Integer[]) rs.getArray("products_quantity").getArray();
+        Boolean[] isRemoved = (Boolean[]) rs.getArray("products_removed").getArray();
 
         if (ids == null ||
                 names == null ||
                 descriptions == null ||
                 prices == null ||
                 quantities == null ||
-                isRemoveds == null
+                isRemoved == null
         ) {
             return null;
         }
@@ -216,9 +217,9 @@ public static ProductDAO toDAO(ResultSet rs) throws SQLException {
                     ids[i],
                     names[i],
                     descriptions[i],
-                    prices[i],
-                    quantities[i],
-                    isRemoveds[i],
+                    prices[i] != null ? prices[i].doubleValue() : Double.valueOf(0),
+                    quantities[i] != null ? quantities[i] : 0,
+                    isRemoved[i] != null ? isRemoved[i] : false,
                     null,
                     null,
                     null
@@ -236,9 +237,9 @@ public static ProductDAO toDAO(ResultSet rs) throws SQLException {
                 this.price,
                 this.quantity,
                 this.removed,
-                this.categories.stream().map(CategoryDAO::toCategory).toList(),
+                this.categories != null ? this.categories.stream().map(CategoryDAO::toCategory).toList() : null,
                 this.images,
-                this.properties.stream().map(PropertyDAO::toProperty).toList()
+                this.properties != null ? this.properties.stream().map(PropertyDAO::toProperty).toList() : null
         );
     }
 

@@ -12,7 +12,7 @@ public class RoleDAO {
     private final List<PermissionDAO> permissions;
 
     public Role toRole() {
-        List<Permission> permissions = this.permissions.stream().map(PermissionDAO::toPermission).toList();
+        List<Permission> permissions = this.permissions != null ? this.permissions.stream().map(PermissionDAO::toPermission).toList() : null;
         return new Role(this.name, permissions);
     }
 }
