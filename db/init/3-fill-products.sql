@@ -12,7 +12,7 @@ VALUES
         'Laptop',
         'A high-performance laptop',
         9999.99,
-        10
+        0
     ),
     ('Smartphone', 'A modern smartphone', 15999.99, 15),
     (

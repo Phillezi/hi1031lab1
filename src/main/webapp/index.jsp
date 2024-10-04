@@ -97,23 +97,16 @@
                             }
                         }
                     %>
-                    <img src="<%= image %>" alt="<%= product.getName() %>" style="width: 10vw; height: 10vw;"/>
+                    <img src="<%= image %>" alt="<%= product.getName() %>" style="width: 100%; height: 100%;"/>
                 </div>
                 <p class="product-description"><%= product.getDescription() %>
                 </p>
                 <p class="product-price">Price: <%= product.getPrice() %> kr</p>
                 <p class="product-quantity">Available Quantity: <%= product.getQuantity() %>
                 </p>
-
-                <!-- Add to Cart Form -->
-                <form method="post" action="${pageContext.request.contextPath}/controller?action=cart">
-                    <input type="hidden" name="productId" value="<%= product.getId() %>"/>
-                    <label for="quantity<%= product.getId() %>">Quantity:</label>
-                    <input type="number" name="quantity" id="quantity" value="1" min="1"
-                           max="<%= product.getQuantity() %>"/>
-                    <button type="submit">Add to Cart</button>
-                </form>
-
+                <%
+                if (product.getCategories() != null && !product.getCategories().isEmpty()) {
+                %>
                 <div class="product-categories">
                     <strong>Categories:</strong>
                     <ul>
@@ -127,6 +120,10 @@
                         %>
                     </ul>
                 </div>
+                <%
+                    }
+                    if (product.getProperties() != null && !product.getProperties().isEmpty()) {
+                %>
                 <div class="product-properties">
                     <strong>Properties:</strong>
                     <ul>
@@ -140,6 +137,18 @@
                         %>
                     </ul>
                 </div>
+                <%
+                    }
+                %>
+
+                <form method="post" action="${pageContext.request.contextPath}/controller?action=cart">
+                    <input type="hidden" name="productId" value="<%= product.getId() %>"/>
+                    <label for="quantity<%= product.getId() %>">Quantity:</label>
+                    <label for="quantity"></label>
+                    <input type="number" name="quantity" id="quantity" value="1" min="1"
+                                                         max="<%= Math.max(product.getQuantity(), 0) %>"/>
+                    <button type="submit" <%= product.getQuantity() <= 0 ? "disabled" : "" %> >Add to Cart</button>
+                </form>
             </div>
             <%
                     }
