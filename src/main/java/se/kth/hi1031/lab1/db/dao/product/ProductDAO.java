@@ -261,6 +261,7 @@ public class ProductDAO {
         Array categoriesArray = rs.getArray("categories");
         List<CategoryDAO> categories = categoriesArray != null
                 ? Arrays.stream((String[]) categoriesArray.getArray())
+                .filter(Objects::nonNull)
                 .map(name -> new CategoryDAO(name, null))
                 .collect(Collectors.toList())
                 : new ArrayList<>();
@@ -275,7 +276,9 @@ public class ProductDAO {
 
         List<PropertyDAO> properties = new ArrayList<>(propertyKeys.length);
         for (int i = 0; i < propertyKeys.length; i++) {
-            properties.add(new PropertyDAO(propertyKeys[i], propertyValues[i]));
+            if (propertyKeys[i] != null && propertyValues[i] != null) {
+                properties.add(new PropertyDAO(propertyKeys[i], propertyValues[i]));
+            }
         }
 
         return new ProductDAO(

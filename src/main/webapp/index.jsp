@@ -74,7 +74,6 @@
 </header>
 <div class="root">
     <div class="featured">
-        <h2>Featured Products</h2>
         <div class="featured-products">
             <%
                 List<ProductDTO> products = ProductService.getProducts();
@@ -105,7 +104,7 @@
                 <p class="product-quantity">Available Quantity: <%= product.getQuantity() %>
                 </p>
                 <%
-                if (product.getCategories() != null && !product.getCategories().isEmpty()) {
+                    if (product.getCategories() != null && !product.getCategories().isEmpty()) {
                 %>
                 <div class="product-categories">
                     <strong>Categories:</strong>

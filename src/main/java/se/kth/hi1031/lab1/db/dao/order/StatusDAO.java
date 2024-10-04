@@ -72,7 +72,9 @@ public class StatusDAO {
 
         List<StatusDAO> daos = new ArrayList<>();
         for (int i = 0; i < statusArr.length; i++) {
-            daos.add(new StatusDAO(statusArr[i], timestampArr[i] ));
+            if(statusArr[i] != null && timestampArr[i] != null) {
+                daos.add(new StatusDAO(statusArr[i], timestampArr[i]));
+            }
         }
 
         return daos;

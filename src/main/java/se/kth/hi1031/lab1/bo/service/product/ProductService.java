@@ -3,6 +3,7 @@ package se.kth.hi1031.lab1.bo.service.product;
 import java.util.List;
 
 import se.kth.hi1031.lab1.bo.model.product.Product;
+import se.kth.hi1031.lab1.db.dao.product.CategoryDAO;
 import se.kth.hi1031.lab1.db.dao.product.ProductDAO;
 import se.kth.hi1031.lab1.ui.dto.product.ProductDTO;
 
@@ -25,6 +26,9 @@ public class ProductService {
      */
     public static List<ProductDTO> getProducts() {
         List<ProductDAO> products = ProductDAO.getAllProducts();
+        products.stream()
+                .flatMap(product -> product.getCategories().stream())
+                .forEach(category -> System.out.println("cat: " + category.getName()));
         return products.stream().map(ProductDAO::toProduct).map(Product::toDTO).toList();
     }
 
@@ -40,6 +44,9 @@ public class ProductService {
      */
     public static List<ProductDTO> getProducts(List<Integer> ids) {
         List<ProductDAO> products = ProductDAO.getProductsByIds(ids);
+        products.stream()
+                .flatMap(product -> product.getCategories().stream())
+                .forEach(category -> System.out.println("cat: " + category));
         return products.stream().map(ProductDAO::toProduct).map(Product::toDTO).toList();
     }
 
