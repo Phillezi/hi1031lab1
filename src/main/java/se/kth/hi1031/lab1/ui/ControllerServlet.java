@@ -39,7 +39,8 @@ public class ControllerServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String path = req.getRequestURI();
+        String[] pathParts = req.getRequestURI().split("/");
+        String path = pathParts[pathParts.length - 1];
         HttpSession session = req.getSession(false);
 
         UserDTO user = null;
@@ -47,6 +48,7 @@ public class ControllerServlet extends HttpServlet {
             user = (UserDTO) session.getAttribute("user");
         }
         boolean isLoggedIn = user != null;
+        System.out.println(path);
 
         switch (path) {
             case "/admin": {
@@ -135,7 +137,7 @@ public class ControllerServlet extends HttpServlet {
             }
             case "/":
             default: {
-                req.getRequestDispatcher("404.jsp").forward(req, resp);
+                req.getRequestDispatcher("/errors/404.jsp").forward(req, resp);
                 break;
             }
         }
@@ -198,7 +200,7 @@ public class ControllerServlet extends HttpServlet {
         if (!isLoggedIn) {
             redirectToLogin(resp, req);
         } else {
-            resp.sendRedirect(req.getContextPath() + "/403.jsp");
+            resp.sendRedirect(req.getContextPath() + "/errors/401.jsp");
         }
     }
 }

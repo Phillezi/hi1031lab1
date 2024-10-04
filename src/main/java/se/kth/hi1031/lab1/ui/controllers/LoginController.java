@@ -67,6 +67,6 @@ public class LoginController extends HttpServlet {
             return;
         }
 
-        resp.sendRedirect("/error");
+        resp.sendRedirect("/errors/error.jsp");
     }
 }

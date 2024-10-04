@@ -1,0 +1,20 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+  <title>404</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css"/>
+</head>
+<body>
+<div class="container">
+  <div class="modal-overlay">
+    <div class="modal">
+      <h1>404</h1>
+      <p>Not found.</p>
+      <form action="${pageContext.request.contextPath}/" method="get">
+        <button type="submit">Take me back</button>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>
