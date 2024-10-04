@@ -59,7 +59,7 @@ header {
   padding: 10px;
   font-size: 16px;
   outline: none;
-  width: 0%;
+  width: 0;
   transition: width 0.5s ease;
 }
 
@@ -80,24 +80,18 @@ header {
   background-color: #555;
 }
 
-.search:hover .search-field,
-.search:focus-within .search-field {
+.search-field {
   width: 100%;
   max-width: 100%;
 }
-.search:hover .search-button,
-.search:focus-within .search-button {
+
+.search-button {
   max-width: 100%;
   padding: 0.5rem 1rem;
   width: max-content;
 }
 
 .search {
-  background: none;
-}
-
-.search:hover,
-.search:focus-within {
   background-color: #eee;
 }
 
@@ -132,7 +126,7 @@ header {
 }
 
 .featured {
-  max-width: 600px;
+  max-width: 1000px;
   margin: 50px auto;
   text-align: center;
   background-color: #f9f9f9;
@@ -147,12 +141,10 @@ header {
   color: #333;
 }
 
-.featured-carousel {
-  display: flex;
-  direction: column;
-  overflow: hidden;
-  position: relative;
-  width: 100%;
+.featured-products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
 }
 
 .product-card {
@@ -206,28 +198,6 @@ header {
   transition: transform 0.3s;
 }
 
-.product:hover {
-  transform: translateY(-10px);
-}
-
-.about {
-  background-color: #fff;
-  padding: 40px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  text-align: center;
-}
-
-.about h2 {
-  margin-bottom: 20px;
-  font-size: 28px;
-}
-
-.about p {
-  font-size: 18px;
-  color: #666;
-}
-
 footer {
   background-color: #333;
   color: #fff;
@@ -238,17 +208,6 @@ footer {
 .footer-content {
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.social-media a {
-  color: #fff;
-  text-decoration: none;
-  margin: 0 10px;
-  font-size: 18px;
-}
-
-.social-media a:hover {
-  color: #bbb;
 }
 
 @media (max-width: 768px) {
