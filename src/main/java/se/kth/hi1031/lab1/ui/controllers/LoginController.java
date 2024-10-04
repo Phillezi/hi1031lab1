@@ -67,6 +67,7 @@ public class LoginController extends HttpServlet {
             return;
         }
 
-        resp.sendRedirect("/errors/error.jsp");
+        session.setAttribute("error", "Invalid email or password. Please try again.");
+        resp.sendRedirect("/login.jsp");
     }
 }

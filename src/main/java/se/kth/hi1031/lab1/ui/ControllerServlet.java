@@ -6,10 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import se.kth.hi1031.lab1.ui.controllers.LoginController;
-import se.kth.hi1031.lab1.ui.controllers.RegisterController;
-import se.kth.hi1031.lab1.ui.controllers.WarehouseController;
-import se.kth.hi1031.lab1.ui.controllers.CartController;
+import se.kth.hi1031.lab1.ui.controllers.*;
 import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 
@@ -112,6 +109,10 @@ public class ControllerServlet extends HttpServlet {
         System.out.println(action);
 
         switch (action) {
+            case "clear-error": {
+                ErrorController.post(req, resp);
+                break;
+            }
             case "register": {
                 RegisterController.post(req, resp);
                 break;
