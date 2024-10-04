@@ -18,60 +18,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css"/>
 </head>
 <body>
-<header>
-    <a href="${pageContext.request.contextPath}/">
-        <div class="logo">WebSHOP</div>
-    </a>
-    <div class="search">
-        <img class="icon" src="${pageContext.request.contextPath}/assets/magnifying-glass.svg" alt="search icon"></img>
-        <label>
-            <input
-                    type="text"
-                    class="search-field"
-                    placeholder="Search products..."
-            />
-        </label>
-        <button class="search-button">Search</button>
-    </div>
-    <div class="navbar">
-        <%
-            UserDTO user = null;
-            if (session != null) {
-                user = (UserDTO) session.getAttribute("user");
-            }
-            if(user != null) {
-                if (user.getRoles().stream().anyMatch((RoleDTO r)->"admin".equals(r.getName()))) {
-                    %>
-        <a href="${pageContext.request.contextPath}/admin/index.jsp"><img class="icon"
-                                                                   src="${pageContext.request.contextPath}/assets/admin.svg"
-                                                                   alt="icon"></img></a>
-                <%
-                }
-                    if (user.getPermissions().stream().anyMatch((PermissionDTO p)->"update_orders".equals(p.getName()))) {
-                %>
-        <a href="${pageContext.request.contextPath}/warehouse.jsp"><img class="icon"
-                                                                          src="${pageContext.request.contextPath}/assets/warehouse.svg"
-                                                                          alt="icon"></img></a>
-        <%
-            }
-                %>
-        <a href="${pageContext.request.contextPath}/cart.jsp"><img class="icon"
-                                                                   src="${pageContext.request.contextPath}/assets/shopping-cart.svg"
-                                                                   alt="icon"></img></a>
-        <a href="${pageContext.request.contextPath}/logout.jsp"><img class="icon"
-                                                                   src="${pageContext.request.contextPath}/assets/logout.svg"
-                                                                   alt="icon"></img></a>
-        <%
-            } else {
-        %>
-        <a href="${pageContext.request.contextPath}/login.jsp"><p>
-            Login
-        </p></a>
-        <%
-            }
-        %>
-    </div>
-</header>
+<jsp:include page="/components/header.jsp" />
 <div class="root">
     <div class="featured">
         <div class="featured-products">

@@ -10,6 +10,7 @@
 <head>
     <title>Title</title>
 </head>
+<jsp:include page="/components/header.jsp" />
 <body>
 
 </body>

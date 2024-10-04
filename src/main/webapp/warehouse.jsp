@@ -15,11 +15,8 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css" />
   </head>
   <body>
-    <header>
-      <a href="/"><div class="logo">Warehouse Panel</div></a>
-    </header>
-    
-    <div class="root">
+  <jsp:include page="/components/header.jsp" />
+  <div class="root">
       <h1>Pack Orders</h1>
       <div class="product-list">
         <%

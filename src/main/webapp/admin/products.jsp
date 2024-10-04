@@ -12,9 +12,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css" />
   </head>
   <body>
-    <header>
-      <a href="/"><div class="logo">Admin Panel</div></a>
-    </header>
+  <jsp:include page="/components/header.jsp" />
     
     <div class="root">
       <h1>Manage Products</h1>
