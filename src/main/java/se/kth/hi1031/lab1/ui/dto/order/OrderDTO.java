@@ -6,7 +6,6 @@ import lombok.Setter;
 import se.kth.hi1031.lab1.ui.dto.product.ProductDTO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter

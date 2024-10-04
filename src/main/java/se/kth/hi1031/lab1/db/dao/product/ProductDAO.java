@@ -102,6 +102,62 @@ public static Optional<ProductDAO> getProductById(int id) throws DAOException {
     return product;
 }
 
+public static List<ProductDAO> getProductsByIds(List<Integer> ids) throws DAOException {
+    List<ProductDAO> products = new ArrayList<>();
+    Connection conn = null;
+    
+    if (ids == null || ids.isEmpty()) {
+        return products;
+    }
+
+    try {
+        conn = DBConnectionManager.getInstance().getConnection();
+
+        String placeholders = ids.stream()
+                                 .map(id -> "?")
+                                 .collect(Collectors.joining(","));
+        
+        String query = "SELECT " +
+                "p.id, p.name, p.description, p.price, p.quantity, p.removed, " +
+                "ARRAY_AGG(DISTINCT pc.category) AS categories, " +
+                "ARRAY_AGG(DISTINCT pi.image_url) AS images, " +
+                "ARRAY_AGG(DISTINCT pp.key) AS property_keys, " +
+                "ARRAY_AGG(DISTINCT pp.value) AS property_values " +
+                "FROM products p " +
+                "LEFT JOIN product_categories pc ON p.id = pc.product_id " +
+                "LEFT JOIN product_images pi ON p.id = pi.product_id " +
+                "LEFT JOIN product_properties pp ON p.id = pp.product_id " +
+                "WHERE p.id IN (" + placeholders + ") " +
+                "GROUP BY p.id";
+        
+        PreparedStatement stmt = conn.prepareStatement(query);
+        
+        for (int i = 0; i < ids.size(); i++) {
+            stmt.setInt(i + 1, ids.get(i));
+        }
+        
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            products.add(toDAO(rs));
+        }
+
+    } catch (SQLException e) {
+        throw new DAOException(e.getMessage());
+    } finally {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    return products;
+}
+
+
 public static ProductDAO toDAO(ResultSet rs) throws SQLException {
     Array categoriesArray = rs.getArray("categories");
     List<CategoryDAO> categories = categoriesArray != null

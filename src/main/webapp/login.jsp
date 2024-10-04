@@ -4,7 +4,7 @@
     <title>login</title>
 </head>
 <body>
-    <form action="/main?action=login" method="POST">    
+    <form action="controller?action=login" method="POST">    
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
         <br><br>

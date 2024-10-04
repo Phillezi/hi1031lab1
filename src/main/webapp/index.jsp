@@ -39,60 +39,69 @@
             <h2>Featured Products</h2>
             <div class="featured-products">
               <%
-    List<ProductDTO> products = ProductService.getProducts();
-    for (ProductDTO product : products) {
-      // Only display products that are not removed
-      if (!product.isRemoved()) {
+List<ProductDTO> products = ProductService.getProducts();
+for (ProductDTO product : products) {
+  if (!product.isRemoved()) {
+%>
+    <div class="product">
+      <h2><%= product.getName() %></h2>
+      <div class="product-images">
+        <% 
+          List<String> images = product.getImages();
+          String image = "https://placehold.co/400x400";
+          if (images != null && images.size() > 0) {
+            for (String img : images) {
+              if (img != null) {
+                image = img;
+                break;
+              }
+            }
+          }
         %>
-            <div class="product">
-              <h2><%= product.getName() %></h2>
-              <div class="product-images">
-                <% 
-                  List<String> images = product.getImages();
-                  String image = "https://placehold.co/400x400";
-                  if (images != null && images.size() > 0) {
-                    for (String img : images) {
-                      if (img != null) {
-                        image = img;
-                        break;
-                      }
-                    }
-                  }
-                %>
-                <img src="<%= image %>" alt="<%= product.getName() %>" style="width: 10vw; height: 10vw;" />
-              </div>
-              <p class="product-description"><%= product.getDescription() %></p>
-              <p class="product-price">Price: <%= product.getPrice() %> kr</p>
-              <p class="product-quantity">Available Quantity: <%= product.getQuantity() %></p>
-              <div class="product-categories">
-                <strong>Categories:</strong>
-                <ul>
-                  <%
-                    for (CategoryDTO category : product.getCategories()) {
-                  %>
-                      <li><%= category.getName() %></li>
-                  <%
-                    }
-                  %>
-                </ul>
-              </div>
-              <div class="product-properties">
-                <strong>Properties:</strong>
-                <ul>
-                  <%
-                    for (PropertyDTO property : product.getProperties()) {
-                  %>
-                      <li><%= property.getKey() %>: <%= property.getValue() %></li>
-                  <%
-                    }
-                  %>
-                </ul>
-              </div>
-            </div>
-                <%
-                    }
-                  }
-                %>
+        <img src="<%= image %>" alt="<%= product.getName() %>" style="width: 10vw; height: 10vw;" />
+      </div>
+      <p class="product-description"><%= product.getDescription() %></p>
+      <p class="product-price">Price: <%= product.getPrice() %> kr</p>
+      <p class="product-quantity">Available Quantity: <%= product.getQuantity() %></p>
+      
+      <!-- Add to Cart Form -->
+      <form method="post" action="${pageContext.request.contextPath}/controller?action=cart">
+        <input type="hidden" name="productId" value="<%= product.getId() %>" />
+        <label for="quantity<%= product.getId() %>">Quantity:</label>
+        <input type="number" name="quantity" id="quantity" value="1" min="1" max="<%= product.getQuantity() %>" />
+        <button type="submit">Add to Cart</button>
+      </form>
+      
+      <div class="product-categories">
+        <strong>Categories:</strong>
+        <ul>
+          <%
+            for (CategoryDTO category : product.getCategories()) {
+          %>
+              <li><%= category.getName() %></li>
+          <%
+            }
+          %>
+        </ul>
+      </div>
+      <div class="product-properties">
+        <strong>Properties:</strong>
+        <ul>
+          <%
+            for (PropertyDTO property : product.getProperties()) {
+          %>
+              <li><%= property.getKey() %>: <%= property.getValue() %></li>
+          <%
+            }
+          %>
+        </ul>
+      </div>
+    </div>
+<%
+  }
+}
+%>
+
             </div>
           </div>
           

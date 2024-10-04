@@ -8,13 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import se.kth.hi1031.lab1.ui.controllers.LoginController;
 import se.kth.hi1031.lab1.ui.controllers.RegisterController;
+import se.kth.hi1031.lab1.ui.controllers.CartController;
 import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
-import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 
 import java.io.IOException;
 
-@WebServlet(name = "MainServlet", urlPatterns = { "/admin/*", "/users/*", "/login", "/logout", "/" })
+@WebServlet(name = "controller", urlPatterns = { "/controller" })
 public class ControllerServlet extends HttpServlet {
 
     @Override
@@ -67,17 +67,40 @@ public class ControllerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
-        UserDTO currentUser = getCurrentUser(req);
+        HttpSession session = req.getSession(false);
+
+        UserDTO user = null;
+        if (session != null) {
+            user = (UserDTO) session.getAttribute("user");
+        }
+        boolean isLoggedIn = user != null;
+        System.out.println(action);
 
         switch (action) {
-            case "register":
+            case "register": {
                 RegisterController.post(req, resp);
                 break;
-            case "login":
+            }
+            case "login": {
                 LoginController.post(req, resp);
                 break;
-            default:
-                resp.getWriter().write("Invalid action!");
+            }
+            case "logout": {
+                if (isLoggedIn) {
+                    session.invalidate();
+                }
+                redirectToLogin(resp, req);
+                break;
+            }
+            case "cart": {
+                CartController.post(req, resp);
+                break;
+            }
+            case "/":
+            default: {
+                req.getRequestDispatcher("404.jsp").forward(req, resp);
+                break;
+            }
         }
     }
 

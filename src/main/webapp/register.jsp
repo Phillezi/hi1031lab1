@@ -5,7 +5,7 @@
 </head>
 <body>
 <h2>Register</h2>
-<form action="/main?action=register" method="POST">
+<form action="controller?action=register" method="POST">
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" required>
     <br><br>

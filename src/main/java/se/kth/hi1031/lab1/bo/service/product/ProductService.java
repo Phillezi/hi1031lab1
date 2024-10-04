@@ -11,4 +11,9 @@ public class ProductService {
         List<ProductDAO> products = ProductDAO.getAllProducts();
         return products.stream().map(ProductDAO::toProduct).map(Product::toDTO).toList();
     }
+
+    public static List<ProductDTO> getProducts(List<Integer> ids) {
+        List<ProductDAO> products = ProductDAO.getProductsByIds(ids);
+        return products.stream().map(ProductDAO::toProduct).map(Product::toDTO).toList();
+    }
 }

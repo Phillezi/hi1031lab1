@@ -23,7 +23,7 @@ public class LoginController extends HttpServlet {
         HttpSession session = req.getSession();
         if (user != null) {
             session.setAttribute("user", user);
-            resp.sendRedirect("/logged_in");
+            resp.sendRedirect("/index.jsp");
             return;
         }
 
