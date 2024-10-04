@@ -58,8 +58,8 @@
         <a href="${pageContext.request.contextPath}/cart.jsp"><img class="icon"
                                                                    src="${pageContext.request.contextPath}/assets/shopping-cart.svg"
                                                                    alt="icon"></img></a>
-        <a href="${pageContext.request.contextPath}/user.jsp"><img class="icon"
-                                                                   src="${pageContext.request.contextPath}/assets/person.svg"
+        <a href="${pageContext.request.contextPath}/logout.jsp"><img class="icon"
+                                                                   src="${pageContext.request.contextPath}/assets/logout.svg"
                                                                    alt="icon"></img></a>
         <%
             } else {
