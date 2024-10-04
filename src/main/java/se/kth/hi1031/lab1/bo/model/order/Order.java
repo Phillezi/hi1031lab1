@@ -7,6 +7,8 @@ import se.kth.hi1031.lab1.bo.model.product.Product;
 import se.kth.hi1031.lab1.bo.model.user.User;
 import se.kth.hi1031.lab1.db.dao.order.OrderDAO;
 import se.kth.hi1031.lab1.ui.dto.order.OrderDTO;
+import se.kth.hi1031.lab1.ui.dto.product.ProductDTO;
+import se.kth.hi1031.lab1.ui.dto.order.StatusDTO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -34,6 +36,21 @@ public class Order {
     private List<Product> products;
     private List<Status> statuses;
 
+    public Order(OrderDTO order) {
+        this.id = order.getId();
+        this.created = order.getCreated();
+        this.delivered = order.getDelivered();
+        this.deliveryAddress = order.getDeliveryAddress();
+        this.customer = order.getCustomer() != null ? new User(order.getCustomer()) : null;
+        this.products = order.getProducts() != null ? order.getProducts()
+                                .stream()
+                                .map((ProductDTO p) -> new Product(p))
+                                .toList() : null;
+        this.statuses = order.getStatuses() != null ? order.getStatuses()
+                                .stream()
+                                .map((StatusDTO s) -> new Status(s))
+                                .toList() : null;
+    }
     
 
     /**

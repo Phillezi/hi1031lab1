@@ -8,6 +8,17 @@ import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 import java.sql.Timestamp;
 import java.util.List;
 
+
+/**
+ * Data Transfer Object representing an order in the system.
+ *
+ * <p>The OrderDTO class is used to encapsulate the details of an order, including 
+ * information about the customer, the products ordered, the order status, and the 
+ * timestamps for creation and delivery.</p>
+ * 
+ * <p>This class uses Lombok annotations to automatically generate
+ * getters, setters, and an all-arguments constructor.</p>
+ */
 @Getter
 @Setter
 @AllArgsConstructor

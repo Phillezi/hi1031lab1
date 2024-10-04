@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import se.kth.hi1031.lab1.db.dao.user.RoleDAO;
 import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
+import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
+
 
 import java.util.List;
 
@@ -24,6 +26,14 @@ import java.util.List;
 public class Role {
     private final String name;
     private final List<Permission> permissions;
+
+    Role(RoleDTO role) {
+        this.name = role.getName();
+        this.permissions = role.getPermissions() != null ? role.getPermissions()
+                                .stream()
+                                .map((PermissionDTO p) -> new Permission(p))
+                                .toList() : null;
+    }
 
     /**
      * Converts this {@code Role} object into a {@link RoleDTO}, which is a Data Transfer Object (DTO)

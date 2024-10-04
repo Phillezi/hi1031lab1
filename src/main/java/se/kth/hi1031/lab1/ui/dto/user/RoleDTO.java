@@ -7,6 +7,13 @@ import lombok.ToString;
 
 import java.util.List;
 
+/**
+ * Data Transfer Object representing a user role.
+ *
+ * <p>The RoleDTO class encapsulates the name of a role and its associated 
+ * permissions within the application, defining what actions a user with 
+ * this role is allowed to perform.</p>
+ */
 @Getter
 @Setter
 @AllArgsConstructor

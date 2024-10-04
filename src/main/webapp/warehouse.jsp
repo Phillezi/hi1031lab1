@@ -32,7 +32,7 @@
         }       
         List<OrderDTO> orders = null;
         if (user != null) {
-          OrderService.getAllOrders(user);
+          orders = OrderService.getAllOrders(user);
         } else {
           orders = new ArrayList<>();
         }
@@ -45,7 +45,7 @@
             <h2><%= order.getId() %></h2>
 
             <h3><%= order.getStatuses() %></h3>
-            <h3><%= order.getCustomer().toString() %></h3>
+            <h3><%= order.getCustomer().getName() %></h3>
 
             <!-- "Pack Order" Button -->
             <a href="#packOrder<%= order.getId() %>">Pack Order</a>
@@ -54,8 +54,8 @@
           <!-- Pack Order Form for this product (initially hidden) -->
           <div id="packOrder<%= order.getId() %>">
             <h3>Pack Order - <%= order.getId() %></h3>
-            <form method="post" action="${pageContext.request.contextPath}/controller?action=packOrder">    <!--will need to update the action...-->
-              <input type="hidden" name="productId" value="<%= order.getId() %>" />   
+            <form method="post" action="${pageContext.request.contextPath}/controller?action=warehouse&status=packed&orderid=<%= order.getId() %>">    <!--will need to update the action...-->
+              <input type="hidden" name="orderId" value="<%= order.getId() %>" />   
 
               <button type="submit">Confirm Packing</button>
             </form>

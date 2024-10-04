@@ -20,6 +20,10 @@ import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 public class Permission implements Comparable<Permission> {
     private final String name;
 
+    Permission(PermissionDTO permission) {
+        this.name = permission.getName();
+    }
+
     /**
      * Converts this {@code Permission} object into a {@link PermissionDTO}, which is a Data Transfer Object (DTO)
      * used to transfer permission data across different layers of the application.

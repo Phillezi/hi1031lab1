@@ -30,6 +30,16 @@ public class DBConnection implements Connection {
     private final Connection connection;
     private final DBConnectionManager parent;
 
+    /**
+     * Constructs a new {@code DBConnection} using the specified {@link DBConnectionManager}.
+     *
+     * <p>This constructor attempts to establish a connection to the database using credentials
+     * obtained from environment variables. If the environment variables are not set, it defaults 
+     * to a local PostgreSQL database.</p>
+     *
+     * @param parent The {@link DBConnectionManager} that manages this connection.
+     * @throws SQLException If a database access error occurs or the URL is null.
+     */
     DBConnection(DBConnectionManager parent) throws SQLException {
         this.parent = parent;
         String dbUri = System.getenv("DB_URI") != null ? System.getenv("DB_URI")
@@ -318,6 +328,15 @@ public class DBConnection implements Connection {
         return connection.createStruct(typeName, attributes);
     }
 
+    /**
+    * Closes the database connection and releases it back to the connection pool.
+    *
+    * <p>This method does not close the underlying database connection directly. Instead, it returns
+    * the connection to the {@link DBConnectionManager} for reuse. It should be used in place of
+    * directly closing the connection to ensure proper management of resources.</p>
+    *
+    * @throws SQLException If a database access error occurs or the connection is already closed.
+    */
     @Override
     public void close() throws SQLException {
         // Instead of closing the connection, release it back to the pool

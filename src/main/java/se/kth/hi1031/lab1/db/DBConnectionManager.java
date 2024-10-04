@@ -5,6 +5,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Manages a pool of database connections.
+ *
+ * <p>This singleton class provides a way to create and manage a pool of 
+ * database connections, ensuring that the maximum number of connections 
+ * does not exceed a specified limit. It allows for reusing connections 
+ * and releasing them back into the pool when they are no longer needed.</p>
+ */
 public class DBConnectionManager {
 
     private static DBConnectionManager instance;
@@ -12,6 +20,10 @@ public class DBConnectionManager {
     private final List<DBConnection> usedConnections;
     private final int MAX_POOL_SIZE;
 
+    /**
+     * Private constructor to initialize the connection pool and set the 
+     * maximum pool size based on environment variables.
+     */
     private DBConnectionManager() {
         String maxPoolSizeEnv = System.getenv("DB_MAX_POOL_SIZE");
         if (maxPoolSizeEnv != null) {
@@ -34,6 +46,11 @@ public class DBConnectionManager {
         usedConnections = new ArrayList<>(MAX_POOL_SIZE / 2);
     }
 
+    /**
+     * Returns the singleton instance of the DBConnectionManager.
+     *
+     * @return The singleton instance of DBConnectionManager.
+     */
     public static synchronized DBConnectionManager getInstance() {
         if (instance == null) {
             instance = new DBConnectionManager();
@@ -41,6 +58,10 @@ public class DBConnectionManager {
         return instance;
     }
 
+    /**
+     * Initializes the connection pool with the maximum number of connections.
+     * This method creates new DBConnection instances and adds them to the pool.
+     */
     private void initializePool() {
         for (int i = 0; i < MAX_POOL_SIZE; i++) {
             try {
@@ -52,6 +73,12 @@ public class DBConnectionManager {
         }
     }
 
+    /**
+     * Retrieves a connection from the pool.
+     *
+     * @return A database connection from the pool.
+     * @throws SQLException If no available connections are found.
+     */
     public synchronized Connection getConnection() throws SQLException {
         if (connectionPool.isEmpty() && usedConnections.size() < MAX_POOL_SIZE) {
             DBConnection dbConnection = new DBConnection(DBConnectionManager.instance);
@@ -67,6 +94,11 @@ public class DBConnectionManager {
         }
     }
 
+    /**
+     * Releases a connection back to the pool for reuse.
+     *
+     * @param connection The connection to be released.
+     */
     public synchronized void releaseConnection(Connection connection) {
         if (connection != null) {
             DBConnection dbConnectionToRelease = null;
@@ -84,6 +116,9 @@ public class DBConnectionManager {
         }
     }
 
+    /**
+     * Closes all connections in the pool and clears the pool.
+     */
     public void closePool() {
         for (DBConnection dbConnection : connectionPool) {
             try {

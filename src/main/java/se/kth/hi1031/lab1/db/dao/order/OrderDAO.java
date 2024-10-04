@@ -86,7 +86,7 @@ public class OrderDAO {
         return orders;
     }
 
-    public static Optional<OrderDAO> getOrdersById(int id) {
+    public static Optional<OrderDAO> getOrderById(int id) {
         Optional<OrderDAO> order = Optional.empty();
         Connection conn = null;
         try {

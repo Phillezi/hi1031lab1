@@ -12,7 +12,8 @@
 <body>
     <h2>Your Shopping Cart</h2>
     <%
-    // No need to declare the session object, as it's implicitly available
+    
+    double totalprice = 0;
     Map<Integer, Integer> cart = null;
     if (session != null) {  // Using the implicit session object
         cart = (Map<Integer, Integer>) session.getAttribute("cart");
@@ -33,14 +34,28 @@
         </tr>
         <%
         if (cart != null && products != null && !products.isEmpty()) {
-            for (ProductDTO product : products) {
+            for (int i = 0; i < products.size(); i++) {
+                Double price = products.get(i).getPrice();
+                Integer quantity = cart.get(products.get(i).getId());
+                if (quantity != null && price != null) {
+                    totalprice += (price * quantity);
+                }
         %>
-        <tr>
-            <td><%= product.getName() %></td>
-            <td><%= product.getPrice() %></td>
-            <td><%= cart.get(product) %></td>
-        </tr>
-        <%
+                <tr>
+                    <td><%= products.get(i).getName() %></td>
+                    <td><%= price %></td>
+                    <td><%= quantity %></td>
+                </tr>
+                <%
+                if (i == products.size()-1) {
+                    %>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td><%= totalprice %></td>
+                    </tr>
+                    <%
+                }
             }
         } else {
         %>

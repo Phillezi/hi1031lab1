@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import se.kth.hi1031.lab1.db.dao.product.ProductDAO;
 import se.kth.hi1031.lab1.ui.dto.product.ProductDTO;
+import se.kth.hi1031.lab1.ui.dto.product.CategoryDTO;
+import se.kth.hi1031.lab1.ui.dto.product.PropertyDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,24 @@ public class Product {
     private List<Category> categories;
     private List<String> images;
     private List<Property> properties;
+
+    public Product(ProductDTO product) {
+        this.id = product.getId();
+        this.name = product.getName();
+        this.description = product.getDescription();
+        this.price = product.getPrice();
+        this.quantity = product.getQuantity();
+        this.removed = product.isRemoved();
+        this.categories = product.getCategories() != null ? product.getCategories()
+                                    .stream()
+                                    .map((CategoryDTO c) -> new Category(c))
+                                    .toList() : null;
+        this.images = new ArrayList<>(product.getImages());
+        this.properties = product.getProperties() != null ? product.getProperties()
+                                    .stream()
+                                    .map((PropertyDTO p) -> new Property(p))
+                                    .toList() : null;
+    }
 
 
     /**

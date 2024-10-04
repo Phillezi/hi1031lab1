@@ -8,15 +8,35 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import se.kth.hi1031.lab1.ui.controllers.LoginController;
 import se.kth.hi1031.lab1.ui.controllers.RegisterController;
+import se.kth.hi1031.lab1.ui.controllers.WarehouseController;
 import se.kth.hi1031.lab1.ui.controllers.CartController;
 import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 
 import java.io.IOException;
 
+/**
+ * Servlet controller that manages application requests and user navigation.
+ *
+ * <p>This servlet routes incoming requests based on the requested URI and the 
+ * action parameter. It handles both GET and POST requests for various actions 
+ * such as login, registration, viewing user lists, and accessing the admin page.</p>
+ */
 @WebServlet(name = "controller", urlPatterns = { "/controller" })
 public class ControllerServlet extends HttpServlet {
 
+    /**
+     * Handles HTTP GET requests for the application.
+     *
+     * <p>This method determines the appropriate action based on the request URI,
+     * checking user authentication and roles to control access to resources.</p>
+     *
+     * @param req  The HttpServletRequest object that contains the request data.
+     * @param resp The HttpServletResponse object that contains the response data.
+     * @throws ServletException If an error occurs during the request processing.
+     * @throws IOException      If an input or output error occurs during the 
+     *                          forwarding process.
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getRequestURI();
@@ -64,6 +84,19 @@ public class ControllerServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles HTTP POST requests for the application.
+     *
+     * <p>This method processes user actions based on the submitted action parameter, 
+     * delegating the work to specific controller classes for registration, login, 
+     * and cart management.</p>
+     *
+     * @param req  The HttpServletRequest object that contains the request data.
+     * @param resp The HttpServletResponse object that contains the response data.
+     * @throws ServletException If an error occurs during the request processing.
+     * @throws IOException      If an input or output error occurs during the 
+     *                          redirection process.
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
@@ -96,6 +129,10 @@ public class ControllerServlet extends HttpServlet {
                 CartController.post(req, resp);
                 break;
             }
+            case "warehouse": {
+                WarehouseController.post(req, resp);
+                break;
+            }
             case "/":
             default: {
                 req.getRequestDispatcher("404.jsp").forward(req, resp);
@@ -104,23 +141,58 @@ public class ControllerServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Retrieves the currently logged-in user from the session.
+     *
+     * @param req The HttpServletRequest object that contains the request data.
+     * @return The UserDTO object representing the logged-in user, or null if no user is logged in.
+     */
     private UserDTO getCurrentUser(HttpServletRequest req) {
         return (UserDTO) req.getSession().getAttribute("user");
     }
 
+    /**
+     * Checks if the specified user has the given role.
+     *
+     * @param user The UserDTO object representing the user to check.
+     * @param role The role name to check against the user's roles.
+     * @return True if the user has the specified role, false otherwise.
+     */
     private boolean hasRole(UserDTO user, String role) {
         return user.getRoles().stream()
                 .anyMatch(r -> r.getName().equals(role));
     }
 
+    /**
+     * Checks if the specified user has the given permission.
+     *
+     * @param user      The UserDTO object representing the user to check.
+     * @param permission The permission name to check against the user's permissions.
+     * @return True if the user has the specified permission, false otherwise.
+     */
     private boolean hasPermission(UserDTO user, String permission) {
         return user.getPermissions().contains(new PermissionDTO(permission));
     }
 
+    /**
+     * Redirects the user to the login page.
+     *
+     * @param resp The HttpServletResponse object that contains the response data.
+     * @param req  The HttpServletRequest object that contains the request data.
+     * @throws IOException If an input or output error occurs during the redirection.
+     */
     private void redirectToLogin(HttpServletResponse resp, HttpServletRequest req) throws IOException {
         resp.sendRedirect(req.getContextPath() + "/login.jsp");
     }
 
+    /**
+     * Handles unauthorized access by redirecting to the appropriate page.
+     *
+     * @param isLoggedIn Indicates whether the user is logged in or not.
+     * @param req       The HttpServletRequest object that contains the request data.
+     * @param resp      The HttpServletResponse object that contains the response data.
+     * @throws IOException If an input or output error occurs during the redirection.
+     */
     private void handleUnauthorizedAccess(boolean isLoggedIn, HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
         if (!isLoggedIn) {

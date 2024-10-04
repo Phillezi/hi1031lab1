@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import se.kth.hi1031.lab1.db.dao.user.UserDAO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
+import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
+import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,21 @@ public class User {
     private String password;
     private List<Role> roles;
     private List<Permission> permissions;
+
+    public User(UserDTO user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.roles = user.getRoles() != null ? user.getRoles()
+                            .stream()
+                            .map((RoleDTO r) -> new Role(r))
+                            .toList() : null;
+        this.permissions = user.getPermissions() != null ? user.getPermissions()
+                                .stream()
+                                .map((PermissionDTO p) -> new Permission(p))
+                                .toList() : null;
+    }
 
     /**
      * Converts this {@code User} object into a {@link UserDTO}, which is a Data Transfer Object (DTO)

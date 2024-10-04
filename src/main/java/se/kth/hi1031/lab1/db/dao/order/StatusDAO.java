@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import se.kth.hi1031.lab1.bo.model.order.Status;
+import se.kth.hi1031.lab1.db.DAOException;
+import se.kth.hi1031.lab1.db.DBConnectionManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,12 +13,47 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
 @Getter
 @Setter
 @AllArgsConstructor
 public class StatusDAO {
     private String status;
     private Timestamp timestamp;
+
+    public static StatusDAO createStatus(int orderId, Status status) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnectionManager.getInstance().getConnection();
+
+            String query = "INSERT INTO order_status (order_id, status, timestamp) VALUES (?, ?, ?)";
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, orderId);
+            stmt.setString(2, status.getStatus());
+            stmt.setTimestamp(3, status.getTimestamp());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+ 
+            }
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return status.toDAO();
+    }
 
     public static StatusDAO toDAO(ResultSet rs) throws SQLException {
         return new StatusDAO(
