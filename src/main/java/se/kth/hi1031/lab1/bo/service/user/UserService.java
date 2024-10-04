@@ -1,5 +1,7 @@
 package se.kth.hi1031.lab1.bo.service.user;
 
+import se.kth.hi1031.lab1.bo.service.ServiceException;
+import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.dao.user.UserDAO;
 import se.kth.hi1031.lab1.bo.model.user.Role;
 import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
@@ -29,17 +31,21 @@ public class UserService {
      * @param user The {@link UserDTO} object containing the user's details.
      * @return A {@link UserDTO} representing the created user, including their roles.
      */
-    public static UserDTO createUser(UserDTO user) {
+    public static UserDTO createUser(UserDTO user) throws ServiceException {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         List<Role> roles = user.getRoles().stream().map((RoleDTO r) -> new Role(r.getName(), null)).toList();
-        UserDAO created = UserDAO.createUser(new User(user.getId(),
-                user.getName(),
-                user.getEmail(),
-                hashedPassword,
-                roles,
-                new ArrayList<>()));
+        try {
+            UserDAO created = UserDAO.createUser(new User(user.getId(),
+                    user.getName(),
+                    user.getEmail(),
+                    hashedPassword,
+                    roles,
+                    new ArrayList<>()));
 
-        return created.toUser().toDTO();
+            return created.toUser().toDTO();
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     /**
@@ -50,10 +56,13 @@ public class UserService {
      *
      * @return A list of {@link UserDTO} representing all users.
      */
-    public static List<UserDTO> getUsers() {
-        List<UserDAO> users = UserDAO.getUsers();
-        System.out.println(users);
-        return users.stream().map(UserDAO::toUser).map(User::toDTO).toList();
+    public static List<UserDTO> getUsers() throws ServiceException {
+        try {
+            List<UserDAO> users = UserDAO.getUsers();
+            return users.stream().map(UserDAO::toUser).map(User::toDTO).toList();
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     /**
@@ -67,16 +76,18 @@ public class UserService {
      * @return A {@link UserDTO} for the authenticated user if login is successful, 
      *         or null if the login fails.
      */
-    public static UserDTO login(UserDTO user) {
-        Optional<UserDAO> userOptional = UserDAO
-                .login(new User(null, null, user.getEmail(), user.getPassword(), null, null));
-        if (userOptional.isPresent()) {
-            return userOptional.get().toUser().toDTO();
-        } else {
-            return null;
+    public static UserDTO login(UserDTO user) throws ServiceException {
+        try {
+            Optional<UserDAO> userOptional = UserDAO
+                    .login(new User(null, null, user.getEmail(), user.getPassword(), null, null));
+            if (userOptional.isPresent()) {
+                return userOptional.get().toUser().toDTO();
+            } else {
+                throw new ServiceException("Invalid username or password");
+            }
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
         }
     }
-
-    // ToDo
 
 }

@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import se.kth.hi1031.lab1.bo.service.ServiceException;
 import se.kth.hi1031.lab1.bo.service.user.UserService;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 
@@ -58,16 +59,18 @@ public class LoginController extends HttpServlet {
     public static void post(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
-
-        UserDTO user = UserService.login(new UserDTO(null, password, email, password, null, null));
         HttpSession session = req.getSession();
-        if (user != null) {
-            session.setAttribute("user", user);
-            resp.sendRedirect("/index.jsp");
-            return;
-        }
+        try {
+            UserDTO user = UserService.login(new UserDTO(null, password, email, password, null, null));
 
-        session.setAttribute("error", "Invalid email or password. Please try again.");
+            if (user != null) {
+                session.setAttribute("user", user);
+                resp.sendRedirect("/index.jsp");
+                return;
+            }
+        } catch (ServiceException e) {
+            session.setAttribute("error", e.getMessage());
+        }
         resp.sendRedirect("/login.jsp");
     }
 }
