@@ -42,6 +42,7 @@ public class OrderService {
                 user.getPermissions()
                         .contains(new Permission("view_orders"))
         ) {
+            
             List<OrderDAO> orders = OrderDAO.getOrders();
             System.out.println("found: " +orders);
             return orders.stream().map(OrderDAO::toOrder).map(Order::toDTO).toList();

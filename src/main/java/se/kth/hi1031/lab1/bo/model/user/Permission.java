@@ -9,7 +9,7 @@ import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Permission {
+public class Permission implements Comparable {
     private final String name;
 
     public PermissionDTO toDTO() {
