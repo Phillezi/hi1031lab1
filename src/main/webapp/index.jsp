@@ -6,6 +6,8 @@
 <%@ page import="se.kth.hi1031.lab1.ui.dto.product.PropertyDTO" %>
 <%@ page import="se.kth.hi1031.lab1.bo.service.product.ProductService" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.user.UserDTO" %>
+<%@ page import="se.kth.hi1031.lab1.ui.dto.user.RoleDTO" %>
+<%@ page import="se.kth.hi1031.lab1.ui.dto.user.PermissionDTO" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -38,6 +40,20 @@
                 user = (UserDTO) session.getAttribute("user");
             }
             if(user != null) {
+                if (user.getRoles().stream().anyMatch((RoleDTO r)->"admin".equals(r.getName()))) {
+                    %>
+        <a href="${pageContext.request.contextPath}/admin/index.jsp"><img class="icon"
+                                                                   src="${pageContext.request.contextPath}/assets/admin.svg"
+                                                                   alt="icon"></img></a>
+                <%
+                }
+                    if (user.getPermissions().stream().anyMatch((PermissionDTO p)->"update_orders".equals(p.getName()))) {
+                %>
+        <a href="${pageContext.request.contextPath}/warehouse.jsp"><img class="icon"
+                                                                          src="${pageContext.request.contextPath}/assets/warehouse.svg"
+                                                                          alt="icon"></img></a>
+        <%
+            }
                 %>
         <a href="${pageContext.request.contextPath}/cart.jsp"><img class="icon"
                                                                    src="${pageContext.request.contextPath}/assets/shopping-cart.svg"
