@@ -6,10 +6,9 @@ import lombok.Setter;
 import se.kth.hi1031.lab1.bo.model.product.Product;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.DBConnectionManager;
-import se.kth.hi1031.lab1.bo.model.order.Status;
 import se.kth.hi1031.lab1.bo.model.product.*;
-import java.math.BigDecimal;
 
+import java.math.BigDecimal;
 
 
 import java.sql.*;
@@ -68,47 +67,47 @@ public class ProductDAO {
         return products;
     }
 
-public static Optional<ProductDAO> getProductById(int id) throws DAOException {
-    Optional<ProductDAO> product = Optional.empty();
-    Connection conn = null;
-    try {
-        conn = DBConnectionManager.getInstance().getConnection();
-        String query = "SELECT " +
-                "p.id, p.name, p.description, p.price, p.quantity, p.removed, " +
-                "ARRAY_AGG(DISTINCT pc.category) AS categories, " +
-                "ARRAY_AGG(DISTINCT pi.image_url) AS images, " +
-                "ARRAY_AGG(DISTINCT pp.key) AS property_keys, " +
-                "ARRAY_AGG(DISTINCT pp.value) AS property_values " +
-                "FROM products p " +
-                "LEFT JOIN product_categories pc ON p.id = pc.product_id " +
-                "LEFT JOIN product_images pi ON p.id = pi.product_id " +
-                "LEFT JOIN product_properties pp ON p.id = pp.product_id " +
-                "WHERE p.id = ?";
+    public static Optional<ProductDAO> getProductById(int id) throws DAOException {
+        Optional<ProductDAO> product = Optional.empty();
+        Connection conn = null;
+        try {
+            conn = DBConnectionManager.getInstance().getConnection();
+            String query = "SELECT " +
+                    "p.id, p.name, p.description, p.price, p.quantity, p.removed, " +
+                    "ARRAY_AGG(DISTINCT pc.category) AS categories, " +
+                    "ARRAY_AGG(DISTINCT pi.image_url) AS images, " +
+                    "ARRAY_AGG(DISTINCT pp.key) AS property_keys, " +
+                    "ARRAY_AGG(DISTINCT pp.value) AS property_values " +
+                    "FROM products p " +
+                    "LEFT JOIN product_categories pc ON p.id = pc.product_id " +
+                    "LEFT JOIN product_images pi ON p.id = pi.product_id " +
+                    "LEFT JOIN product_properties pp ON p.id = pp.product_id " +
+                    "WHERE p.id = ?";
 
-        PreparedStatement stmt = conn.prepareStatement(query);
-        stmt.setInt(1, id);
-        ResultSet rs = stmt.executeQuery();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
 
-        while (rs.next()) {
-            product = Optional.of(toDAO(rs));
-        }
-    } catch (SQLException e) {
-        throw new DAOException(e.getMessage());
-    } finally {
-        if (conn != null) {
-            // TODO: mark as free to use
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            while (rs.next()) {
+                product = Optional.of(toDAO(rs));
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                // TODO: mark as free to use
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
+        return product;
     }
-    return product;
-}
 
-public static ProductDAO createProduct(Product product) {
-    Connection conn = null;
+    public static ProductDAO createProduct(Product product) {
+        Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
@@ -124,7 +123,7 @@ public static ProductDAO createProduct(Product product) {
 
             rs = stmt.executeQuery();
             if (rs.next()) {
-                Integer id = rs.getInt("id");
+                int id = rs.getInt("id");
                 product.setId(id);
 
                 for (Category category : product.getCategories()) {
@@ -140,7 +139,7 @@ public static ProductDAO createProduct(Product product) {
 
                         stmt.executeUpdate();
                     }
-                    
+
                     String categoriesQuery = "INSERT INTO product_categories (product_id, category) VALUES (?, ?)";
                     stmt = conn.prepareStatement(categoriesQuery);
                     stmt.setInt(1, id);
@@ -150,27 +149,32 @@ public static ProductDAO createProduct(Product product) {
                 }
 
                 for (Property property : product.getProperties()) {
-                    String propertyQuery = "INSERT INTO product_properties (key, value) VALUES (?, ? )";
+                    String propertyQuery = "INSERT INTO product_properties (product_id, key, value) VALUES (?, ?, ? )";
                     stmt = conn.prepareStatement(propertyQuery);
-                    stmt.setString(1, property.getKey());
-
-                    stmt.setString(2, property,getValue());
-
-                 
-
-                for (String image : product.getProperties()) {
-                    String propertyQuery = "INSERT INTO product_properties (key, value) VALUES (?, ? )";
-                    stmt = conn.prepareStatement(propertyQuery);
-                    stmt.setString(1, property.getKey());                    
-                    stmt.setString(2, property.getValue());
+                    stmt.setInt(1, id);
+                    stmt.setString(2, property.getKey());
+                    stmt.setString(3, property.getValue());
 
                     stmt.executeUpdate();
-                }   stmt.executeUpdate();
+                }
+
+                for (String imageURL : product.getImages()) {
+                    String imageQuery = "INSERT INTO product_images (product_id, image_url) VALUES (?, ? )";
+                    stmt = conn.prepareStatement(imageQuery);
+                    stmt.setInt(1, id);
+                    stmt.setString(2, imageURL);
+
+                    stmt.executeUpdate();
                 }
             }
 
             conn.commit();
         } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {
@@ -189,104 +193,104 @@ public static ProductDAO createProduct(Product product) {
                 e.printStackTrace();
             }
         }
-        return order.toDAO();
-}
+        return product.toDAO();
+    }
 
-public static List<ProductDAO> getProductsByIds(List<Integer> ids) throws DAOException {
-    List<ProductDAO> products = new ArrayList<>();
-    Connection conn = null;
-    
-    if (ids == null || ids.isEmpty()) {
+    public static List<ProductDAO> getProductsByIds(List<Integer> ids) throws DAOException {
+        List<ProductDAO> products = new ArrayList<>();
+        Connection conn = null;
+
+        if (ids == null || ids.isEmpty()) {
+            return products;
+        }
+
+        try {
+            conn = DBConnectionManager.getInstance().getConnection();
+
+            String placeholders = ids.stream()
+                    .map(id -> "?")
+                    .collect(Collectors.joining(","));
+
+            String query = "SELECT " +
+                    "p.id, p.name, p.description, p.price, p.quantity, p.removed, " +
+                    "ARRAY_AGG(DISTINCT pc.category) AS categories, " +
+                    "ARRAY_AGG(DISTINCT pi.image_url) AS images, " +
+                    "ARRAY_AGG(DISTINCT pp.key) AS property_keys, " +
+                    "ARRAY_AGG(DISTINCT pp.value) AS property_values " +
+                    "FROM products p " +
+                    "LEFT JOIN product_categories pc ON p.id = pc.product_id " +
+                    "LEFT JOIN product_images pi ON p.id = pi.product_id " +
+                    "LEFT JOIN product_properties pp ON p.id = pp.product_id " +
+                    "WHERE p.id IN (" + placeholders + ") " +
+                    "GROUP BY p.id";
+
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            for (int i = 0; i < ids.size(); i++) {
+                stmt.setInt(i + 1, ids.get(i));
+            }
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                products.add(toDAO(rs));
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         return products;
     }
 
-    try {
-        conn = DBConnectionManager.getInstance().getConnection();
-
-        String placeholders = ids.stream()
-                                 .map(id -> "?")
-                                 .collect(Collectors.joining(","));
-        
-        String query = "SELECT " +
-                "p.id, p.name, p.description, p.price, p.quantity, p.removed, " +
-                "ARRAY_AGG(DISTINCT pc.category) AS categories, " +
-                "ARRAY_AGG(DISTINCT pi.image_url) AS images, " +
-                "ARRAY_AGG(DISTINCT pp.key) AS property_keys, " +
-                "ARRAY_AGG(DISTINCT pp.value) AS property_values " +
-                "FROM products p " +
-                "LEFT JOIN product_categories pc ON p.id = pc.product_id " +
-                "LEFT JOIN product_images pi ON p.id = pi.product_id " +
-                "LEFT JOIN product_properties pp ON p.id = pp.product_id " +
-                "WHERE p.id IN (" + placeholders + ") " +
-                "GROUP BY p.id";
-        
-        PreparedStatement stmt = conn.prepareStatement(query);
-        
-        for (int i = 0; i < ids.size(); i++) {
-            stmt.setInt(i + 1, ids.get(i));
-        }
-        
-        ResultSet rs = stmt.executeQuery();
-
-        while (rs.next()) {
-            products.add(toDAO(rs));
-        }
-
-    } catch (SQLException e) {
-        throw new DAOException(e.getMessage());
-    } finally {
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+    public static boolean updateProduct(Product product) throws DAOException {
+        return false;
     }
 
-    return products;
-}
+    public static ProductDAO toDAO(ResultSet rs) throws SQLException {
+        Array categoriesArray = rs.getArray("categories");
+        List<CategoryDAO> categories = categoriesArray != null
+                ? Arrays.stream((String[]) categoriesArray.getArray())
+                .map(name -> new CategoryDAO(name, null))
+                .collect(Collectors.toList())
+                : new ArrayList<>();
 
-public static boolean updateProduct(Product product) throws DAOException {
+        Array imagesArray = rs.getArray("images");
+        List<String> images = Arrays.asList((String[]) imagesArray.getArray());
 
-}
+        Array keysArray = rs.getArray("property_keys");
+        Array valuesArray = rs.getArray("property_values");
+        String[] propertyKeys = (String[]) keysArray.getArray();
+        String[] propertyValues = (String[]) valuesArray.getArray();
 
-public static ProductDAO toDAO(ResultSet rs) throws SQLException {
-    Array categoriesArray = rs.getArray("categories");
-    List<CategoryDAO> categories = categoriesArray != null
-            ? Arrays.stream((String[]) categoriesArray.getArray())
-            .map(name -> new CategoryDAO(name, null))
-            .collect(Collectors.toList())
-            : new ArrayList<>();
+        List<PropertyDAO> properties = new ArrayList<>(propertyKeys.length);
+        for (int i = 0; i < propertyKeys.length; i++) {
+            properties.add(new PropertyDAO(propertyKeys[i], propertyValues[i]));
+        }
 
-    Array imagesArray = rs.getArray("images");
-    List<String> images = Arrays.asList((String[]) imagesArray.getArray());
-
-    Array keysArray = rs.getArray("property_keys");
-    Array valuesArray = rs.getArray("property_values");
-    String[] propertyKeys = (String[]) keysArray.getArray();
-    String[] propertyValues = (String[]) valuesArray.getArray();
-
-    List<PropertyDAO> properties = new ArrayList<>(propertyKeys.length);
-    for (int i = 0; i < propertyKeys.length; i++) {
-        properties.add(new PropertyDAO(propertyKeys[i], propertyValues[i]));
+        return new ProductDAO(
+                rs.getInt("id"),
+                rs.getString("name"),
+                rs.getString("description"),
+                rs.getDouble("price"),
+                rs.getInt("quantity"),
+                rs.getBoolean("removed"),
+                categories,
+                images,
+                properties
+        );
     }
-
-    return new ProductDAO(
-            rs.getInt("id"),
-            rs.getString("name"),
-            rs.getString("description"),
-            rs.getDouble("price"),
-            rs.getInt("quantity"),
-            rs.getBoolean("removed"),
-            categories,
-            images,
-            properties
-    );
-}
 
     public static List<ProductDAO> toDAOs(ResultSet rs) throws SQLException {
-        Integer[] ids = (Integer[])rs.getArray("products_id").getArray();
+        Integer[] ids = (Integer[]) rs.getArray("products_id").getArray();
         String[] names = (String[]) rs.getArray("products_name").getArray();
         String[] descriptions = (String[]) rs.getArray("products_description").getArray();
         BigDecimal[] prices = (BigDecimal[]) rs.getArray("products_price").getArray();

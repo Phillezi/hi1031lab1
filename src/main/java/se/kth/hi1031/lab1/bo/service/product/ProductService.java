@@ -42,4 +42,8 @@ public class ProductService {
         List<ProductDAO> products = ProductDAO.getProductsByIds(ids);
         return products.stream().map(ProductDAO::toProduct).map(Product::toDTO).toList();
     }
+
+    public static ProductDTO createProduct(ProductDTO product) {
+        return ProductDAO.createProduct(new Product(product)).toProduct().toDTO();
+    }
 }
