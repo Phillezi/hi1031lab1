@@ -13,6 +13,7 @@
 </head>
 <jsp:include page="/components/header.jsp" />
 <body>
+<jsp:include page="/components/errors/error.jsp" />
 <%
     String userIdStr = request.getParameter("userId");
     if (userIdStr == null || userIdStr.isEmpty()) {

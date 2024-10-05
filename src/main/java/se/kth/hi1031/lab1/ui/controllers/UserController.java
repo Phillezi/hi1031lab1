@@ -46,7 +46,8 @@ public class UserController extends HttpServlet {
                 updateUser(req, resp);
                 return;
             case "delete":
-                break;
+                deleteUser(req, resp);
+                return;
             default:
                 break;
 
@@ -78,6 +79,27 @@ public class UserController extends HttpServlet {
 
         try {
             UserService.updateUser(userToUpdate);
+        } catch (PermissionException | ServiceException e) {
+            session.setAttribute("error", e.getMessage());
+            resp.sendRedirect(req.getHeader("Referer"));
+            return;
+        }
+
+        resp.sendRedirect("/admin/users/");
+    }
+
+    private static void deleteUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String userIdStr = req.getParameter("userId");
+        HttpSession session = req.getSession(false);
+        if (userIdStr == null || userIdStr.isEmpty()) {
+            session.setAttribute("error", "Invalid operation");
+            resp.sendRedirect(req.getHeader("Referer"));
+            return;
+        }
+
+        int userId = Integer.parseInt(userIdStr);
+        try {
+            UserService.deleteUserById(userId);
         } catch (PermissionException | ServiceException e) {
             session.setAttribute("error", e.getMessage());
             resp.sendRedirect(req.getHeader("Referer"));

@@ -96,7 +96,7 @@ CREATE TABLE
         delivered_at TIMESTAMP,
         delivery_address VARCHAR,
         customer_id INT,
-        FOREIGN KEY (customer_id) REFERENCES user_t (id)
+        FOREIGN KEY (customer_id) REFERENCES user_t (id) ON DELETE SET NULL
     );
 
 CREATE TABLE

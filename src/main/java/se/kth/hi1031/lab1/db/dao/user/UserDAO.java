@@ -318,6 +318,48 @@ public class UserDAO {
         }
     }
 
+    public static void deleteUserById(int id) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = DBConnectionManager.getInstance().getConnection();
+            conn.setAutoCommit(false);
+
+            String query = "DELETE FROM user_t WHERE id = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, id);
+
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                conn.commit();
+            } else {
+                conn.rollback();
+            }
+        } catch (SQLException e) {
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                throw new DAOException(ex.getMessage());
+            }
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public static UserDAO toDAO(ResultSet rs) throws SQLException {
         List<PermissionDAO> permissions = null;

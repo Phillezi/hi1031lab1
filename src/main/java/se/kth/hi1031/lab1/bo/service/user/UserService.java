@@ -114,4 +114,12 @@ public class UserService {
             throw new ServiceException(e.getMessage());
         }
     }
+
+    public static void deleteUserById(int id) {
+        try {
+            UserDAO.deleteUserById(id);
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
 }

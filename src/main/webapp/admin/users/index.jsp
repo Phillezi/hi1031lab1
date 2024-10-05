@@ -8,6 +8,7 @@
 </head>
 <jsp:include page="/components/header.jsp" />
 <body>
+<jsp:include page="/components/errors/error.jsp" />
 <%
     List<UserDTO> userList = UserService.getUsers();
     request.setAttribute("users", userList);
