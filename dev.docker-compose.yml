@@ -15,17 +15,6 @@ services:
       - cdn
     restart: unless-stopped
 
-  # The cdn here is used to serve static content such as images for products etc
-  cdn:
-    build:
-      context: cdn/.
-      dockerfile: Dockerfile
-    ports:
-      - "3000:8080"
-    volumes:
-      - ./uploads:/app/uploads
-      - cdn_dbdata:/app/db_data
-
   # The db is our database that we use in our application
   db:
     image: postgres:15
