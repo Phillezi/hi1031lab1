@@ -16,6 +16,9 @@
 <div class="container">
     <div class="table-container">
         <jsp:include page="/components/tables/users.jsp" />
+        <form action="${pageContext.request.contextPath}/admin/users/add.jsp" method="get">
+            <button class="add-btn" type="submit">Add user</button>
+        </form>
     </div>
 </div>
 </body>

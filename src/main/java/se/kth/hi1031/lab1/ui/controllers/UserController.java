@@ -41,7 +41,8 @@ public class UserController extends HttpServlet {
 
         switch (operation) {
             case "add":
-                break;
+                addUser(req, resp);
+                return;
             case "update":
                 updateUser(req, resp);
                 return;
@@ -49,6 +50,7 @@ public class UserController extends HttpServlet {
                 deleteUser(req, resp);
                 return;
             default:
+                session.setAttribute("error", "Invalid operation");
                 break;
 
         }
@@ -100,6 +102,30 @@ public class UserController extends HttpServlet {
         int userId = Integer.parseInt(userIdStr);
         try {
             UserService.deleteUserById(userId);
+        } catch (PermissionException | ServiceException e) {
+            session.setAttribute("error", e.getMessage());
+            resp.sendRedirect(req.getHeader("Referer"));
+            return;
+        }
+
+        resp.sendRedirect("/admin/users/");
+    }
+
+    private static void addUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String name = req.getParameter("name");
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
+
+        HttpSession session = req.getSession(false);
+
+        String[] selectedRoles = req.getParameterValues("roles");
+        List<String> roles = (selectedRoles != null) ? Arrays.asList(selectedRoles) : new ArrayList<>();
+        List<RoleDTO> userRoles = roles.stream().map((String role) -> new RoleDTO(role, null)).toList();
+
+        UserDTO userToAdd = new UserDTO(null, name, email, password, userRoles, new ArrayList<>());
+
+        try {
+            UserService.createUser(userToAdd);
         } catch (PermissionException | ServiceException e) {
             session.setAttribute("error", e.getMessage());
             resp.sendRedirect(req.getHeader("Referer"));
