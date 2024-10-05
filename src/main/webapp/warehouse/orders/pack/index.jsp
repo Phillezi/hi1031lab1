@@ -1,11 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.order.OrderDTO" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.order.StatusDTO" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.user.UserDTO" %>
 <%@ page import="se.kth.hi1031.lab1.bo.service.order.OrderService" %>
-<%@ page import="java.util.Objects" %>
+<%@ page import="se.kth.hi1031.lab1.ui.dto.product.ProductDTO" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -18,6 +17,7 @@
 <body>
 <jsp:include page="/components/header.jsp"/>
 <div class="root">
+    <jsp:include page="/components/errors/error.jsp"/>
     <h1>Pack Orders</h1>
     <div class="product-list">
         <%
@@ -29,8 +29,7 @@
                 out.print("not logged in");
                 return;
             }
-            List<OrderDTO> orders = null;
-            orders = OrderService.getOrdersWithStatus("received", null, "");
+            List<OrderDTO> orders = OrderService.getOrdersWithStatus(user, "received", null, "");
             if (orders == null || orders.isEmpty()) {
                 out.print("no orders present");
             } else {
@@ -38,26 +37,44 @@
                     String latestStatus = null;
                     List<StatusDTO> statuses = order.getStatuses();
                     if (statuses != null && !statuses.isEmpty()) {
-                        latestStatus = statuses.getLast().getStatus();
+                        latestStatus = statuses.get(statuses.size() - 1).getStatus();
                     }
         %>
         <div class="product">
-            <h2><%= order.getId() %>
-            </h2>
+            <h2>Order ID: <%= order.getId() %></h2>
+            <h3>Status: <%= latestStatus != null ? latestStatus : "no status" %></h3>
+            <h3>Customer: <%= order.getCustomer().getName() %></h3>
 
-            <h3><%= latestStatus != null ? latestStatus : "no status" %>
-            </h3>
-            <h3><%= order.getCustomer().getName() %>
-            </h3>
+            <h4>Delivery Address:</h4>
+            <p><%= order.getDeliveryAddress() != null ? order.getDeliveryAddress() : "No address provided" %></p>
+
+            <h4>Ordered Products:</h4>
+            <ul>
+                <%
+                    List<ProductDTO> products = order.getProducts(); // Assuming getProducts() returns a List<ProductDTO>
+                    if (products != null && !products.isEmpty()) {
+                        for (ProductDTO product : products) {
+                %>
+                <li>
+                    <strong><%= product.getName() %></strong> - Quantity: <%= product.getQuantity() %>
+                </li>
+                <%
+                    }
+                } else {
+                %>
+                <li>No products ordered.</li>
+                <%
+                    }
+                %>
+            </ul>
 
             <a href="#packOrder<%= order.getId() %>">Pack Order</a>
         </div>
 
         <div id="packOrder<%= order.getId() %>">
-            <h3>Pack Order - <%= order.getId() %>
-            </h3>
+            <h3>Pack Order - <%= order.getId() %></h3>
             <form method="post"
-                  action="${pageContext.request.contextPath}/controller?action=warehouse&status=packed&orderid=<%= order.getId() %>">
+                  action="${pageContext.request.contextPath}/controller?action=warehouse&status=packed&orderId=<%= order.getId() %>">
                 <input type="hidden" name="orderId" value="<%= order.getId() %>"/>
                 <button type="submit">Confirm Packing</button>
             </form>

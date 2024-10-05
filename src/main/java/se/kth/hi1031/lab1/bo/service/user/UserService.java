@@ -1,5 +1,7 @@
 package se.kth.hi1031.lab1.bo.service.user;
 
+import se.kth.hi1031.lab1.bo.middleware.AuthMiddleware;
+import se.kth.hi1031.lab1.bo.service.PermissionException;
 import se.kth.hi1031.lab1.bo.service.ServiceException;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.dao.user.UserDAO;
@@ -35,12 +37,7 @@ public class UserService {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         List<Role> roles = user.getRoles().stream().map((RoleDTO r) -> new Role(r.getName(), null)).toList();
         try {
-            UserDAO created = UserDAO.createUser(new User(user.getId(),
-                    user.getName(),
-                    user.getEmail(),
-                    hashedPassword,
-                    roles,
-                    new ArrayList<>()));
+            UserDAO created = UserDAO.createUser(new User(user.getId(), user.getName(), user.getEmail(), hashedPassword, roles, new ArrayList<>()));
 
             return created.toUser().toDTO();
         } catch (DAOException e) {
@@ -56,7 +53,10 @@ public class UserService {
      *
      * @return A list of {@link UserDTO} representing all users.
      */
-    public static List<UserDTO> getUsers() throws ServiceException {
+    public static List<UserDTO> getUsers(UserDTO user) throws ServiceException {
+        if (!AuthMiddleware.userHasOneOf(user, new Role("admin"))) {
+            throw new PermissionException("User " + user.getName() + " needs to be admin to create products.");
+        }
         try {
             List<UserDAO> users = UserDAO.getUsers();
             return users.stream().map(UserDAO::toUser).map(User::toDTO).toList();
@@ -78,8 +78,7 @@ public class UserService {
      */
     public static UserDTO login(UserDTO user) throws ServiceException {
         try {
-            Optional<UserDAO> userOptional = UserDAO
-                    .login(new User(null, null, user.getEmail(), user.getPassword(), null, null));
+            Optional<UserDAO> userOptional = UserDAO.login(new User(null, null, user.getEmail(), user.getPassword(), null, null));
             if (userOptional.isPresent()) {
                 return userOptional.get().toUser().toDTO();
             } else {
@@ -90,7 +89,10 @@ public class UserService {
         }
     }
 
-    public static UserDTO getUserById(int userId) {
+    public static UserDTO getUserById(UserDTO user, int userId) {
+        if (!user.getId().equals(userId) && !AuthMiddleware.userHasOneOf(user, new Role("admin"))) {
+            throw new PermissionException("User " + user.getName() + " needs to be admin to get users other than self.");
+        }
         try {
             Optional<UserDAO> userOptional = UserDAO.getUserByid(userId);
             if (userOptional.isPresent()) {
@@ -103,19 +105,25 @@ public class UserService {
         }
     }
 
-    public static void updateUser(UserDTO userToUpdate) {
+    public static void updateUser(UserDTO user, UserDTO userToUpdate) {
+        if (!user.getId().equals(userToUpdate.getId()) && !AuthMiddleware.userHasOneOf(user, new Role("admin"))) {
+            throw new PermissionException("User " + user.getName() + " needs to be admin to update users other than self.");
+        }
         try {
-            User user = new User(userToUpdate);
-            if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-                user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+            User user_ = new User(userToUpdate);
+            if (user.getPassword() != null && !user_.getPassword().isEmpty()) {
+                user_.setPassword(BCrypt.hashpw(user_.getPassword(), BCrypt.gensalt()));
             }
-            UserDAO.updateUser(user);
+            UserDAO.updateUser(user_);
         } catch (DAOException e) {
             throw new ServiceException(e.getMessage());
         }
     }
 
-    public static void deleteUserById(int id) {
+    public static void deleteUserById(UserDTO user, int id) {
+        if (!user.getId().equals(id) && !AuthMiddleware.userHasOneOf(user, new Role("admin"))) {
+            throw new PermissionException("User " + user.getName() + " needs to be admin to delete users other than self.");
+        }
         try {
             UserDAO.deleteUserById(id);
         } catch (DAOException e) {

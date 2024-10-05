@@ -73,8 +73,7 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td><%= totalprice %>
-                        </td>
+                        <td><%= totalprice %> kr</td>
                     </tr>
                     <%
                             }

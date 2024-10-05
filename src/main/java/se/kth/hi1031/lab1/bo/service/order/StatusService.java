@@ -1,6 +1,8 @@
 package se.kth.hi1031.lab1.bo.service.order;
 
+import se.kth.hi1031.lab1.bo.middleware.AuthMiddleware;
 import se.kth.hi1031.lab1.bo.model.order.Status;
+import se.kth.hi1031.lab1.bo.model.user.Permission;
 import se.kth.hi1031.lab1.bo.service.PermissionException;
 import se.kth.hi1031.lab1.db.dao.order.OrderDAO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
@@ -28,13 +30,9 @@ public class StatusService {
      * @throws PermissionException if the user lacks the necessary permissions to update the order status.
      */
     public static void setOrderStatus(int orderId, String status, UserDTO user) {
-        // Check if the user has the required permissions
-        if ("packed".equals(status) && !hasPermission(user, "pack_orders")) {
-            throw new PermissionException("User " + user.getName() + " does not have permission to pack orders.");
-        } else if (!"packed".equals(status) && !hasPermission(user, "update_orders")) {
+        if (!AuthMiddleware.userHasOneOf(user, new Permission("update_orders"), new Permission("pack_orders"))) {
             throw new PermissionException("User " + user.getName() + " does not have permission to update orders.");
         }
-
         Optional<OrderDAO> optionalOrder = OrderDAO.getOrderById(orderId);
         if (optionalOrder.isPresent()) {
             StatusDAO.createStatus(orderId, new Status(status, new Timestamp(System.currentTimeMillis())));
@@ -43,15 +41,4 @@ public class StatusService {
         }
     }
 
-    /**
-     * Check if the user has the required permission.
-     *
-     * @param user       The user to check.
-     * @param permission The required permission.
-     * @return True if the user has the permission, false otherwise.
-     */
-    private static boolean hasPermission(UserDTO user, String permission) {
-        return user.getPermissions().stream()
-                .anyMatch(perm -> perm.getName().equals(permission));
-    }
 }

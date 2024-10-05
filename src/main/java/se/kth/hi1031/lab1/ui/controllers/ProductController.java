@@ -60,11 +60,16 @@ public class ProductController extends HttpServlet {
     private static void updateProduct(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String productIdStr = req.getParameter("productId");
         HttpSession session = req.getSession(false);
+        if (session == null) {
+            return;
+        }
         if (productIdStr == null || productIdStr.isEmpty()) {
             session.setAttribute("error", "Invalid operation");
             resp.sendRedirect(req.getHeader("Referer"));
             return;
         }
+
+        UserDTO user = (UserDTO) session.getAttribute("user");
 
         int productId = Integer.parseInt(productIdStr);
 
@@ -88,7 +93,7 @@ public class ProductController extends HttpServlet {
         ProductDTO productToUpdate = new ProductDTO(productId, name, description, price, quantity, isRemoved, productCategories, images, new ArrayList<>());
 
         try {
-            ProductService.updateProduct(productToUpdate);
+            ProductService.updateProduct(user, productToUpdate);
         } catch (PermissionException | ServiceException e) {
             session.setAttribute("error", e.getMessage());
             resp.sendRedirect(req.getHeader("Referer"));
@@ -100,6 +105,11 @@ public class ProductController extends HttpServlet {
 
     private static void addProduct(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
+        if (session == null) {
+            return;
+        }
+
+        UserDTO user = (UserDTO) session.getAttribute("user");
 
         String name = req.getParameter("name");
         String description = req.getParameter("description");
@@ -120,10 +130,8 @@ public class ProductController extends HttpServlet {
 
         ProductDTO product = new ProductDTO(null, name, description, price, quantity, isRemoved, productCategories, images, new ArrayList<>());
 
-        productCategories.forEach(System.out::println);
-
         try {
-            ProductService.createProduct(product);
+            ProductService.createProduct(user, product);
         } catch (PermissionException | ServiceException e) {
             session.setAttribute("error", e.getMessage());
             resp.sendRedirect(req.getHeader("Referer"));

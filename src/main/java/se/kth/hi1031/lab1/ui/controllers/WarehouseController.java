@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+import se.kth.hi1031.lab1.bo.service.PermissionException;
 import se.kth.hi1031.lab1.bo.service.ServiceException;
 import se.kth.hi1031.lab1.bo.service.order.StatusService;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
@@ -21,7 +22,7 @@ public class WarehouseController extends HttpServlet {
             user = (UserDTO) session.getAttribute("user");
         }
         if (user != null) {
-            String orderIdStr = req.getParameter("orderid");
+            String orderIdStr = req.getParameter("orderId");
             String status = req.getParameter("status");
 
             Integer orderId = null;
@@ -31,7 +32,7 @@ public class WarehouseController extends HttpServlet {
             if (status != null && orderId != null) {
                 try {
                     StatusService.setOrderStatus(orderId, status, user);
-                } catch (ServiceException e) {
+                } catch (PermissionException | ServiceException e) {
                     session.setAttribute("error", e.getMessage());
                 }
                 resp.sendRedirect("/warehouse/orders/pack");

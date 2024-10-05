@@ -59,8 +59,14 @@ public class UserController extends HttpServlet {
     }
 
     private static void updateUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String userIdStr = req.getParameter("userId");
         HttpSession session = req.getSession(false);
+        if (session == null) {
+            return;
+        }
+
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        String userIdStr = req.getParameter("userId");
         if (userIdStr == null || userIdStr.isEmpty()) {
             session.setAttribute("error", "Invalid operation");
             resp.sendRedirect(req.getHeader("Referer"));
@@ -80,7 +86,7 @@ public class UserController extends HttpServlet {
         UserDTO userToUpdate = new UserDTO(userId, name, email, password, userRoles, new ArrayList<>());
 
         try {
-            UserService.updateUser(userToUpdate);
+            UserService.updateUser(user, userToUpdate);
         } catch (PermissionException | ServiceException e) {
             session.setAttribute("error", e.getMessage());
             resp.sendRedirect(req.getHeader("Referer"));
@@ -91,8 +97,13 @@ public class UserController extends HttpServlet {
     }
 
     private static void deleteUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String userIdStr = req.getParameter("userId");
         HttpSession session = req.getSession(false);
+        if (session == null) {
+            return;
+        }
+
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        String userIdStr = req.getParameter("userId");
         if (userIdStr == null || userIdStr.isEmpty()) {
             session.setAttribute("error", "Invalid operation");
             resp.sendRedirect(req.getHeader("Referer"));
@@ -101,7 +112,7 @@ public class UserController extends HttpServlet {
 
         int userId = Integer.parseInt(userIdStr);
         try {
-            UserService.deleteUserById(userId);
+            UserService.deleteUserById(user, userId);
         } catch (PermissionException | ServiceException e) {
             session.setAttribute("error", e.getMessage());
             resp.sendRedirect(req.getHeader("Referer"));

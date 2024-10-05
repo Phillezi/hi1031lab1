@@ -3,11 +3,16 @@ package se.kth.hi1031.lab1.bo.service.product;
 import java.util.List;
 import java.util.Optional;
 
+import se.kth.hi1031.lab1.bo.middleware.AuthMiddleware;
 import se.kth.hi1031.lab1.bo.model.product.Product;
+import se.kth.hi1031.lab1.bo.model.user.Permission;
+import se.kth.hi1031.lab1.bo.model.user.Role;
+import se.kth.hi1031.lab1.bo.service.PermissionException;
 import se.kth.hi1031.lab1.bo.service.ServiceException;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.dao.product.ProductDAO;
 import se.kth.hi1031.lab1.ui.dto.product.ProductDTO;
+import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 
 /**
  * Service class for managing products in the application.
@@ -59,7 +64,10 @@ public class ProductService {
         }
     }
 
-    public static void updateProduct(ProductDTO productToUpdate) {
+    public static void updateProduct(UserDTO user, ProductDTO productToUpdate) {
+        if (!AuthMiddleware.userHasOneOf(user, new Role("admin"))) {
+            throw new PermissionException("User " + user.getName() + " needs to be admin to update products.");
+        }
         try {
             Product product = new Product(productToUpdate);
             ProductDAO.updateProduct(product);
@@ -68,7 +76,10 @@ public class ProductService {
         }
     }
 
-    public static ProductDTO createProduct(ProductDTO product) {
+    public static ProductDTO createProduct(UserDTO user, ProductDTO product) {
+        if (!AuthMiddleware.userHasOneOf(user, new Role("admin"))) {
+            throw new PermissionException("User " + user.getName() + " needs to be admin to create products.");
+        }
         return ProductDAO.createProduct(new Product(product)).toProduct().toDTO();
     }
 }

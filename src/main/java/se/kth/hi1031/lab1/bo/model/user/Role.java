@@ -22,15 +22,19 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Role {
+public class Role implements Comparable<Role> {
     private final String name;
     private final List<Permission> permissions;
+
+    public Role(String name) {
+        this(name, null);
+    }
 
     public Role(RoleDTO role) {
         this.name = role.getName();
         this.permissions = role.getPermissions() != null ? role.getPermissions()
                 .stream()
-                .map((PermissionDTO p) -> new Permission(p))
+                .map(Permission::new)
                 .toList() : null;
     }
 
@@ -59,4 +63,26 @@ public class Role {
                 this.permissions != null ? this.permissions.stream().map(Permission::toDAO).toList() : null
         );
     }
+
+    @Override
+    public int compareTo(Role r) {
+        return name.compareTo(r.getName());
+    }
+
+    /**
+     * Determines whether this permission is equal to another object.
+     * Two {@code Permission} objects are considered equal if their names are identical.
+     *
+     * @param o the object to compare with this {@code Permission}.
+     * @return {@code true} if the given object is a {@code Permission} with the same name; {@code false} otherwise.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Role) {
+            return this.compareTo((Role) o) == 0;
+        }
+        return false;
+    }
+
+
 }

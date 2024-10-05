@@ -1,5 +1,6 @@
 package se.kth.hi1031.lab1.bo.service.order;
 
+import se.kth.hi1031.lab1.bo.middleware.AuthMiddleware;
 import se.kth.hi1031.lab1.bo.model.order.Order;
 import se.kth.hi1031.lab1.bo.model.order.Status;
 import se.kth.hi1031.lab1.bo.model.product.Product;
@@ -105,22 +106,13 @@ public class OrderService {
      * @throws PermissionException if the user lacks permission to view orders.
      */
     public static List<OrderDTO> getAllOrders(UserDTO user) {
-        List<Permission> permissions = user.getPermissions().stream().map((PermissionDTO p) -> new Permission(p.getName())).toList();
-        List<Role> roles = user.getRoles().stream().map((RoleDTO r) -> new Role(r.getName(), permissions)).toList();
-        User user_ = new User(user.getId(), user.getName(), user.getEmail(), user.getPassword(), roles, permissions);
-        System.out.println("getallorders: " + user);
-        System.out.println("permissions: " + permissions);
         if (
-                permissions
-                        .stream()
-                        .anyMatch((Permission p) -> p.getName().equalsIgnoreCase("view_orders"))
+                AuthMiddleware.userHasOneOf(user, new Permission("view_orders"))
         ) {
-            System.out.println("has permission!!");
             List<OrderDAO> orders = OrderDAO.getOrders();
-            System.out.println("found: " + orders);
             return orders.stream().map(OrderDAO::toOrder).map(Order::toDTO).toList();
         } else if (user != null && user.getId() != null) {
-            List<OrderDAO> orders = OrderDAO.getOrdersByCustomer(user_);
+            List<OrderDAO> orders = OrderDAO.getOrdersByCustomer(new User(user));
             System.out.println("found: " + orders);
             return orders.stream().map(OrderDAO::toOrder).map(Order::toDTO).toList();
         }
@@ -137,23 +129,25 @@ public class OrderService {
      * @param id The ID of the order to retrieve.
      * @return An {@link Optional<OrderDTO>} containing the order if found, or empty if not found.
      */
-    // todo auth
-    public static Optional<OrderDTO> getOrderById(int id) {
-        Optional<OrderDAO> order = OrderDAO.getOrderById(id);
-        if (order.isPresent()) {
-            return Optional.of(order.get().toOrder().toDTO());
+    public static Optional<OrderDTO> getOrderById(UserDTO user, int id) {
+        if (AuthMiddleware.userHasOneOf(user, new Permission("view_orders"))
+        ) {
+            Optional<OrderDAO> order = OrderDAO.getOrderById(id);
+            return order.map(orderDAO -> orderDAO.toOrder().toDTO());
         }
-        return Optional.empty();
+        throw new PermissionException("User " + user + " cant view orders");
     }
 
-    // todo auth
-    public static List<OrderDTO> getOrdersWithStatus(String... statuses) {
-        try {
-            List<OrderDAO> orders = OrderDAO.getOrdersByStatus(statuses);
-            return orders.stream().map(OrderDAO::toOrder).map(Order::toDTO).toList();
-        } catch (DAOException e) {
-            throw new ServiceException(e.getMessage());
+    public static List<OrderDTO> getOrdersWithStatus(UserDTO user, String... statuses) {
+        if (AuthMiddleware.userHasOneOf(user, new Permission("view_orders"))) {
+            try {
+                List<OrderDAO> orders = OrderDAO.getOrdersByStatus(statuses);
+                return orders.stream().map(OrderDAO::toOrder).map(Order::toDTO).toList();
+            } catch (DAOException e) {
+                throw new ServiceException(e.getMessage());
+            }
         }
+        throw new PermissionException("User " + user + " cant view orders");
     }
 
 }

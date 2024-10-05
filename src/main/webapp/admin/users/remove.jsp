@@ -10,6 +10,11 @@
 <body>
 <jsp:include page="/components/errors/error.jsp"/>
 <%
+    UserDTO currentUser = (UserDTO) session.getAttribute("user");
+    if (currentUser == null) {
+        response.sendRedirect("/errors/401.jsp");
+        return;
+    }
     String userIdStr = request.getParameter("userId");
     if (userIdStr == null || userIdStr.isEmpty()) {
         out.println("<p>Error: User ID is missing.</p>");
@@ -17,7 +22,7 @@
     }
 
     int userId = Integer.parseInt(userIdStr);
-    UserDTO user = UserService.getUserById(userId);
+    UserDTO user = UserService.getUserById(currentUser, userId);
     if (user == null) {
         out.println("<p>Error: User not found.</p>");
         return;
