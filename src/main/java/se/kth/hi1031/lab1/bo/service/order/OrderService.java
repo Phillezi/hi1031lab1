@@ -3,8 +3,6 @@ package se.kth.hi1031.lab1.bo.service.order;
 import se.kth.hi1031.lab1.bo.model.order.Order;
 import se.kth.hi1031.lab1.bo.model.order.Status;
 import se.kth.hi1031.lab1.bo.model.product.Product;
-import se.kth.hi1031.lab1.bo.model.product.Property;
-import se.kth.hi1031.lab1.bo.model.product.Category;
 import se.kth.hi1031.lab1.bo.model.user.Permission;
 import se.kth.hi1031.lab1.bo.model.user.User;
 import se.kth.hi1031.lab1.bo.service.PermissionException;
@@ -13,10 +11,7 @@ import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.dao.order.OrderDAO;
 import se.kth.hi1031.lab1.db.dao.product.ProductDAO;
 import se.kth.hi1031.lab1.ui.dto.order.OrderDTO;
-import se.kth.hi1031.lab1.ui.dto.order.StatusDTO;
-import se.kth.hi1031.lab1.ui.dto.product.PropertyDTO;
 import se.kth.hi1031.lab1.ui.dto.product.ProductDTO;
-import se.kth.hi1031.lab1.ui.dto.product.CategoryDTO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 import se.kth.hi1031.lab1.bo.model.user.Role;
 import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
@@ -74,7 +69,7 @@ public class OrderService {
                 .map((ProductDAO p) -> {
                     int available = p.getQuantity();
                     int amountOrdered = idAndQuantity.get(p.getId());
-                    if(amountOrdered > available) {
+                    if (amountOrdered > available) {
                         throw new ServiceException("Order exceeds quantity of product: " + p.getName() + " available: " + available + " ordered: " + amountOrdered);
                     }
                     p.setQuantity(amountOrdered);

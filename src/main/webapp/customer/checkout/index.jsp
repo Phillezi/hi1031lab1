@@ -35,7 +35,7 @@
 
     String deliveryAddress = "";
 %>
-<jsp:include page="/components/errors/error.jsp" />
+<jsp:include page="/components/errors/error.jsp"/>
 <div class="container">
     <div class="modal-overlay">
         <div class="modal">

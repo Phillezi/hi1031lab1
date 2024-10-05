@@ -10,7 +10,6 @@ import se.kth.hi1031.lab1.bo.model.product.*;
 
 import java.math.BigDecimal;
 
-
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;

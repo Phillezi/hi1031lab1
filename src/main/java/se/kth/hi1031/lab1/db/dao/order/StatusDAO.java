@@ -76,7 +76,7 @@ public class StatusDAO {
     }
 
     public static List<StatusDAO> toDAOs(ResultSet rs) throws SQLException {
-        String[] statusArr = (String[])rs.getArray("statuses_status").getArray();
+        String[] statusArr = (String[]) rs.getArray("statuses_status").getArray();
         Timestamp[] timestampArr = (Timestamp[]) rs.getArray("statuses_timestamp").getArray();
 
         if (statusArr == null || timestampArr == null) {
@@ -85,7 +85,7 @@ public class StatusDAO {
 
         List<StatusDAO> daos = new ArrayList<>();
         for (int i = 0; i < statusArr.length; i++) {
-            if(statusArr[i] != null && timestampArr[i] != null) {
+            if (statusArr[i] != null && timestampArr[i] != null) {
                 daos.add(new StatusDAO(statusArr[i], timestampArr[i]));
             }
         }

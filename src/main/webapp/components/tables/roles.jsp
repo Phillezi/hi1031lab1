@@ -18,14 +18,16 @@
             for (RoleDTO role : roles) {
     %>
     <tr>
-        <td><%= role.getName() %></td>
+        <td><%= role.getName() %>
+        </td>
         <td>
             <ul>
                 <%
                     for (PermissionDTO permission : role.getPermissions()) {
                         if (permission != null) {
                 %>
-                <li><%= permission.getName() %></li>
+                <li><%= permission.getName() %>
+                </li>
                 <%
                         }
                     }
@@ -33,12 +35,14 @@
             </ul>
         </td>
         <td>
-            <form action="${pageContext.request.contextPath}/admin/users/roles/edit.jsp" method="get" style="display:inline;">
-                <input type="hidden" name="roleName" value="<%= role.getName() %>" />
+            <form action="${pageContext.request.contextPath}/admin/users/roles/edit.jsp" method="get"
+                  style="display:inline;">
+                <input type="hidden" name="roleName" value="<%= role.getName() %>"/>
                 <button class="edit-btn" type="submit">Edit</button>
             </form>
-            <form action="${pageContext.request.contextPath}/admin/users/roles/remove.jsp" method="post" style="display:inline;">
-                <input type="hidden" name="roleName" value="<%= role.getName() %>" />
+            <form action="${pageContext.request.contextPath}/admin/users/roles/remove.jsp" method="post"
+                  style="display:inline;">
+                <input type="hidden" name="roleName" value="<%= role.getName() %>"/>
                 <button class="remove-btn" type="submit">Remove</button>
             </form>
         </td>

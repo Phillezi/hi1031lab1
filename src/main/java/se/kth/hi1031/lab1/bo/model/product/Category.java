@@ -9,9 +9,9 @@ import se.kth.hi1031.lab1.ui.dto.product.CategoryDTO;
 
 /**
  * Represents a product category in the system.
- * 
+ *
  * <p> Each category has a name and an optional description that provides more details about it.</p>
- * 
+ *
  * <p>This class uses Lombok annotations to automatically generate
  * getters, setters, and an all-arguments constructor.</p>
  */

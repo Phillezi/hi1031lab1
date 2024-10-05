@@ -7,17 +7,16 @@ import se.kth.hi1031.lab1.db.dao.user.RoleDAO;
 import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
 import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 
-
 import java.util.List;
 
 /**
- * Represents a user role within the system, which is a collection of permissions 
+ * Represents a user role within the system, which is a collection of permissions
  * that define the access control level of a user.
- * 
+ *
  * <p>A {@code Role} object consists of a unique name and a list of {@link Permission} objects
  * that specify the actions allowed for this role.</p>
- * 
- * <p>This class uses Lombok annotations to automatically generate getters, setters, and 
+ *
+ * <p>This class uses Lombok annotations to automatically generate getters, setters, and
  * an all-arguments constructor.</p>
  */
 @Getter
@@ -30,9 +29,9 @@ public class Role {
     public Role(RoleDTO role) {
         this.name = role.getName();
         this.permissions = role.getPermissions() != null ? role.getPermissions()
-                                .stream()
-                                .map((PermissionDTO p) -> new Permission(p))
-                                .toList() : null;
+                .stream()
+                .map((PermissionDTO p) -> new Permission(p))
+                .toList() : null;
     }
 
     /**

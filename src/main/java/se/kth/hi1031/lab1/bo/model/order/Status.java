@@ -10,12 +10,12 @@ import java.sql.Timestamp;
 
 /**
  * Represents the status of an order.
- * 
- * <p>The status tracks various stages of the order, such as 
- * "packed", "shipped", "delivered", etc., along with the timestamp when 
+ *
+ * <p>The status tracks various stages of the order, such as
+ * "packed", "shipped", "delivered", etc., along with the timestamp when
  * that status was assigned.</p>
  *
- * <p>This class uses Lombok annotations to automatically generate 
+ * <p>This class uses Lombok annotations to automatically generate
  * getters, setters, and an all-arguments constructor.</p>
  */
 @Getter
@@ -31,8 +31,8 @@ public class Status {
     }
 
     /**
-     * Converts this {@code Status} object into a {@link StatusDTO}, 
-     * which is a Data Transfer Object (DTO) used for transferring status data across 
+     * Converts this {@code Status} object into a {@link StatusDTO},
+     * which is a Data Transfer Object (DTO) used for transferring status data across
      * different layers of the application.
      *
      * @return a {@code StatusDTO} containing the status data.
@@ -42,7 +42,7 @@ public class Status {
     }
 
     /**
-     * Converts this {@code Status} object into a {@link StatusDAO}, 
+     * Converts this {@code Status} object into a {@link StatusDAO},
      * which is a Data Access Object (DAO) used for storing status data in a database.
      *
      * @return a {@code StatusDAO} containing the status data for persistence.

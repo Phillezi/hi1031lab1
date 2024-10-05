@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css"/>
 </head>
 <body>
-<jsp:include page="/components/errors/error.jsp" />
+<jsp:include page="/components/errors/error.jsp"/>
 <div class="container">
     <div class="modal-overlay">
         <div class="modal">
@@ -30,7 +30,8 @@
 
                         for (String role : roles) {
                     %>
-                    <option value="<%= role %>"><%= role %></option>
+                    <option value="<%= role %>"><%= role %>
+                    </option>
                     <%
                         }
                     %>

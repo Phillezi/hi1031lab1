@@ -5,18 +5,16 @@ import lombok.Getter;
 import lombok.Setter;
 import se.kth.hi1031.lab1.db.dao.product.ProductDAO;
 import se.kth.hi1031.lab1.ui.dto.product.ProductDTO;
-import se.kth.hi1031.lab1.ui.dto.product.CategoryDTO;
-import se.kth.hi1031.lab1.ui.dto.product.PropertyDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * Represents a product in the system, including essential details such as its name, price, 
+ * Represents a product in the system, including essential details such as its name, price,
  * description, quantity, and other attributes like categories, images, and properties.
- * 
- * <p>This class uses Lombok annotations to automatically generate getters, setters, 
+ *
+ * <p>This class uses Lombok annotations to automatically generate getters, setters,
  * and an all-arguments constructor.</p>
  */
 @Getter
@@ -41,20 +39,20 @@ public class Product {
         this.quantity = product.getQuantity();
         this.removed = product.isRemoved();
         this.categories = product.getCategories() != null ? product.getCategories()
-                                    .stream()
-                                    .map(Category::new)
-                                    .toList() : null;
+                .stream()
+                .map(Category::new)
+                .toList() : null;
         this.images = product.getImages() != null ? new ArrayList<>(product.getImages()) : null;
         this.properties = product.getProperties() != null ? product.getProperties()
-                                    .stream()
-                                    .map(Property::new)
-                                    .toList() : null;
+                .stream()
+                .map(Property::new)
+                .toList() : null;
     }
 
 
     /**
-     * Converts this {@code Product} object into a {@link ProductDTO}, 
-     * which is a Data Transfer Object (DTO) used for transferring product data across 
+     * Converts this {@code Product} object into a {@link ProductDTO},
+     * which is a Data Transfer Object (DTO) used for transferring product data across
      * different layers of the application.
      *
      * @return a {@code ProductDTO} containing the product's data.
@@ -74,7 +72,7 @@ public class Product {
     }
 
     /**
-     * Converts this {@code Product} object into a {@link ProductDAO}, 
+     * Converts this {@code Product} object into a {@link ProductDAO},
      * which is a Data Access Object (DAO) used for storing the product data in a database.
      *
      * @return a {@code ProductDAO} containing the product's data for persistence.

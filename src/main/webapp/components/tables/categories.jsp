@@ -17,15 +17,19 @@
             for (CategoryDTO category : categories) {
     %>
     <tr>
-        <td><%= category.getName() %></td>
-        <td><%= category.getDescription() %></td>
+        <td><%= category.getName() %>
+        </td>
+        <td><%= category.getDescription() %>
+        </td>
         <td>
-            <form action="${pageContext.request.contextPath}/admin/products/categories/edit.jsp" method="get" style="display:inline;">
-                <input type="hidden" name="categoryName" value="<%= category.getName() %>" />
+            <form action="${pageContext.request.contextPath}/admin/products/categories/edit.jsp" method="get"
+                  style="display:inline;">
+                <input type="hidden" name="categoryName" value="<%= category.getName() %>"/>
                 <button class="edit-btn" type="submit">Edit</button>
             </form>
-            <form action="${pageContext.request.contextPath}/admin/products/categories/remove.jsp" method="post" style="display:inline;">
-                <input type="hidden" name="categoryName" value="<%= category.getName() %>" />
+            <form action="${pageContext.request.contextPath}/admin/products/categories/remove.jsp" method="post"
+                  style="display:inline;">
+                <input type="hidden" name="categoryName" value="<%= category.getName() %>"/>
                 <button class="remove-btn" type="submit">Remove</button>
             </form>
         </td>

@@ -11,9 +11,9 @@
     <title>Edit User</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css"/>
 </head>
-<jsp:include page="/components/header.jsp" />
+<jsp:include page="/components/header.jsp"/>
 <body>
-<jsp:include page="/components/errors/error.jsp" />
+<jsp:include page="/components/errors/error.jsp"/>
 <%
     String userIdStr = request.getParameter("userId");
     if (userIdStr == null || userIdStr.isEmpty()) {
@@ -65,17 +65,18 @@
                         List<String> availableRoles = RoleService.getAvailableRoles();
                         List<String> roles = user.getRoles().stream().map(RoleDTO::getName).toList();
                         Map<String, Boolean> userRoles = new HashMap<String, Boolean>();
-                        availableRoles.forEach((String s)->userRoles.put(s, roles.contains(s)));
+                        availableRoles.forEach((String s) -> userRoles.put(s, roles.contains(s)));
                         if (!availableRoles.isEmpty()) {
                             for (String roleName : availableRoles) {
                     %>
                     <tr>
                         <td>
-                            <label for="<%= roleName %>"><%= roleName %></label>
+                            <label for="<%= roleName %>"><%= roleName %>
+                            </label>
                         </td>
                         <td>
                             <input id="<%= roleName %>" type="checkbox" name="roles" value="<%= roleName %>"
-                                   <%= userRoles.get(roleName) ? "checked" : "" %> />
+                                    <%= userRoles.get(roleName) ? "checked" : "" %> />
                         </td>
                     </tr>
                     <%

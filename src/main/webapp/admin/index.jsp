@@ -3,7 +3,7 @@
 <head>
     <title>Admin</title>
 </head>
-<jsp:include page="/components/header.jsp" />
+<jsp:include page="/components/header.jsp"/>
 <body>
 <div class="container">
     <div class="modal-overlay">

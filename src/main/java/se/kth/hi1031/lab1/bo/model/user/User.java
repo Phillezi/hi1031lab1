@@ -8,13 +8,12 @@ import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
 import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a user in the system, containing details such as user ID, name, email, 
+ * Represents a user in the system, containing details such as user ID, name, email,
  * password, associated roles, and permissions.
- * 
+ *
  * <p>This class uses Lombok annotations to automatically generate getters, setters, and an all-arguments constructor.</p>
  */
 @Getter
@@ -34,13 +33,13 @@ public class User {
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.roles = user.getRoles() != null ? user.getRoles()
-                            .stream()
-                            .map((RoleDTO r) -> new Role(r))
-                            .toList() : null;
+                .stream()
+                .map((RoleDTO r) -> new Role(r))
+                .toList() : null;
         this.permissions = user.getPermissions() != null ? user.getPermissions()
-                                .stream()
-                                .map((PermissionDTO p) -> new Permission(p))
-                                .toList() : null;
+                .stream()
+                .map((PermissionDTO p) -> new Permission(p))
+                .toList() : null;
     }
 
     /**

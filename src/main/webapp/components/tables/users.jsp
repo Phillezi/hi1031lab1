@@ -23,17 +23,23 @@
             for (UserDTO user : users) {
     %>
     <tr>
-        <td><%= user.getId() %></td>
-        <td><%= user.getName() %></td>
-        <td><%= user.getEmail() %></td>
-        <td><%= user.getPassword() %></td>
+        <td><%= user.getId() %>
+        </td>
+        <td><%= user.getName() %>
+        </td>
+        <td><%= user.getEmail() %>
+        </td>
+        <td><%= user.getPassword() %>
+        </td>
         <td>
             <ul>
                 <%
                     for (RoleDTO role : user.getRoles()) {
                         if (role != null) {
                 %>
-                <a href="${pageContext.request.contextPath}/admin/users/roles?role=<%= role.getName() %>" class="clickable-attribute" style="color: inherit;"><%= role.getName() %></a>
+                <a href="${pageContext.request.contextPath}/admin/users/roles?role=<%= role.getName() %>"
+                   class="clickable-attribute" style="color: inherit;"><%= role.getName() %>
+                </a>
                 <%
                         }
                     }
@@ -46,7 +52,8 @@
                     for (PermissionDTO permission : user.getPermissions()) {
                         if (permission != null) {
                 %>
-                <li><%= permission.getName() %></li>
+                <li><%= permission.getName() %>
+                </li>
                 <%
                         }
                     }
@@ -55,11 +62,12 @@
         </td>
         <td>
             <form action="${pageContext.request.contextPath}/admin/users/edit.jsp" method="get" style="display:inline;">
-                <input type="hidden" name="userId" value="<%= user.getId() %>" />
+                <input type="hidden" name="userId" value="<%= user.getId() %>"/>
                 <button class="edit-btn" type="submit">Edit</button>
             </form>
-            <form action="${pageContext.request.contextPath}/admin/users/remove.jsp" method="post" style="display:inline;">
-                <input type="hidden" name="userId" value="<%= user.getId() %>" />
+            <form action="${pageContext.request.contextPath}/admin/users/remove.jsp" method="post"
+                  style="display:inline;">
+                <input type="hidden" name="userId" value="<%= user.getId() %>"/>
                 <button class="remove-btn" type="submit">Remove</button>
             </form>
         </td>

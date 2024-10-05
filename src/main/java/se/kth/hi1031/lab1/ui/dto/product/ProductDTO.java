@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * Data Transfer Object representing a product.
  *
- * <p>The ProductDTO class is used to encapsulate information about a product, 
- * including its id, name, description, price, quantity, and associated categories, 
+ * <p>The ProductDTO class is used to encapsulate information about a product,
+ * including its id, name, description, price, quantity, and associated categories,
  * images, and properties.</p>
  */
 @Getter

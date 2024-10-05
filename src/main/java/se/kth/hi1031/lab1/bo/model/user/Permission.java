@@ -8,10 +8,10 @@ import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 
 /**
  * Represents a user permission within the system, used for control levels for different actions.
- * 
- * <p>The {@code Permission} class implements {@link Comparable} to enable natural ordering 
+ *
+ * <p>The {@code Permission} class implements {@link Comparable} to enable natural ordering
  * of permissions based on their name. It also overrides {@code equals()} for logical comparison.</p>
- * 
+ *
  * <p>This class uses Lombok annotations to automatically generate getters, setters, and an all-arguments constructor.</p>
  */
 @Getter
@@ -45,12 +45,12 @@ public class Permission implements Comparable<Permission> {
     }
 
     /**
-     * Compares this permission with another {@code Permission} object for order, 
+     * Compares this permission with another {@code Permission} object for order,
      * based on the lexicographical ordering of their names.
      *
      * @param p the other {@code Permission} to be compared.
-     * @return a negative integer, zero, or a positive integer as this permission's name is 
-     *         less than, equal to, or greater than the specified permission's name.
+     * @return a negative integer, zero, or a positive integer as this permission's name is
+     * less than, equal to, or greater than the specified permission's name.
      */
     @Override
     public int compareTo(Permission p) {
@@ -58,7 +58,7 @@ public class Permission implements Comparable<Permission> {
     }
 
     /**
-     * Determines whether this permission is equal to another object. 
+     * Determines whether this permission is equal to another object.
      * Two {@code Permission} objects are considered equal if their names are identical.
      *
      * @param o the object to compare with this {@code Permission}.
@@ -67,7 +67,7 @@ public class Permission implements Comparable<Permission> {
     @Override
     public boolean equals(Object o) {
         if (o instanceof Permission) {
-            return this.compareTo((Permission)o) == 0;
+            return this.compareTo((Permission) o) == 0;
         }
         return false;
     }

@@ -8,7 +8,7 @@ import lombok.ToString;
 /**
  * Data Transfer Object representing a user permission.
  *
- * <p>The PermissionDTO class encapsulates the name of a permission 
+ * <p>The PermissionDTO class encapsulates the name of a permission
  * associated with a user role within the application.</p>
  */
 @Getter

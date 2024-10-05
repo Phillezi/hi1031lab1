@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css"/>
 </head>
 <body>
-<jsp:include page="/components/header.jsp" />
+<jsp:include page="/components/header.jsp"/>
 <div class="root">
     <div class="featured">
         <div class="featured-products">
@@ -88,8 +88,9 @@
                     <label for="quantity<%= product.getId() %>">Quantity:</label>
                     <label for="quantity"></label>
                     <input type="number" name="quantity" id="quantity" value="1" min="1"
-                                                         max="<%= Math.max(product.getQuantity(), 0) %>"/>
-                    <button type="submit" <%= product.getQuantity() <= 0 ? "disabled" : "" %> ><%= product.getQuantity() <= 0 ? "Out of stock" : "Add to cart" %></button>
+                           max="<%= Math.max(product.getQuantity(), 0) %>"/>
+                    <button type="submit" <%= product.getQuantity() <= 0 ? "disabled" : "" %> ><%= product.getQuantity() <= 0 ? "Out of stock" : "Add to cart" %>
+                    </button>
                 </form>
             </div>
             <%

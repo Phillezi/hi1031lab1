@@ -17,7 +17,7 @@ import org.mindrot.jbcrypt.BCrypt;
 /**
  * Service class for managing user related operations.
  *
- * <p>The {@code UserService} class provides methods for creating users, retrieving user 
+ * <p>The {@code UserService} class provides methods for creating users, retrieving user
  * information, and handling user login operations.</p>
  */
 public class UserService {
@@ -25,7 +25,7 @@ public class UserService {
     /**
      * Creates a new user with the provided user data.
      *
-     * <p>This method hashes the user's password and creates a new user in the system. 
+     * <p>This method hashes the user's password and creates a new user in the system.
      * It also associates roles with the user based on the provided {@link UserDTO}.</p>
      *
      * @param user The {@link UserDTO} object containing the user's details.
@@ -51,7 +51,7 @@ public class UserService {
     /**
      * Retrieves a list of all users in the system.
      *
-     * <p>This method fetches all users from the database and converts them into a list 
+     * <p>This method fetches all users from the database and converts them into a list
      * of {@link UserDTO} objects.</p>
      *
      * @return A list of {@link UserDTO} representing all users.
@@ -68,13 +68,13 @@ public class UserService {
     /**
      * Logs in a user by validating their email and password.
      *
-     * <p>This method attempts to authenticate the user using the provided email and 
-     * password. If successful, it returns a {@link UserDTO} for the logged-in user; 
+     * <p>This method attempts to authenticate the user using the provided email and
+     * password. If successful, it returns a {@link UserDTO} for the logged-in user;
      * otherwise, it returns null.</p>
      *
      * @param user The {@link UserDTO} object containing the user's email and password.
-     * @return A {@link UserDTO} for the authenticated user if login is successful, 
-     *         or null if the login fails.
+     * @return A {@link UserDTO} for the authenticated user if login is successful,
+     * or null if the login fails.
      */
     public static UserDTO login(UserDTO user) throws ServiceException {
         try {

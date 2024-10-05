@@ -6,9 +6,9 @@
     <title>Add New User</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css"/>
 </head>
-<jsp:include page="/components/header.jsp" />
+<jsp:include page="/components/header.jsp"/>
 <body>
-<jsp:include page="/components/errors/error.jsp" />
+<jsp:include page="/components/errors/error.jsp"/>
 
 <div class="container">
     <div class="modal-overlay">
@@ -46,7 +46,8 @@
                     %>
                     <tr>
                         <td>
-                            <label for="<%= roleName %>"><%= roleName %></label>
+                            <label for="<%= roleName %>"><%= roleName %>
+                            </label>
                         </td>
                         <td>
                             <input id="<%= roleName %>" type="checkbox" name="roles" value="<%= roleName %>"/>

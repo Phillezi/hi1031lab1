@@ -166,7 +166,7 @@ public class UserDAO {
 
     /**
      * Expects a hashed password!
-     * 
+     *
      * @param user
      * @return
      * @throws DAOException
@@ -364,22 +364,22 @@ public class UserDAO {
     public static UserDAO toDAO(ResultSet rs) throws SQLException {
         List<PermissionDAO> permissions = null;
         try {
-        Array permsArr = rs.getArray("user_role_permissions");
-        permissions = Arrays.stream((String[]) permsArr.getArray())
-                .map(PermissionDAO::new)
-                .collect(Collectors.toList());
-        } catch(SQLException ignored) {
-            
+            Array permsArr = rs.getArray("user_role_permissions");
+            permissions = Arrays.stream((String[]) permsArr.getArray())
+                    .map(PermissionDAO::new)
+                    .collect(Collectors.toList());
+        } catch (SQLException ignored) {
+
         }
 
         List<RoleDAO> roles = null;
         try {
-        Array rolesArr = rs.getArray("user_roles");
-        roles = Arrays.stream((String[]) rolesArr.getArray())
-                .map((String role) -> new RoleDAO(role, new ArrayList<>()))
-                .collect(Collectors.toList());
-        } catch(SQLException ignored) {
-            
+            Array rolesArr = rs.getArray("user_roles");
+            roles = Arrays.stream((String[]) rolesArr.getArray())
+                    .map((String role) -> new RoleDAO(role, new ArrayList<>()))
+                    .collect(Collectors.toList());
+        } catch (SQLException ignored) {
+
         }
 
         return new UserDAO(
@@ -394,7 +394,7 @@ public class UserDAO {
     /**
      * Gets multiple Users from a ResultSet
      * TODO: get roles and permissions for each user somehow (array in array)
-     * 
+     *
      * @param rs The resultset.
      * @return A List of the UserDAOs
      * @throws SQLException

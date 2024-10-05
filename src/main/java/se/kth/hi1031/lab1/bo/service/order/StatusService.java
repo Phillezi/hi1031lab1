@@ -1,15 +1,9 @@
 package se.kth.hi1031.lab1.bo.service.order;
 
-import se.kth.hi1031.lab1.bo.model.order.Order;
 import se.kth.hi1031.lab1.bo.model.order.Status;
-import se.kth.hi1031.lab1.bo.model.user.Permission;
-import se.kth.hi1031.lab1.bo.model.user.User;
 import se.kth.hi1031.lab1.bo.service.PermissionException;
 import se.kth.hi1031.lab1.db.dao.order.OrderDAO;
-import se.kth.hi1031.lab1.ui.dto.order.OrderDTO;
-import se.kth.hi1031.lab1.ui.dto.order.StatusDTO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
-import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 import se.kth.hi1031.lab1.db.dao.order.*;
 
 import java.sql.Timestamp;
@@ -29,8 +23,8 @@ public class StatusService {
      * the user must have the 'update_orders' permission.</p>
      *
      * @param orderId The ID of the order to update.
-     * @param status   The new status to set.
-     * @param user     The user attempting to set the status.
+     * @param status  The new status to set.
+     * @param user    The user attempting to set the status.
      * @throws PermissionException if the user lacks the necessary permissions to update the order status.
      */
     public static void setOrderStatus(int orderId, String status, UserDTO user) {
@@ -52,7 +46,7 @@ public class StatusService {
     /**
      * Check if the user has the required permission.
      *
-     * @param user      The user to check.
+     * @param user       The user to check.
      * @param permission The required permission.
      * @return True if the user has the permission, false otherwise.
      */

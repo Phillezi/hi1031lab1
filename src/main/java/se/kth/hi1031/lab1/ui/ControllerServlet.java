@@ -15,11 +15,11 @@ import java.io.IOException;
 /**
  * Servlet controller that manages application requests and user navigation.
  *
- * <p>This servlet routes incoming requests based on the requested URI and the 
- * action parameter. It handles both GET and POST requests for various actions 
+ * <p>This servlet routes incoming requests based on the requested URI and the
+ * action parameter. It handles both GET and POST requests for various actions
  * such as login, registration, viewing user lists, and accessing the admin page.</p>
  */
-@WebServlet(name = "controller", urlPatterns = { "/controller" })
+@WebServlet(name = "controller", urlPatterns = {"/controller"})
 public class ControllerServlet extends HttpServlet {
 
     /**
@@ -31,7 +31,7 @@ public class ControllerServlet extends HttpServlet {
      * @param req  The HttpServletRequest object that contains the request data.
      * @param resp The HttpServletResponse object that contains the response data.
      * @throws ServletException If an error occurs during the request processing.
-     * @throws IOException      If an input or output error occurs during the 
+     * @throws IOException      If an input or output error occurs during the
      *                          forwarding process.
      */
     @Override
@@ -86,14 +86,14 @@ public class ControllerServlet extends HttpServlet {
     /**
      * Handles HTTP POST requests for the application.
      *
-     * <p>This method processes user actions based on the submitted action parameter, 
-     * delegating the work to specific controller classes for registration, login, 
+     * <p>This method processes user actions based on the submitted action parameter,
+     * delegating the work to specific controller classes for registration, login,
      * and cart management.</p>
      *
      * @param req  The HttpServletRequest object that contains the request data.
      * @param resp The HttpServletResponse object that contains the response data.
      * @throws ServletException If an error occurs during the request processing.
-     * @throws IOException      If an input or output error occurs during the 
+     * @throws IOException      If an input or output error occurs during the
      *                          redirection process.
      */
     @Override
@@ -181,7 +181,7 @@ public class ControllerServlet extends HttpServlet {
     /**
      * Checks if the specified user has the given permission.
      *
-     * @param user      The UserDTO object representing the user to check.
+     * @param user       The UserDTO object representing the user to check.
      * @param permission The permission name to check against the user's permissions.
      * @return True if the user has the specified permission, false otherwise.
      */
@@ -204,8 +204,8 @@ public class ControllerServlet extends HttpServlet {
      * Handles unauthorized access by redirecting to the appropriate page.
      *
      * @param isLoggedIn Indicates whether the user is logged in or not.
-     * @param req       The HttpServletRequest object that contains the request data.
-     * @param resp      The HttpServletResponse object that contains the response data.
+     * @param req        The HttpServletRequest object that contains the request data.
+     * @param resp       The HttpServletResponse object that contains the response data.
      * @throws IOException If an input or output error occurs during the redirection.
      */
     private void handleUnauthorizedAccess(boolean isLoggedIn, HttpServletRequest req, HttpServletResponse resp)

@@ -8,11 +8,11 @@ import se.kth.hi1031.lab1.ui.dto.product.PropertyDTO;
 
 /**
  * Represents a key-value pair that defines a specific attribute or characteristic of a product.
- * 
- * <p>Each {@code Property} object is used to capture additional product details such as 
+ *
+ * <p>Each {@code Property} object is used to capture additional product details such as
  * color, size, material, etc.</p>
- * 
- * <p>This class uses Lombok annotations to automatically generate getters, setters, 
+ *
+ * <p>This class uses Lombok annotations to automatically generate getters, setters,
  * and an all-arguments constructor.</p>
  */
 @Getter
@@ -28,8 +28,8 @@ public class Property {
     }
 
     /**
-     * Converts this {@code Property} object into a {@link PropertyDTO}, 
-     * which is a Data Transfer Object (DTO) used for transferring property data across 
+     * Converts this {@code Property} object into a {@link PropertyDTO},
+     * which is a Data Transfer Object (DTO) used for transferring property data across
      * different layers of the application.
      *
      * @return a {@code PropertyDTO} containing the property's key and value.
@@ -39,7 +39,7 @@ public class Property {
     }
 
     /**
-     * Converts this {@code Property} object into a {@link PropertyDAO}, 
+     * Converts this {@code Property} object into a {@link PropertyDAO},
      * which is a Data Access Object (DAO) used for storing the property data in a database.
      *
      * @return a {@code PropertyDAO} containing the property's key and value for persistence.

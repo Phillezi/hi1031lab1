@@ -8,9 +8,9 @@ import java.util.List;
 /**
  * Manages a pool of database connections.
  *
- * <p>This singleton class provides a way to create and manage a pool of 
- * database connections, ensuring that the maximum number of connections 
- * does not exceed a specified limit. It allows for reusing connections 
+ * <p>This singleton class provides a way to create and manage a pool of
+ * database connections, ensuring that the maximum number of connections
+ * does not exceed a specified limit. It allows for reusing connections
  * and releasing them back into the pool when they are no longer needed.</p>
  */
 public class DBConnectionManager {
@@ -21,7 +21,7 @@ public class DBConnectionManager {
     private final int MAX_POOL_SIZE;
 
     /**
-     * Private constructor to initialize the connection pool and set the 
+     * Private constructor to initialize the connection pool and set the
      * maximum pool size based on environment variables.
      */
     private DBConnectionManager() {

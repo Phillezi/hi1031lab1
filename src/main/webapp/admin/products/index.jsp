@@ -6,16 +6,16 @@
 <head>
     <title>Administer products</title>
 </head>
-<jsp:include page="/components/header.jsp" />
+<jsp:include page="/components/header.jsp"/>
 <body>
-<jsp:include page="/components/errors/error.jsp" />
+<jsp:include page="/components/errors/error.jsp"/>
 <%
-  List<ProductDTO> productList = ProductService.getProducts();
-  request.setAttribute("products", productList);
+    List<ProductDTO> productList = ProductService.getProducts();
+    request.setAttribute("products", productList);
 %>
 <div class="container">
     <div class="table-container">
-<jsp:include page="/components/tables/product.jsp" />
+        <jsp:include page="/components/tables/product.jsp"/>
     </div>
 </div>
 </body>

@@ -5,11 +5,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 
 import se.kth.hi1031.lab1.bo.service.ServiceException;
 import se.kth.hi1031.lab1.bo.service.order.StatusService;
-import se.kth.hi1031.lab1.ui.dto.user.UserDTO;;
+import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 
 
 public class WarehouseController extends HttpServlet {
@@ -19,7 +20,6 @@ public class WarehouseController extends HttpServlet {
         if (session != null) {
             user = (UserDTO) session.getAttribute("user");
         }
-        // TODO: check user permissions from the database later
         if (user != null) {
             String orderIdStr = req.getParameter("orderid");
             String status = req.getParameter("status");

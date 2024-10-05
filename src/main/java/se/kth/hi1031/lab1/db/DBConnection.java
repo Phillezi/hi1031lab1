@@ -1,7 +1,5 @@
 package se.kth.hi1031.lab1.db;
 
-import lombok.Getter;
-
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -34,7 +32,7 @@ public class DBConnection implements Connection {
      * Constructs a new {@code DBConnection} using the specified {@link DBConnectionManager}.
      *
      * <p>This constructor attempts to establish a connection to the database using credentials
-     * obtained from environment variables. If the environment variables are not set, it defaults 
+     * obtained from environment variables. If the environment variables are not set, it defaults
      * to a local PostgreSQL database.</p>
      *
      * @param parent The {@link DBConnectionManager} that manages this connection.
@@ -213,13 +211,13 @@ public class DBConnection implements Connection {
 
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
-            int resultSetHoldability) throws SQLException {
+                                              int resultSetHoldability) throws SQLException {
         return connection.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
     }
 
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
-            int resultSetHoldability) throws SQLException {
+                                         int resultSetHoldability) throws SQLException {
         return connection.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
     }
 
@@ -329,14 +327,14 @@ public class DBConnection implements Connection {
     }
 
     /**
-    * Closes the database connection and releases it back to the connection pool.
-    *
-    * <p>This method does not close the underlying database connection directly. Instead, it returns
-    * the connection to the {@link DBConnectionManager} for reuse. It should be used in place of
-    * directly closing the connection to ensure proper management of resources.</p>
-    *
-    * @throws SQLException If a database access error occurs or the connection is already closed.
-    */
+     * Closes the database connection and releases it back to the connection pool.
+     *
+     * <p>This method does not close the underlying database connection directly. Instead, it returns
+     * the connection to the {@link DBConnectionManager} for reuse. It should be used in place of
+     * directly closing the connection to ensure proper management of resources.</p>
+     *
+     * @throws SQLException If a database access error occurs or the connection is already closed.
+     */
     @Override
     public void close() throws SQLException {
         // Instead of closing the connection, release it back to the pool

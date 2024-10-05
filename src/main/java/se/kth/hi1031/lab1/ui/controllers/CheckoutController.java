@@ -12,7 +12,6 @@ import se.kth.hi1031.lab1.ui.dto.product.ProductDTO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

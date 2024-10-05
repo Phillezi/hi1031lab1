@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Data Transfer Object representing a user in the application.
  *
- * <p>The UserDTO class encapsulates the data associated with a user, including 
+ * <p>The UserDTO class encapsulates the data associated with a user, including
  * their identification, credentials, roles, and permissions within the application.</p>
  */
 @Getter

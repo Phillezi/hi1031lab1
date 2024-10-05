@@ -219,7 +219,7 @@ public class OrderDAO {
                     stmt.executeUpdate();
 
                     int quantity = ProductDAO.getProductQuantity(product.getId(), conn);
-                    int newQuantity = quantity -product.getQuantity();
+                    int newQuantity = quantity - product.getQuantity();
                     ProductDAO.updateProductQuantity(product, newQuantity, conn);
                 }
 
@@ -423,6 +423,6 @@ public class OrderDAO {
                 this.customer != null ? this.customer.toUser() : null,
                 this.products != null ? this.products.stream().map(ProductDAO::toProduct).toList() : null,
                 this.statuses != null ? this.statuses.stream().map(StatusDAO::toStatus).toList() : null
-                );
+        );
     }
 }
