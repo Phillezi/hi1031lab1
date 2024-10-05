@@ -8,7 +8,7 @@
     <a href="${pageContext.request.contextPath}/">
         <div class="logo">WebSHOP</div>
     </a>
-    <div class="search">
+    <div style="display: none;" class="search">
         <img class="icon" src="${pageContext.request.contextPath}/assets/magnifying-glass.svg" alt="search icon"/>
         <label>
             <input
