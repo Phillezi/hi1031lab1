@@ -11,6 +11,9 @@
         <div class="modal">
             <h1>401</h1>
             <p>Unauthorized.</p>
+            <form action="${pageContext.request.contextPath}/login.jsp" method="get">
+                <button type="submit">Login</button>
+            </form>
             <form action="${pageContext.request.contextPath}/" method="get">
                 <button type="submit">Take me back</button>
             </form>

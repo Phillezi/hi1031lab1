@@ -3,6 +3,7 @@ package se.kth.hi1031.lab1.db.dao.order;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import se.kth.hi1031.lab1.bo.model.order.Status;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.DBConnectionManager;
@@ -19,16 +20,24 @@ import java.sql.PreparedStatement;
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
 public class StatusDAO {
     private String status;
     private Timestamp timestamp;
 
     public static StatusDAO createStatus(int orderId, Status status) {
-        Connection conn = null;
+        return createStatus(orderId, status, null);
+    }
+
+    public static StatusDAO createStatus(int orderId, Status status, Connection conn) {
+        boolean isChild = false;
         PreparedStatement stmt = null;
-        ResultSet rs = null;
         try {
-            conn = DBConnectionManager.getInstance().getConnection();
+            if (conn == null) {
+                conn = DBConnectionManager.getInstance().getConnection();
+            } else {
+                isChild = true;
+            }
 
             String query = "INSERT INTO order_status (order_id, status, timestamp) VALUES (?, ?, ?)";
             stmt = conn.prepareStatement(query);
@@ -41,11 +50,15 @@ public class StatusDAO {
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {
- 
+                if (!isChild) {
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             try {
-                if (rs != null)
-                    rs.close();
                 if (stmt != null)
                     stmt.close();
             } catch (SQLException e) {

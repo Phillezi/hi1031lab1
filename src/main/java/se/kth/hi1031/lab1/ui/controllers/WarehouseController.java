@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+
+import se.kth.hi1031.lab1.bo.service.ServiceException;
 import se.kth.hi1031.lab1.bo.service.order.StatusService;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;;
 
@@ -27,7 +29,12 @@ public class WarehouseController extends HttpServlet {
                 orderId = Integer.valueOf(orderIdStr);
             }
             if (status != null && orderId != null) {
-                StatusService.setOrderStatus(orderId, status, user);
+                try {
+                    StatusService.setOrderStatus(orderId, status, user);
+                } catch (ServiceException e) {
+                    session.setAttribute("error", e.getMessage());
+                }
+                resp.sendRedirect("/warehouse/orders");
             }
         }
     }

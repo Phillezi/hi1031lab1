@@ -5,6 +5,7 @@
 <%@ page import="se.kth.hi1031.lab1.ui.dto.order.StatusDTO" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.user.UserDTO" %>
 <%@ page import="se.kth.hi1031.lab1.bo.service.order.OrderService" %>
+<%@ page import="java.util.Objects" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,20 +30,17 @@
         return;
       }
       List<OrderDTO> orders = null;
-      if (user != null) {
         orders = OrderService.getAllOrders(user);
-      } else {
-        orders = new ArrayList<>();
-      }
-      if (orders == null) {
+        if (orders == null) {
         out.print("no orders present");
       } else {
         for (OrderDTO order : orders) {
           String latestStatus = null;
           List<StatusDTO> statuses = order.getStatuses();
           if (statuses != null && !statuses.isEmpty()) {
-            latestStatus = statuses.get(statuses.size()-1).getStatus();
+            latestStatus = statuses.getLast().getStatus();
           }
+          if (latestStatus == null || latestStatus.isEmpty() || "received".equalsIgnoreCase(latestStatus)) {
     %>
     <div class="product">
       <h2><%= order.getId() %></h2>
@@ -50,20 +48,18 @@
       <h3><%= latestStatus != null ? latestStatus : "no status" %></h3>
       <h3><%= order.getCustomer().getName() %></h3>
 
-      <!-- "Pack Order" Button -->
       <a href="#packOrder<%= order.getId() %>">Pack Order</a>
     </div>
 
-    <!-- Pack Order Form for this product (initially hidden) -->
     <div id="packOrder<%= order.getId() %>">
       <h3>Pack Order - <%= order.getId() %></h3>
-      <form method="post" action="${pageContext.request.contextPath}/controller?action=warehouse&status=packed&orderid=<%= order.getId() %>">    <!--will need to update the action...-->
+      <form method="post" action="${pageContext.request.contextPath}/controller?action=warehouse&status=packed&orderid=<%= order.getId() %>">
         <input type="hidden" name="orderId" value="<%= order.getId() %>" />
-
         <button type="submit">Confirm Packing</button>
       </form>
     </div>
     <%
+          }
         }
       }
     %>

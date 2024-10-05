@@ -11,7 +11,7 @@ import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 
 import java.io.IOException;
 
-@WebFilter( urlPatterns = {"/admin/*", "/warehouse/*"})
+@WebFilter(urlPatterns = {"/components/*", "/admin/*", "/warehouse/*", "/customer/*"})
 public class AuthMiddleware implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -35,7 +35,6 @@ public class AuthMiddleware implements Filter {
             return;
         }
         String requestURI = httpRequest.getRequestURI();
-
         if (requestURI.startsWith("/admin")) {
             if (user.getRoles()
                     .stream()
@@ -43,8 +42,8 @@ public class AuthMiddleware implements Filter {
                             (RoleDTO r)
                                     ->
                                     "admin".equalsIgnoreCase(r.getName())
-                            )
-                    ) {
+                    )
+            ) {
                 httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 httpResponse.sendRedirect("/errors/403.jsp");
             }
@@ -66,11 +65,15 @@ public class AuthMiddleware implements Filter {
                 httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 httpResponse.sendRedirect("/errors/403.jsp");
             }
+        } else if (requestURI.startsWith("/components")) {
+            httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            httpResponse.sendRedirect("/errors/403.jsp");
         }
 
+        // user is counted as customer despite not having the customer role,
+        // they are implicitly customers
         chain.doFilter(request, response);
     }
-
 
 
     @Override

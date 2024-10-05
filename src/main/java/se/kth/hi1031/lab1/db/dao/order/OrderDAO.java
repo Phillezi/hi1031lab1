@@ -3,6 +3,7 @@ package se.kth.hi1031.lab1.db.dao.order;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import se.kth.hi1031.lab1.bo.model.order.Order;
 import se.kth.hi1031.lab1.bo.model.order.Status;
 import se.kth.hi1031.lab1.bo.model.product.Product;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
 public class OrderDAO {
     private Integer id;
     private Timestamp created;
@@ -83,6 +85,7 @@ public class OrderDAO {
                 }
             }
         }
+        orders.stream().map(OrderDAO::toString).forEach(System.out::println);
         return orders;
     }
 
@@ -151,8 +154,8 @@ public class OrderDAO {
                     "ARRAY_AGG(DISTINCT p.price) AS products_price, " +
                     "ARRAY_AGG(DISTINCT p.quantity) AS products_quantity, " +
                     "ARRAY_AGG(DISTINCT p.removed) AS products_removed, " +
-                    "ARRAY_AGG(DISTINCT os.status) AS statuses_status, " +
-                    "ARRAY_AGG(DISTINCT os.timestamp) AS statuses_timestamp, " +
+                    "ARRAY_AGG(os.status ORDER BY os.timestamp ASC) AS statuses_status, " +
+                    "ARRAY_AGG(os.timestamp ORDER BY os.timestamp ASC) AS statuses_timestamp, " +
                     "u.id AS user_id, u.email AS user_email, u.name AS user_name, u.hashed_pw AS user_hashed_pw " +
                     "FROM orders o " +
                     "LEFT JOIN ordered_products op ON o.id = op.order_id " +
@@ -218,13 +221,7 @@ public class OrderDAO {
                 }
 
                 for (Status status : order.getStatuses()) {
-                    String statusQuery = "INSERT INTO order_status (order_id, status, timestamp) VALUES (?, ?, ?)";
-                    stmt = conn.prepareStatement(statusQuery);
-                    stmt.setInt(1, id);
-                    stmt.setString(2, status.getStatus());
-                    stmt.setTimestamp(3, status.getTimestamp());
-
-                    stmt.executeUpdate();
+                    StatusDAO.createStatus(id, status, conn);
                 }
             }
 
