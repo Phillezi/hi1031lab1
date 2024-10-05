@@ -2,9 +2,9 @@ INSERT INTO
     user_t (email, name, hashed_pw)
 VALUES
     (
-        'email@example.com',
+        'admin@example.com',
         'John Smith',
-        '$2b$12$ygBfLb1JXcIBLsiMIR684u6d.THZr2dXikxhSBChiU.olZk1WsQUm'
+        '$2a$10$ItalLAnJwcFD5VtTC.S0I.du.nJDtcUmIKjqrVRVuXVn36XC4Pr7e' -- admin
     );
 
 INSERT INTO
