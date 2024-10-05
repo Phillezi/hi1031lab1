@@ -12,5 +12,5 @@ INSERT INTO
 VALUES
     (
         'admin',
-        (SELECT id FROM user_t WHERE email = 'email@example.com')
+        (SELECT id FROM user_t WHERE email = 'admin@example.com')
     );
