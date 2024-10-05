@@ -42,7 +42,7 @@
     <%
       }
     %>
-    <a href="${pageContext.request.contextPath}/cart.jsp">
+    <a href="${pageContext.request.contextPath}/customer/cart/index.jsp">
       <img class="icon" src="${pageContext.request.contextPath}/assets/shopping-cart.svg" alt="icon" />
     </a>
     <a href="${pageContext.request.contextPath}/logout.jsp">

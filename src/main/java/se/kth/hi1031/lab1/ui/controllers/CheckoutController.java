@@ -23,21 +23,21 @@ public class CheckoutController extends HttpServlet {
         HttpSession session = req.getSession();
         if (deliveryAddress == null || deliveryAddress.isEmpty()) {
             session.setAttribute("error", "No delivery address provided");
-            resp.sendRedirect("/checkout.jsp");
+            resp.sendRedirect("/customer/checkout");
             return;
         }
 
         Map<Integer, Integer> cart = (Map<Integer, Integer>) session.getAttribute("cart");
         if (cart == null) {
             session.setAttribute("error", "Cart is empty");
-            resp.sendRedirect("/checkout.jsp");
+            resp.sendRedirect("/customer/checkout");
             return;
         }
 
         UserDTO user = (UserDTO) session.getAttribute("user");
         if (user == null) {
             session.setAttribute("error", "Not logged in");
-            resp.sendRedirect("/checkout.jsp");
+            resp.sendRedirect("/customer/checkout");
             return;
         }
 
@@ -49,9 +49,9 @@ public class CheckoutController extends HttpServlet {
             OrderService.createOrder(user, user, deliveryAddress, products);
         } catch (PermissionException | ServiceException e) {
             session.setAttribute("error", e.getMessage());
-            resp.sendRedirect("/checkout.jsp");
+            resp.sendRedirect("/customer/checkout");
             return;
         }
-        resp.sendRedirect("/checkout-success");
+        resp.sendRedirect("/customer/checkout/done");
     }
 }

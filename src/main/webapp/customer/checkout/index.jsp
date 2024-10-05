@@ -38,7 +38,7 @@
 <div class="container">
     <div class="modal-overlay">
         <div class="modal">
-            <form method="post" action="/controller?action=checkout">
+            <form method="post" action="${pageContext.request.contextPath}/controller?action=checkout">
                 <h3>Delivery Address</h3>
                 <label>
                     <input type="text" name="deliveryAddress" value="<%= deliveryAddress %>" required/>
