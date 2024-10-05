@@ -60,8 +60,6 @@ public class CartController extends HttpServlet {
         Integer productId = Integer.valueOf(productIdStr);
         Integer quantity = Integer.valueOf(quantityStr);
 
-        System.out.println(productIdStr);
-
         HttpSession session = req.getSession(false);
         Map<Integer, Integer> cart = null;
         if (session == null || session.getAttribute("user") == null) {

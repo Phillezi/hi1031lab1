@@ -1,17 +1,18 @@
 # hi1031lab1
 
-## Innehållsförteckning
+Det här repot är skapat för labb 1 i kursen HI1031 och är byggt med hjälp av Java Enterprise (Jakarta) och trelagersarkitektur med MVC. Applikationen hanterar produkter, användare (med olika roller) och beställningar genom en tydligt separerad arkitektur där logik, dataåtkomst och användargränsnitt hålls åtskilda.
 
-## Översikt
+## Köra applikationen
 
-Repo för labb 1 i HI1031 med java enterprise.
+Om du har [`docker`](https://docker.com/) installerat kan du köra applikationen genom att klona repot och sedan använda docker compose för att köra igång tomcatservern och dbn.
 
-```mermaid
-graph
-    client(client) --> tomcat(tomcat) <--> db[(db)]
-    client -->|fetches static content| cdn(cdn)
-    tomcat -->|uploads images| cdn
+```bash
+git clone https://github.com/Phillezi/hi1031lab1.git && \
+cd hi1031lab1 && \
+docker compose up -d
 ```
+
+Webbshoppen nås då på [`localhost:8080`](http://localhost:8080).
 
 ## UML diagram
 
@@ -30,16 +31,6 @@ classDiagram
         - List~DBConnection~ connections
         + getConnection() DBConnection
         + releaseConnection(DBConnection) void
-    }
-
-    class Campaign {
-        - int id
-        - String name
-        - String description
-        + Campaign(int, String, String)
-        + getId() int
-        + getName() String
-        + getDescription() String
     }
 
     class Product {
