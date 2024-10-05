@@ -38,7 +38,7 @@
           for (CategoryDTO category : product.getCategories()) {
             if (category != null) {
         %>
-        <a href="${pageContext.request.contextPath}/admin/products/categories?category=<%= category.getName() %>" class="clickable-attribute" style="color: inherit;"><%= category.getName() %></a>
+        <p style="color: inherit;"><%= category.getName() %></p>
         <%
             }
           }

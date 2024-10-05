@@ -12,9 +12,7 @@
 <body>
 <%
     String roleName = request.getParameter("role");
-    System.out.println(roleName);
     RoleDTO role = RoleService.getRole(roleName);
-    System.out.println(role);
 %>
 <div class="container">
     <div class="modal-overlay">

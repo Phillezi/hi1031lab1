@@ -90,4 +90,16 @@ public class UserService {
         }
     }
 
+    public static UserDTO getUserById(int userId) {
+        try {
+            Optional<UserDAO> userOptional = UserDAO.getUserByid(userId);
+            if (userOptional.isPresent()) {
+                return userOptional.get().toUser().toDTO();
+            } else {
+                throw new ServiceException("No user found with id " + userId);
+            }
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
 }
