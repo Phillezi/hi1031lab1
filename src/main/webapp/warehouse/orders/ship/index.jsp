@@ -31,7 +31,7 @@
             }
             List<OrderDTO> orders = null;
             orders = OrderService.getOrdersWithStatus("packed");
-            if (orders == null) {
+            if (orders == null || orders.isEmpty()) {
                 out.print("no orders present");
             } else {
                 for (OrderDTO order : orders) {

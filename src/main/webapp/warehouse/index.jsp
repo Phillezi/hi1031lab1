@@ -10,8 +10,11 @@
     <h1>Warehouse Dashboard</h1>
 
     <div class="modal">
-      <form action="${pageContext.request.contextPath}/warehouse/orders" method="get">
-        <button type="submit" class="admin-button">Manage orders</button>
+      <form action="${pageContext.request.contextPath}/warehouse/orders/pack" method="get">
+        <button type="submit" class="admin-button">Pack orders</button>
+      </form>
+      <form action="${pageContext.request.contextPath}/warehouse/orders/ship" method="get">
+        <button type="submit" class="admin-button">Ship orders</button>
       </form>
     </div>
 
