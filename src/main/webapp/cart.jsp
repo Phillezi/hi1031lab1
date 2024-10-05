@@ -76,6 +76,9 @@
                     }
                 %>
             </table>
+            <form action="${pageContext.request.contextPath}/checkout.jsp" method="get">
+                <button type="submit">Go to checkout</button>
+            </form>
         </div>
     </div>
 </div>
