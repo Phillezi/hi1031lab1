@@ -72,7 +72,12 @@ public class OrderService {
                         .stream()
                         .toList()).stream()
                 .map((ProductDAO p) -> {
-                    p.setQuantity(idAndQuantity.get(p.getId()));
+                    int available = p.getQuantity();
+                    int amountOrdered = idAndQuantity.get(p.getId());
+                    if(amountOrdered > available) {
+                        throw new ServiceException("Order exceeds quantity of product: " + p.getName() + " available: " + available + " ordered: " + amountOrdered);
+                    }
+                    p.setQuantity(amountOrdered);
                     return p.toProduct();
                 })
                 .toList();
