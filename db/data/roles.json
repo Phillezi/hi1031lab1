@@ -1,7 +1,0 @@
-[
-  {
-    "name": "admin",
-    "description": "Administrator role",
-    "permissions": ["do-something"]
-  }
-]
