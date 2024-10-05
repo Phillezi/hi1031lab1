@@ -4,7 +4,7 @@
 <%@ page import="se.kth.hi1031.lab1.ui.dto.product.CategoryDTO" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.product.ProductDTO" %>
 
-<table class="product-table" border="1">
+<table>
   <thead>
   <tr>
     <th>ID</th>
@@ -16,6 +16,7 @@
     <th>Categories</th>
     <th>Images</th>
     <th>Properties</th>
+    <th>Actions</th>
   </tr>
   </thead>
   <tbody>
@@ -37,7 +38,7 @@
           for (CategoryDTO category : product.getCategories()) {
             if (category != null) {
         %>
-        <li><%= category.getName() %></li>
+        <a href="${pageContext.request.contextPath}/admin/products/categories?category=<%= category.getName() %>" class="clickable-attribute" style="color: inherit;"><%= category.getName() %></a>
         <%
             }
           }
@@ -70,13 +71,23 @@
         %>
       </ul>
     </td>
+    <td>
+      <form action="${pageContext.request.contextPath}/admin/products/edit.jsp" method="get" style="display:inline;">
+        <input type="hidden" name="productId" value="<%= product.getId() %>" />
+        <button class="edit-btn" type="submit">Edit</button>
+      </form>
+      <form action="${pageContext.request.contextPath}/admin/products/remove.jsp" method="post" style="display:inline;">
+        <input type="hidden" name="productId" value="<%= product.getId() %>" />
+        <button class="remove-btn" type="submit">Remove</button>
+      </form>
+    </td>
   </tr>
   <%
     }
   } else {
   %>
   <tr>
-    <td colspan="9">No products available.</td>
+    <td colspan="10">No products available.</td>
   </tr>
   <%
     }

@@ -49,4 +49,32 @@ public class RoleDAO {
         }
         return availableRoles;
     }
+
+    public static RoleDAO getRole(String name) {
+        List<PermissionDAO> permissions = new ArrayList<>();
+        Connection conn = null;
+        try {
+            conn = DBConnectionManager.getInstance().getConnection();
+            String query = "SELECT permission FROM permissions_t WHERE role = ?";
+
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                permissions.add(new PermissionDAO(rs.getString("permission")));
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return new RoleDAO(name, permissions);
+    }
 }

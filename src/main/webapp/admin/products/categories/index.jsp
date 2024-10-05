@@ -4,17 +4,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Administer products</title>
+    <title>Administer product categories</title>
 </head>
 <jsp:include page="/components/header.jsp" />
 <body>
 <%
-  List<ProductDTO> productList = ProductService.getProducts();
-  request.setAttribute("products", productList);
+    List<ProductDTO> productList = CategoryService.getCategories();
+    request.setAttribute("categories", categories);
 %>
 <div class="container">
     <div class="table-container">
-<jsp:include page="/components/tables/product.jsp" />
+        <jsp:include page="/components/tables/product.jsp" />
     </div>
 </div>
 </body>
