@@ -12,6 +12,7 @@ import se.kth.hi1031.lab1.bo.service.ServiceException;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.dao.order.OrderDAO;
 import se.kth.hi1031.lab1.ui.dto.order.OrderDTO;
+import se.kth.hi1031.lab1.ui.dto.order.StatusDTO;
 import se.kth.hi1031.lab1.ui.dto.product.PropertyDTO;
 import se.kth.hi1031.lab1.ui.dto.product.ProductDTO;
 import se.kth.hi1031.lab1.ui.dto.product.CategoryDTO;
@@ -61,7 +62,6 @@ public class OrderService {
         } else {
             throw new PermissionException("User " + user + " does not have permission update_orders but tried to create order on customer that is not self.");
         }
-
 
         Order newOrder = new Order(null,
                 new Timestamp(System.currentTimeMillis()),
@@ -125,12 +125,23 @@ public class OrderService {
      * @param id The ID of the order to retrieve.
      * @return An {@link Optional<OrderDTO>} containing the order if found, or empty if not found.
      */
-    public Optional<OrderDTO> getOrderById(int id) {
+    // todo auth
+    public static Optional<OrderDTO> getOrderById(int id) {
         Optional<OrderDAO> order = OrderDAO.getOrderById(id);
         if (order.isPresent()) {
             return Optional.of(order.get().toOrder().toDTO());
         }
         return Optional.empty();
+    }
+
+    // todo auth
+    public static List<OrderDTO> getOrdersWithStatus(String... statuses) {
+        try {
+            List<OrderDAO> orders = OrderDAO.getOrdersByStatus(statuses);
+            return orders.stream().map(OrderDAO::toOrder).map(Order::toDTO).toList();
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
 }

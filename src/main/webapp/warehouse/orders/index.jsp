@@ -30,7 +30,7 @@
         return;
       }
       List<OrderDTO> orders = null;
-        orders = OrderService.getAllOrders(user);
+        orders = OrderService.getOrdersWithStatus("received", null, "");
         if (orders == null) {
         out.print("no orders present");
       } else {
@@ -40,7 +40,6 @@
           if (statuses != null && !statuses.isEmpty()) {
             latestStatus = statuses.getLast().getStatus();
           }
-          if (latestStatus == null || latestStatus.isEmpty() || "received".equalsIgnoreCase(latestStatus)) {
     %>
     <div class="product">
       <h2><%= order.getId() %></h2>
@@ -60,7 +59,6 @@
     </div>
     <%
           }
-        }
       }
     %>
   </div>

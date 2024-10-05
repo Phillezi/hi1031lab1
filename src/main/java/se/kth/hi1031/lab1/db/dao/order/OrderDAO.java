@@ -15,6 +15,7 @@ import se.kth.hi1031.lab1.db.dao.user.UserDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -314,6 +315,87 @@ public class OrderDAO {
         }
         return order.toDAO();
     }
+
+    public static List<OrderDAO> getOrdersByStatus(String... statuses) throws DAOException {
+        return OrderDAO.getOrdersByStatus(null, statuses);
+    }
+
+    public static List<OrderDAO> getOrdersByStatus(Connection conn, String... statuses) throws DAOException {
+        boolean isChild = false;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        List<OrderDAO> orders = new ArrayList<>();
+
+        try {
+            if (conn == null) {
+                conn = DBConnectionManager.getInstance().getConnection();
+            } else {
+                isChild = true;
+            }
+
+            String query = "SELECT " +
+                    "o.id AS order_id, " +
+                    "o.created_at AS order_created_at, " +
+                    "o.delivered_at AS order_delivered_at, " +
+                    "o.delivery_address AS order_delivery_address, " +
+                    "ARRAY_AGG(DISTINCT p.id) AS products_id, " +
+                    "ARRAY_AGG(DISTINCT p.name) AS products_name, " +
+                    "ARRAY_AGG(DISTINCT p.description) AS products_description, " +
+                    "ARRAY_AGG(DISTINCT p.price) AS products_price, " +
+                    "ARRAY_AGG(DISTINCT p.quantity) AS products_quantity, " +
+                    "ARRAY_AGG(DISTINCT p.removed) AS products_removed, " +
+                    "ARRAY_AGG(os.status ORDER BY os.timestamp ASC) AS statuses_status, " +
+                    "ARRAY_AGG(os.timestamp ORDER BY os.timestamp ASC) AS statuses_timestamp, " +
+                    "u.id AS user_id, u.email AS user_email, u.name AS user_name, u.hashed_pw AS user_hashed_pw " +
+                    "FROM orders o " +
+                    "LEFT JOIN ordered_products op ON o.id = op.order_id " +
+                    "LEFT JOIN products p ON op.product_id = p.id " +
+                    "LEFT JOIN order_status os ON o.id = os.order_id " +
+                    "LEFT JOIN user_t u ON o.customer_id = u.id " +
+                    "INNER JOIN ( " +
+                    "SELECT os_inner.order_id, MAX(os_inner.timestamp) AS latest_timestamp " +
+                    "FROM order_status os_inner " +
+                    "GROUP BY os_inner.order_id " +
+                    ") latest_status ON os.order_id = latest_status.order_id " +
+                    "AND os.timestamp = latest_status.latest_timestamp " +
+                    "WHERE os.status IN (" +
+                    String.join(",", Collections.nCopies(statuses.length, "?")) +
+                    ") GROUP BY o.id, u.id";
+            stmt = conn.prepareStatement(query);
+
+            for (int i = 0; i < statuses.length; i++) {
+                stmt.setString(i + 1, statuses[i]);
+            }
+
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                orders.add(toDAO(rs));
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null && !isChild) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return orders;
+    }
+
 
     public static OrderDAO toDAO(ResultSet rs) throws SQLException {
         UserDAO customer = UserDAO.toDAO(rs);
