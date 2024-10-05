@@ -1,7 +1,6 @@
 <%@ page import="se.kth.hi1031.lab1.ui.dto.user.UserDTO" %>
 <%@ page import="se.kth.hi1031.lab1.bo.service.user.UserService" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.user.RoleDTO" %>
-<%@ page import="se.kth.hi1031.lab1.ui.dto.user.PermissionDTO" %>
 <%@ page import="java.util.List" %>
 <%@ page import="se.kth.hi1031.lab1.bo.service.user.RoleService" %>
 <%@ page import="java.util.Map" %>
@@ -12,6 +11,7 @@
     <title>Edit User</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css"/>
 </head>
+<jsp:include page="/components/header.jsp" />
 <body>
 <%
     String userIdStr = request.getParameter("userId");
@@ -35,7 +35,7 @@
             <h2>Edit User: <%= user.getName() %>
             </h2>
 
-            <form action="${pageContext.request.contextPath}/controller?action=todo" method="post">
+            <form action="${pageContext.request.contextPath}/controller?action=users&operation=update" method="post">
                 <input type="hidden" name="userId" value="<%= user.getId() %>"/>
 
                 <label for="name">Name:</label>

@@ -102,4 +102,12 @@ public class UserService {
             throw new ServiceException(e.getMessage());
         }
     }
+
+    public static void updateUser(UserDTO userToUpdate) {
+        try {
+            UserDAO.updateUser(new User(userToUpdate));
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
 }

@@ -121,6 +121,10 @@ public class ControllerServlet extends HttpServlet {
                 LoginController.post(req, resp);
                 break;
             }
+            case "users": {
+                UserController.post(req, resp);
+                break;
+            }
             case "logout": {
                 if (isLoggedIn) {
                     session.invalidate();

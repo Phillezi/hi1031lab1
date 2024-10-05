@@ -235,6 +235,66 @@ public class UserDAO {
         return created;
     }
 
+    public static void updateUser(User user) throws DAOException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = DBConnectionManager.getInstance().getConnection();
+            conn.setAutoCommit(false);
+
+            String query = "UPDATE user_t SET name = ?, email = ?, hashed_pw = ? WHERE id = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, user.getName());
+            stmt.setString(2, user.getEmail());
+            stmt.setString(3, user.getPassword());
+            stmt.setInt(4, user.getId());
+
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                String deleteRolesQuery = "DELETE FROM roles WHERE user_id = ?";
+                stmt = conn.prepareStatement(deleteRolesQuery);
+                stmt.setInt(1, user.getId());
+                stmt.executeUpdate();
+
+                String roleQuery = "INSERT INTO roles (role, user_id) VALUES (?, ?)";
+                for (Role role : user.getRoles()) {
+                    stmt = conn.prepareStatement(roleQuery);
+                    stmt.setString(1, role.getName());
+                    stmt.setInt(2, user.getId());
+                    stmt.executeUpdate();
+                }
+
+                conn.commit();
+            } else {
+                conn.rollback();
+            }
+        } catch (SQLException e) {
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                throw new DAOException(ex.getMessage());
+            }
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
     public static UserDAO toDAO(ResultSet rs) throws SQLException {
         List<PermissionDAO> permissions = null;
         try {
