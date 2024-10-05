@@ -211,6 +211,10 @@ public class OrderDAO {
                     stmt.setInt(2, product.getId());
 
                     stmt.executeUpdate();
+
+                    int quantity = ProductDAO.getProductQuantity(product.getId(), conn);
+                    int newQuantity = quantity -product.getQuantity();
+                    ProductDAO.updateProductQuantity(product, newQuantity, conn);
                 }
 
                 for (Status status : order.getStatuses()) {
@@ -225,7 +229,14 @@ public class OrderDAO {
             }
 
             conn.commit();
-        } catch (SQLException e) {
+        } catch (DAOException | SQLException e) {
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                throw new DAOException(ex.getMessage());
+            }
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {

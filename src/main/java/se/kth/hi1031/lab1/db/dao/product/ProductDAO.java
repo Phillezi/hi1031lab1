@@ -198,6 +198,87 @@ public class ProductDAO {
         return product.toDAO();
     }
 
+    // Wrap to make it
+    public static boolean updateProductQuantity(Product product, int quantity) {
+        return ProductDAO.updateProductQuantity(product, quantity, null);
+    }
+
+    // Can be part of a bigger transaction if the parents connection is set
+    public static boolean updateProductQuantity(Product product, int quantity, Connection conn) throws DAOException {
+        boolean isChild = false;
+        PreparedStatement stmt = null;
+        try {
+            if (conn == null) {
+                conn = DBConnectionManager.getInstance().getConnection();
+            } else {
+                isChild = true;
+            }
+            String query = "UPDATE products SET quantity = ? WHERE id = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, quantity);
+            stmt.setInt(2, product.getId());
+            stmt.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    if (!isChild) {
+                        conn.close();
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static int getProductQuantity(int productId) throws DAOException {
+        return getProductQuantity(productId, null);
+    }
+
+    public static int getProductQuantity(int productId, Connection conn) throws DAOException {
+        boolean isChild = false;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            if (conn == null) {
+                conn = DBConnectionManager.getInstance().getConnection();
+            } else {
+                isChild = true;
+            }
+            String query = "SELECT quantity FROM products WHERE id = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, productId);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("quantity");
+            }
+            throw new DAOException("no product found");
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    if (!isChild) {
+                        conn.close();
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
     public static List<ProductDAO> getProductsByIds(List<Integer> ids) throws DAOException {
         List<ProductDAO> products = new ArrayList<>();
         Connection conn = null;
