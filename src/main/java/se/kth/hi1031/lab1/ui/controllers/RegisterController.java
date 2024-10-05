@@ -69,6 +69,7 @@ public class RegisterController extends HttpServlet {
 
         HttpSession session = req.getSession();
         try {
+            // Todo: this doesnt contain all permissions of the user causing bugs, make sure it does
             UserDTO user = UserService.createUser(new UserDTO(null, name, email, password, roles, new ArrayList<>()));
             if (user != null) {
                 session.setAttribute("user", user);

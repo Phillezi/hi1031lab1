@@ -33,7 +33,8 @@
     </a>
     <%
       }
-      if (user.getPermissions().stream().anyMatch((PermissionDTO p) -> "update_orders".equals(p.getName()))) {
+      if (user.getRoles().stream().anyMatch((RoleDTO r) -> "warehouse".equals(r.getName())) ||
+              user.getPermissions().stream().anyMatch((PermissionDTO r) -> "view_orders".equals(r.getName()))) {
     %>
     <a href="${pageContext.request.contextPath}/warehouse/index.jsp">
       <img class="icon" src="${pageContext.request.contextPath}/assets/warehouse.svg" alt="icon" />
