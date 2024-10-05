@@ -242,12 +242,36 @@ public class UserDAO {
             conn = DBConnectionManager.getInstance().getConnection();
             conn.setAutoCommit(false);
 
-            String query = "UPDATE user_t SET name = ?, email = ?, hashed_pw = ? WHERE id = ?";
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, user.getName());
-            stmt.setString(2, user.getEmail());
-            stmt.setString(3, user.getPassword());
-            stmt.setInt(4, user.getId());
+            StringBuilder queryBuilder = new StringBuilder("UPDATE user_t SET ");
+            List<String> setClauses = new ArrayList<>();
+            List<Object> parameters = new ArrayList<>();
+
+            if (user.getName() != null && !user.getName().isEmpty()) {
+                setClauses.add("name = ?");
+                parameters.add(user.getName());
+            }
+            if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+                setClauses.add("email = ?");
+                parameters.add(user.getEmail());
+            }
+            if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+                setClauses.add("hashed_pw = ?");
+                parameters.add(user.getPassword());
+            }
+
+            if (setClauses.isEmpty()) {
+                throw new DAOException("No fields to update.");
+            }
+
+            queryBuilder.append(String.join(", ", setClauses));
+            queryBuilder.append(" WHERE id = ?");
+            parameters.add(user.getId());
+
+            stmt = conn.prepareStatement(queryBuilder.toString());
+
+            for (int i = 0; i < parameters.size(); i++) {
+                stmt.setObject(i + 1, parameters.get(i));
+            }
 
             int rowsUpdated = stmt.executeUpdate();
 

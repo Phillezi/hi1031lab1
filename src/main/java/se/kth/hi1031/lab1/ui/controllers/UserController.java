@@ -84,8 +84,6 @@ public class UserController extends HttpServlet {
             return;
         }
 
-        resp.sendRedirect(req.getHeader("Referer"));
-
-
+        resp.sendRedirect("/admin/users/");
     }
 }

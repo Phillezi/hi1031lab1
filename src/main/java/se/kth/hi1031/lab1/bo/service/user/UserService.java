@@ -105,7 +105,11 @@ public class UserService {
 
     public static void updateUser(UserDTO userToUpdate) {
         try {
-            UserDAO.updateUser(new User(userToUpdate));
+            User user = new User(userToUpdate);
+            if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+                user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+            }
+            UserDAO.updateUser(user);
         } catch (DAOException e) {
             throw new ServiceException(e.getMessage());
         }
