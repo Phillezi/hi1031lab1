@@ -16,6 +16,9 @@
 <div class="container">
     <div class="table-container">
         <jsp:include page="/components/tables/product.jsp"/>
+        <form action="${pageContext.request.contextPath}/admin/products/add.jsp" method="get">
+            <button class="add-btn" type="submit">Add product</button>
+        </form>
     </div>
 </div>
 </body>

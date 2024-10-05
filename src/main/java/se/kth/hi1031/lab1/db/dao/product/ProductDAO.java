@@ -143,7 +143,7 @@ public class ProductDAO {
                     String categoriesQuery = "INSERT INTO product_categories (product_id, category) VALUES (?, ?)";
                     stmt = conn.prepareStatement(categoriesQuery);
                     stmt.setInt(1, id);
-                    stmt.setInt(2, product.getId());
+                    stmt.setString(2, category.getName());
 
                     stmt.executeUpdate();
                 }
@@ -159,6 +159,9 @@ public class ProductDAO {
                 }
 
                 for (String imageURL : product.getImages()) {
+                    if (imageURL.isEmpty()) {
+                        continue;
+                    }
                     String imageQuery = "INSERT INTO product_images (product_id, image_url) VALUES (?, ? )";
                     stmt = conn.prepareStatement(imageQuery);
                     stmt.setInt(1, id);

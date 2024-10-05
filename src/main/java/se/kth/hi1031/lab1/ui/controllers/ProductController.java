@@ -99,7 +99,36 @@ public class ProductController extends HttpServlet {
     }
 
     private static void addProduct(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = req.getSession(false);
 
+        String name = req.getParameter("name");
+        String description = req.getParameter("description");
+        String priceStr = req.getParameter("price");
+        String quantityStr = req.getParameter("quantity");
+        String isRemovedStr = req.getParameter("removed");
+
+        Double price = Double.valueOf(priceStr);
+        Integer quantity = Integer.valueOf(quantityStr);
+        Boolean isRemoved = Boolean.valueOf(isRemovedStr);
+
+        String[] selectedCategories = req.getParameterValues("categories");
+        List<String> categories = (selectedCategories != null) ? Arrays.asList(selectedCategories) : new ArrayList<>();
+        List<CategoryDTO> productCategories = categories.stream().map((String category) -> new CategoryDTO(category, null)).toList();
+
+        String[] selectedImages = req.getParameterValues("images");
+        List<String> images = (selectedImages != null) ? Arrays.asList(selectedImages) : new ArrayList<>();
+
+        ProductDTO product = new ProductDTO(null, name, description, price, quantity, isRemoved, productCategories, images, new ArrayList<>());
+
+        productCategories.forEach(System.out::println);
+
+        try {
+            ProductService.createProduct(product);
+        } catch (PermissionException | ServiceException e) {
+            session.setAttribute("error", e.getMessage());
+            resp.sendRedirect(req.getHeader("Referer"));
+            return;
+        }
 
         resp.sendRedirect("/admin/products/");
     }
