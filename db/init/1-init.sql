@@ -113,6 +113,7 @@ CREATE TABLE
     ordered_products (
         product_id INT,
         order_id INT,
+        product_price DECIMAL(10, 2),
         FOREIGN KEY (product_id) REFERENCES products (id),
         FOREIGN KEY (order_id) REFERENCES orders (id),
         PRIMARY KEY (product_id, order_id)

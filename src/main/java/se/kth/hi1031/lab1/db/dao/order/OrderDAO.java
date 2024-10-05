@@ -13,6 +13,7 @@ import se.kth.hi1031.lab1.db.DBConnectionManager;
 import se.kth.hi1031.lab1.db.dao.product.ProductDAO;
 import se.kth.hi1031.lab1.db.dao.user.UserDAO;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,7 +56,7 @@ public class OrderDAO {
                     "ARRAY_AGG(DISTINCT p.id) AS products_id, " +
                     "ARRAY_AGG(DISTINCT p.name) AS products_name, " +
                     "ARRAY_AGG(DISTINCT p.description) AS products_description, " +
-                    "ARRAY_AGG(DISTINCT p.price) AS products_price, " +
+                    "ARRAY_AGG(DISTINCT op.product_price) AS products_price, " +
                     "ARRAY_AGG(DISTINCT p.quantity) AS products_quantity, " +
                     "ARRAY_AGG(DISTINCT p.removed) AS products_removed, " +
                     "ARRAY_AGG(DISTINCT os.status) AS statuses_status, " +
@@ -103,7 +104,7 @@ public class OrderDAO {
                     "ARRAY_AGG(DISTINCT p.id) AS products_id, " +
                     "ARRAY_AGG(DISTINCT p.name) AS products_name, " +
                     "ARRAY_AGG(DISTINCT p.description) AS products_description, " +
-                    "ARRAY_AGG(DISTINCT p.price) AS products_price, " +
+                    "ARRAY_AGG(DISTINCT op.product_price) AS products_price, " +
                     "ARRAY_AGG(DISTINCT p.quantity) AS products_quantity, " +
                     "ARRAY_AGG(DISTINCT p.removed) AS products_removed, " +
                     "ARRAY_AGG(DISTINCT os.status) AS statuses_status, " +
@@ -152,7 +153,7 @@ public class OrderDAO {
                     "ARRAY_AGG(DISTINCT p.id) AS products_id, " +
                     "ARRAY_AGG(DISTINCT p.name) AS products_name, " +
                     "ARRAY_AGG(DISTINCT p.description) AS products_description, " +
-                    "ARRAY_AGG(DISTINCT p.price) AS products_price, " +
+                    "ARRAY_AGG(DISTINCT op.product_price) AS products_price, " +
                     "ARRAY_AGG(DISTINCT p.quantity) AS products_quantity, " +
                     "ARRAY_AGG(DISTINCT p.removed) AS products_removed, " +
                     "ARRAY_AGG(os.status ORDER BY os.timestamp ASC) AS statuses_status, " +
@@ -209,10 +210,11 @@ public class OrderDAO {
                 order.setId(id);
 
                 for (Product product : order.getProducts()) {
-                    String productsQuery = "INSERT INTO ordered_products (order_id, product_id) VALUES (?, ?)";
+                    String productsQuery = "INSERT INTO ordered_products (order_id, product_id, product_price) VALUES (?, ?, ?)";
                     stmt = conn.prepareStatement(productsQuery);
                     stmt.setInt(1, id);
                     stmt.setInt(2, product.getId());
+                    stmt.setBigDecimal(3, BigDecimal.valueOf(product.getPrice()));
 
                     stmt.executeUpdate();
 
@@ -341,7 +343,7 @@ public class OrderDAO {
                     "ARRAY_AGG(DISTINCT p.id) AS products_id, " +
                     "ARRAY_AGG(DISTINCT p.name) AS products_name, " +
                     "ARRAY_AGG(DISTINCT p.description) AS products_description, " +
-                    "ARRAY_AGG(DISTINCT p.price) AS products_price, " +
+                    "ARRAY_AGG(DISTINCT op.product_price) AS products_price, " +
                     "ARRAY_AGG(DISTINCT p.quantity) AS products_quantity, " +
                     "ARRAY_AGG(DISTINCT p.removed) AS products_removed, " +
                     "ARRAY_AGG(os.status ORDER BY os.timestamp ASC) AS statuses_status, " +

@@ -11,6 +11,7 @@ import se.kth.hi1031.lab1.bo.service.PermissionException;
 import se.kth.hi1031.lab1.bo.service.ServiceException;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.dao.order.OrderDAO;
+import se.kth.hi1031.lab1.db.dao.product.ProductDAO;
 import se.kth.hi1031.lab1.ui.dto.order.OrderDTO;
 import se.kth.hi1031.lab1.ui.dto.order.StatusDTO;
 import se.kth.hi1031.lab1.ui.dto.product.PropertyDTO;
@@ -22,9 +23,7 @@ import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
 import se.kth.hi1031.lab1.ui.dto.user.PermissionDTO;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service class for managing orders within the application.
@@ -63,14 +62,27 @@ public class OrderService {
             throw new PermissionException("User " + user + " does not have permission update_orders but tried to create order on customer that is not self.");
         }
 
+        Map<Integer, Integer> idAndQuantity = new HashMap<>();
+        for (ProductDTO product : products) {
+            idAndQuantity.put(product.getId(), product.getQuantity());
+        }
+
+        List<Product> products_ = ProductDAO.getProductsByIds(idAndQuantity
+                        .keySet()
+                        .stream()
+                        .toList()).stream()
+                .map((ProductDAO p) -> {
+                    p.setQuantity(idAndQuantity.get(p.getId()));
+                    return p.toProduct();
+                })
+                .toList();
+
         Order newOrder = new Order(null,
                 new Timestamp(System.currentTimeMillis()),
                 null,
                 deliveryAddress,
                 new User(customer),
-                products.stream()
-                        .map(Product::new)
-                        .toList(),
+                products_,
                 List.of(new Status("received", new Timestamp(System.currentTimeMillis())))
         );
         try {
