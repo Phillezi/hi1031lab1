@@ -82,7 +82,8 @@ public class ProductDAO {
                     "LEFT JOIN product_categories pc ON p.id = pc.product_id " +
                     "LEFT JOIN product_images pi ON p.id = pi.product_id " +
                     "LEFT JOIN product_properties pp ON p.id = pp.product_id " +
-                    "WHERE p.id = ?";
+                    "WHERE p.id = ? " +
+                    "GROUP BY p.id";
 
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, id);
@@ -334,9 +335,133 @@ public class ProductDAO {
         return products;
     }
 
-    public static boolean updateProduct(Product product) throws DAOException {
-        return false;
+    public static void updateProduct(Product product) throws DAOException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnectionManager.getInstance().getConnection();
+            conn.setAutoCommit(false);
+
+            StringBuilder queryBuilder = new StringBuilder("UPDATE products SET ");
+            List<String> setClauses = new ArrayList<>();
+            List<Object> parameters = new ArrayList<>();
+
+            if (product.getName() != null && !product.getName().isEmpty()) {
+                setClauses.add("name = ?");
+                parameters.add(product.getName());
+            }
+
+            setClauses.add("description = ?");
+            parameters.add(product.getDescription());
+
+            if (product.getPrice() != -1) {
+                setClauses.add("price = ?");
+                parameters.add(BigDecimal.valueOf(product.getPrice()));
+            }
+            if (product.getQuantity() != -1) {
+                setClauses.add("quantity = ?");
+                parameters.add(product.getQuantity());
+            }
+
+            if (setClauses.isEmpty()) {
+                throw new DAOException("No fields to update.");
+            }
+
+            queryBuilder.append(String.join(", ", setClauses));
+            queryBuilder.append(" WHERE id = ?");
+            parameters.add(product.getId());
+
+            stmt = conn.prepareStatement(queryBuilder.toString());
+            for (int i = 0; i < parameters.size(); i++) {
+                stmt.setObject(i + 1, parameters.get(i));
+            }
+
+            stmt.executeUpdate();
+
+            String deleteCategoriesQuery = "DELETE FROM product_categories WHERE product_id = ?";
+            stmt = conn.prepareStatement(deleteCategoriesQuery);
+            stmt.setInt(1, product.getId());
+            stmt.executeUpdate();
+
+            String deletePropertiesQuery = "DELETE FROM product_properties WHERE product_id = ?";
+            stmt = conn.prepareStatement(deletePropertiesQuery);
+            stmt.setInt(1, product.getId());
+            stmt.executeUpdate();
+
+            String deleteImagesQuery = "DELETE FROM product_images WHERE product_id = ?";
+            stmt = conn.prepareStatement(deleteImagesQuery);
+            stmt.setInt(1, product.getId());
+            stmt.executeUpdate();
+
+            for (Category category : product.getCategories()) {
+                String availableCategoriesQuery = "SELECT name FROM available_categories WHERE name = ?";
+                stmt = conn.prepareStatement(availableCategoriesQuery);
+                stmt.setString(1, category.getName());
+                rs = stmt.executeQuery();
+                if (!rs.next()) {
+                    String insertCategoryQuery = "INSERT INTO available_categories (name, description) VALUES (?, ?)";
+                    stmt = conn.prepareStatement(insertCategoryQuery);
+                    stmt.setString(1, category.getName());
+                    stmt.setString(2, category.getDescription());
+                    stmt.executeUpdate();
+                }
+
+                String categoriesQuery = "INSERT INTO product_categories (product_id, category) VALUES (?, ?)";
+                stmt = conn.prepareStatement(categoriesQuery);
+                stmt.setInt(1, product.getId());
+                stmt.setString(2, category.getName());
+                stmt.executeUpdate();
+            }
+
+            for (Property property : product.getProperties()) {
+                String propertyQuery = "INSERT INTO product_properties (product_id, key, value) VALUES (?, ?, ?)";
+                stmt = conn.prepareStatement(propertyQuery);
+                stmt.setInt(1, product.getId());
+                stmt.setString(2, property.getKey());
+                stmt.setString(3, property.getValue());
+                stmt.executeUpdate();
+            }
+
+            for (String imageURL : product.getImages()) {
+                if (imageURL.isEmpty()) {
+                    continue;
+                }
+                String imageQuery = "INSERT INTO product_images (product_id, image_url) VALUES (?, ?)";
+                stmt = conn.prepareStatement(imageQuery);
+                stmt.setInt(1, product.getId());
+                stmt.setString(2, imageURL);
+                stmt.executeUpdate();
+            }
+
+            conn.commit();
+
+        } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
 
     public static ProductDAO toDAO(ResultSet rs) throws SQLException {
         Array categoriesArray = rs.getArray("categories");

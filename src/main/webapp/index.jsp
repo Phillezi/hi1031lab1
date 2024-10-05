@@ -1,13 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.sql.SQLException" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.product.ProductDTO" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.product.CategoryDTO" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.product.PropertyDTO" %>
 <%@ page import="se.kth.hi1031.lab1.bo.service.product.ProductService" %>
-<%@ page import="se.kth.hi1031.lab1.ui.dto.user.UserDTO" %>
-<%@ page import="se.kth.hi1031.lab1.ui.dto.user.RoleDTO" %>
-<%@ page import="se.kth.hi1031.lab1.ui.dto.user.PermissionDTO" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -93,7 +89,7 @@
                     <label for="quantity"></label>
                     <input type="number" name="quantity" id="quantity" value="1" min="1"
                                                          max="<%= Math.max(product.getQuantity(), 0) %>"/>
-                    <button type="submit" <%= product.getQuantity() <= 0 ? "disabled" : "" %> >Add to Cart</button>
+                    <button type="submit" <%= product.getQuantity() <= 0 ? "disabled" : "" %> ><%= product.getQuantity() <= 0 ? "Out of stock" : "Add to cart" %></button>
                 </form>
             </div>
             <%

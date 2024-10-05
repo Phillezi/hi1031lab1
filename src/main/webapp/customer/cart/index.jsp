@@ -4,16 +4,13 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.product.ProductDTO" %>
 <%@ page import="se.kth.hi1031.lab1.bo.service.product.ProductService" %>
-<%@ page import="se.kth.hi1031.lab1.ui.dto.user.UserDTO" %>
-<%@ page import="se.kth.hi1031.lab1.ui.dto.user.RoleDTO" %>
-<%@ page import="se.kth.hi1031.lab1.ui.dto.user.PermissionDTO" %>
 
 <html>
 <head>
     <title>Shopping Cart</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css"/>
 </head>
-<jsp:include page="/components/header.jsp" />
+<jsp:include page="/components/header.jsp"/>
 <body>
 <%
 
@@ -61,8 +58,7 @@
                 <tr>
                     <td></td>
                     <td></td>
-                    <td><%= totalprice %>
-                    </td>
+                    <td><%= totalprice %> kr</td>
                 </tr>
                 <%
                         }
@@ -76,9 +72,15 @@
                     }
                 %>
             </table>
+            <%
+                if (cart != null && products != null && !products.isEmpty()) {
+            %>
             <form action="${pageContext.request.contextPath}/customer/checkout" method="get">
                 <button type="submit">Go to checkout</button>
             </form>
+            <%
+                }
+            %>
         </div>
     </div>
 </div>

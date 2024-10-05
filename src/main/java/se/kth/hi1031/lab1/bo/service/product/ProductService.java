@@ -1,10 +1,16 @@
 package se.kth.hi1031.lab1.bo.service.product;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.mindrot.jbcrypt.BCrypt;
 import se.kth.hi1031.lab1.bo.model.product.Product;
+import se.kth.hi1031.lab1.bo.model.user.User;
+import se.kth.hi1031.lab1.bo.service.ServiceException;
+import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.dao.product.CategoryDAO;
 import se.kth.hi1031.lab1.db.dao.product.ProductDAO;
+import se.kth.hi1031.lab1.db.dao.user.UserDAO;
 import se.kth.hi1031.lab1.ui.dto.product.ProductDTO;
 
 /**
@@ -42,6 +48,28 @@ public class ProductService {
     public static List<ProductDTO> getProducts(List<Integer> ids) {
         List<ProductDAO> products = ProductDAO.getProductsByIds(ids);
         return products.stream().map(ProductDAO::toProduct).map(Product::toDTO).toList();
+    }
+
+    public static ProductDTO getProductById(int id) {
+        try {
+            Optional<ProductDAO> productOptional = ProductDAO.getProductById(id);
+            if (productOptional.isPresent()) {
+                return productOptional.get().toProduct().toDTO();
+            } else {
+                throw new ServiceException("No product found with id " + id);
+            }
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    public static void updateProduct(ProductDTO productToUpdate) {
+        try {
+            Product product = new Product(productToUpdate);
+            ProductDAO.updateProduct(product);
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     public static ProductDTO createProduct(ProductDTO product) {
