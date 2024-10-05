@@ -68,7 +68,7 @@ classDiagram
 
 ```
 
-## ER diagram
+## DB
 
 ```mermaid
 erDiagram
@@ -129,48 +129,42 @@ erDiagram
         varchar category FK, PK
     }
 
+    available_status {
+        varchar name PK
+    }
+
     orders {
         int id PK
-        timestamp timestamp
-        int product_id FK
+        timestamp created_at
+        timestamp delivered_at
+        varchar delivery_address
         int customer_id FK
+    }
+
+    order_status {
+        int order_id FK, PK
+        varchar status FK
+        timestamp timestamp PK
     }
 
     ordered_products {
         int product_id FK, PK
         int order_id FK, PK
+        decimal product_price
     }
 
-    campaigns {
-        int id PK
-        varchar name
-        varchar description
-        timestamp start_time
-        timestamp end_time
-        int discount_percent
-    }
-
-    in_campaign {
-        int id PK
-        int product_id FK
-        int campaign_id FK
-        varchar category FK
-    }
-
-    user_t ||--o{ roles : "har roll"
-    available_roles ||--o{ roles : "beskriver"
-    available_roles ||--o{ permissions_t : "har tillåtelse"
-    available_permissions ||--o{ permissions_t : "beskriver"
-    products ||--o{ product_images : "har bild"
-    products ||--o{ product_properties : "har egenskap"
-    products ||--o{ product_categories : "tillhör kategori"
-    available_categories ||--o{ product_categories : "beskriver"
-    products ||--o{ orders : "är i order"
-    user_t ||--o{ orders : "lägger order"
-    products ||--o{ ordered_products : "är i order"
-    orders ||--o{ ordered_products : "har produkt"
-    products ||--o{ in_campaign : "är i kampanj"
-    campaigns ||--o{ in_campaign : "har produkt eller kategori"
-    available_categories ||--o{ in_campaign : "är i kampanj"
+    user_t ||--o{ roles : "has role"
+    available_roles ||--o{ roles : "describes"
+    available_roles ||--o{ permissions_t : "has permission"
+    available_permissions ||--o{ permissions_t : "describes"
+    products ||--o{ product_images : "has image"
+    products ||--o{ product_properties : "has property"
+    products ||--o{ product_categories : "belongs to category"
+    available_categories ||--o{ product_categories : "describes"
+    orders ||--o{ ordered_products : "contains product"
+    user_t ||--o{ orders : "places order"
+    products ||--o{ ordered_products : "is in order"
+    orders ||--o{ order_status : "has status"
+    available_status ||--o{ order_status : "describes status"
 
 ```

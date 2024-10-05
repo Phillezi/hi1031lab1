@@ -10,7 +10,9 @@ import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 
 import java.io.IOException;
-
+/**
+ * Middleware for checking auth on UI layer.
+ */
 @WebFilter(urlPatterns = {"/components/*", "/admin/*", "/warehouse/*", "/customer/*"})
 public class AuthMiddleware implements Filter {
     @Override

@@ -10,6 +10,9 @@ import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Middleware for checking auth on BO layer.
+ */
 public class AuthMiddleware {
 
     public static boolean userHasOneOf(UserDTO user, PermissionDTO... permissions) {
