@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import se.kth.hi1031.lab1.bo.service.ServiceException;
+import se.kth.hi1031.lab1.bo.service.user.RoleService;
 import se.kth.hi1031.lab1.bo.service.user.UserService;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
@@ -61,13 +62,17 @@ public class RegisterController extends HttpServlet {
         String name = req.getParameter("name");
         String email = req.getParameter("email");
         String password = req.getParameter("password");
-        String role = req.getParameter("role");
-        System.out.println("registering user: " + name + " , " + email + " , " + password + " , " + role);
+        String role = req.getParameter("role").toLowerCase();
+        HttpSession session = req.getSession();
+        if(RoleService.getAvailableRoles().stream().noneMatch((String r)->r.equals(role))) {
+            session.setAttribute("error", "Couldn't create user. Role " + role + " is not available." );
+            resp.sendRedirect("/register.jsp");
+            return;
+        }
 
         ArrayList<RoleDTO> roles = new ArrayList<>(1);
         roles.add(new RoleDTO(role, null));
 
-        HttpSession session = req.getSession();
         try {
             // Todo: this doesnt contain all permissions of the user causing bugs, make sure it does
             UserDTO user = UserService.createUser(new UserDTO(null, name, email, password, roles, new ArrayList<>()));

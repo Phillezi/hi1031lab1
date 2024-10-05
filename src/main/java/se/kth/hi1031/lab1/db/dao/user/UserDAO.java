@@ -45,14 +45,12 @@ public class UserDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                System.out.print("user found");
                 users.add(toDAO(rs));
             }
         } catch (SQLException e) {
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {
-                // TODO: mark as free to use
                 try {
                     conn.close();
                 } catch (SQLException e) {
@@ -92,7 +90,6 @@ public class UserDAO {
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {
-                // TODO: mark as free to use
                 try {
                     conn.close();
                 } catch (SQLException e) {
@@ -139,7 +136,6 @@ public class UserDAO {
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {
-                // TODO: mark as free to use
                 try {
                     conn.close();
                 } catch (SQLException e) {
@@ -226,7 +222,7 @@ public class UserDAO {
         permissions = Arrays.stream((String[]) permsArr.getArray())
                 .map(PermissionDAO::new)
                 .collect(Collectors.toList());
-        } catch(SQLException e) {
+        } catch(SQLException ignored) {
             
         }
 
@@ -236,7 +232,7 @@ public class UserDAO {
         roles = Arrays.stream((String[]) rolesArr.getArray())
                 .map((String role) -> new RoleDAO(role, new ArrayList<>()))
                 .collect(Collectors.toList());
-        } catch(SQLException e) {
+        } catch(SQLException ignored) {
             
         }
 

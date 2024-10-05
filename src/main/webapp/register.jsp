@@ -1,3 +1,5 @@
+<%@ page import="se.kth.hi1031.lab1.bo.service.user.RoleService" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -21,8 +23,18 @@
                 <br><br>
 
                 <label for="role">Role:</label>
-                <input type="text" id="role" name="role" placeholder="warehouse or admin" required>
-                <br><br>
+                <select id="role" name="role" required>
+                    <option value="">Select a role</option>
+                    <%
+                        List<String> roles = RoleService.getAvailableRoles();
+
+                        for (String role : roles) {
+                    %>
+                    <option value="<%= role %>"><%= role %></option>
+                    <%
+                        }
+                    %>
+                </select>
 
                 <input type="submit" value="Register">
             </form>
