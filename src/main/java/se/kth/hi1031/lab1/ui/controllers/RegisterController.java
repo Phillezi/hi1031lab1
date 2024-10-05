@@ -73,6 +73,7 @@ public class RegisterController extends HttpServlet {
             if (user != null) {
                 session.setAttribute("user", user);
                 resp.sendRedirect("/");
+                return;
             }
         } catch (ServiceException e) {
             session.setAttribute("error", "Couldn't create user. " + e.getMessage());
