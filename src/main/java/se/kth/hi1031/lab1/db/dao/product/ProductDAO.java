@@ -462,7 +462,6 @@ public class ProductDAO {
         }
     }
 
-
     public static ProductDAO toDAO(ResultSet rs) throws SQLException {
         Array categoriesArray = rs.getArray("categories");
         List<CategoryDAO> categories = categoriesArray != null

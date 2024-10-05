@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpSession;
 import se.kth.hi1031.lab1.bo.service.PermissionException;
 import se.kth.hi1031.lab1.bo.service.ServiceException;
 import se.kth.hi1031.lab1.bo.service.product.ProductService;
-import se.kth.hi1031.lab1.bo.service.user.UserService;
 import se.kth.hi1031.lab1.ui.dto.product.CategoryDTO;
 import se.kth.hi1031.lab1.ui.dto.product.ProductDTO;
 import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
@@ -49,9 +48,6 @@ public class ProductController extends HttpServlet {
             case "update":
                 updateProduct(req, resp);
                 return;
-            case "delete":
-                deleteProduct(req, resp);
-                return;
             default:
                 session.setAttribute("error", "Invalid operation");
                 break;
@@ -89,34 +85,10 @@ public class ProductController extends HttpServlet {
         String[] selectedImages = req.getParameterValues("images");
         List<String> images = (selectedImages != null) ? Arrays.asList(selectedImages) : new ArrayList<>();
 
-        /*String[] selectedProperties = req.getParameterValues("properties");
-        List<String> properties = (selectedCategories != null) ? Arrays.asList(selectedCategories) : new ArrayList<>();*/
-
         ProductDTO productToUpdate = new ProductDTO(productId, name, description, price, quantity, isRemoved, productCategories, images, new ArrayList<>());
 
         try {
             ProductService.updateProduct(productToUpdate);
-        } catch (PermissionException | ServiceException e) {
-            session.setAttribute("error", e.getMessage());
-            resp.sendRedirect(req.getHeader("Referer"));
-            return;
-        }
-
-        resp.sendRedirect("/admin/products/");
-    }
-
-    private static void deleteProduct(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String productIdStr = req.getParameter("productId");
-        HttpSession session = req.getSession(false);
-        if (productIdStr == null || productIdStr.isEmpty()) {
-            session.setAttribute("error", "Invalid operation");
-            resp.sendRedirect(req.getHeader("Referer"));
-            return;
-        }
-
-        int productId = Integer.parseInt(productIdStr);
-        try {
-            //ProductService.deleteProductById(productId);
         } catch (PermissionException | ServiceException e) {
             session.setAttribute("error", e.getMessage());
             resp.sendRedirect(req.getHeader("Referer"));
