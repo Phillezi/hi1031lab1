@@ -132,6 +132,10 @@ public class ControllerServlet extends HttpServlet {
                 CartController.post(req, resp);
                 break;
             }
+            case "checkout": {
+                CheckoutController.post(req, resp);
+                break;
+            }
             case "warehouse": {
                 WarehouseController.post(req, resp);
                 break;

@@ -8,17 +8,19 @@
 <%@ page import="se.kth.hi1031.lab1.bo.service.product.ProductService" %>
 <%@ page import="se.kth.hi1031.lab1.bo.service.order.OrderService" %>
 <%@ page import="se.kth.hi1031.lab1.bo.service.PermissionException" %>
-<%@ page import="se.kth.hi1031.lab1.ui.dto.user.RoleDTO" %>
-<%@ page import="se.kth.hi1031.lab1.ui.dto.user.PermissionDTO" %>
 
 <html>
 <head>
     <title>Checkout</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css"/>
 </head>
-<jsp:include page="/components/header.jsp" />
+<jsp:include page="/components/header.jsp"/>
 <body>
 <%
+    UserDTO user = null;
+    if (session != null) {
+        user = (UserDTO) session.getAttribute("user");
+    }
 
     double totalprice = 0;
     Map<Integer, Integer> cart = null;
@@ -36,55 +38,55 @@
 <div class="container">
     <div class="modal-overlay">
         <div class="modal">
-            <form method="post" action="checkout.jsp">
+            <form method="post" action="/controller?action=checkout">
                 <h3>Delivery Address</h3>
                 <label>
-                    <input type="text" name="deliveryAddress" value="<%= deliveryAddress %>" required />
+                    <input type="text" name="deliveryAddress" value="<%= deliveryAddress %>" required/>
                 </label>
-            <table>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                </tr>
-                <%
-                    if (cart != null && products != null && !products.isEmpty()) {
-                        for (int i = 0; i < products.size(); i++) {
-                            Double price = products.get(i).getPrice();
-                            Integer quantity = cart.get(products.get(i).getId());
-                            if (quantity != null) {
-                                totalprice += (price * quantity);
+                <table>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </tr>
+                    <%
+                        if (cart != null && products != null && !products.isEmpty()) {
+                            for (int i = 0; i < products.size(); i++) {
+                                Double price = products.get(i).getPrice();
+                                Integer quantity = cart.get(products.get(i).getId());
+                                if (quantity != null) {
+                                    totalprice += (price * quantity);
+                                }
+                    %>
+                    <tr>
+                        <td><%= products.get(i).getName() %>
+                        </td>
+                        <td><%= price %>
+                        </td>
+                        <td><%= quantity %>
+                        </td>
+                    </tr>
+                    <%
+                        if (i == products.size() - 1) {
+                    %>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td><%= totalprice %>
+                        </td>
+                    </tr>
+                    <%
                             }
-                %>
-                <tr>
-                    <td><%= products.get(i).getName() %>
-                    </td>
-                    <td><%= price %>
-                    </td>
-                    <td><%= quantity %>
-                    </td>
-                </tr>
-                <%
-                    if (i == products.size() - 1) {
-                %>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td><%= totalprice %>
-                    </td>
-                </tr>
-                <%
                         }
-                    }
-                } else {
-                %>
-                <tr>
-                    <td colspan="3">Your cart is empty</td>
-                </tr>
-                <%
-                    }
-                %>
-            </table>
+                    } else {
+                    %>
+                    <tr>
+                        <td colspan="3">Your cart is empty</td>
+                    </tr>
+                    <%
+                        }
+                    %>
+                </table>
                 <button type="submit">Place Order</button>
             </form>
 

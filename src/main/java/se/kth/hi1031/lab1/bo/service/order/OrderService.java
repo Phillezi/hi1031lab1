@@ -7,6 +7,8 @@ import se.kth.hi1031.lab1.bo.model.product.Category;
 import se.kth.hi1031.lab1.bo.model.user.Permission;
 import se.kth.hi1031.lab1.bo.model.user.User;
 import se.kth.hi1031.lab1.bo.service.PermissionException;
+import se.kth.hi1031.lab1.bo.service.ServiceException;
+import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.dao.order.OrderDAO;
 import se.kth.hi1031.lab1.ui.dto.order.OrderDTO;
 import se.kth.hi1031.lab1.ui.dto.product.PropertyDTO;
@@ -46,7 +48,7 @@ public class OrderService {
      * @return An {@link OrderDTO} representing the created order.
      * @throws PermissionException if the user lacks the necessary permissions to create the order.
      */
-    public static OrderDTO createOrder(UserDTO user, UserDTO customer, String deliveryAddress, ArrayList<ProductDTO> products) {
+    public static OrderDTO createOrder(UserDTO user, UserDTO customer, String deliveryAddress, List<ProductDTO> products) {
         if (user.equals(customer)) {
             // order is created by the person ordering the items
 
@@ -66,12 +68,16 @@ public class OrderService {
                                     deliveryAddress, 
                                     new User(customer), 
                                     products.stream()
-                                                .map((ProductDTO p) -> new Product(p))
+                                                .map(Product::new)
                                                 .toList(), 
                                     new ArrayList<>()
                                     );
-        OrderDAO.createOrder(newOrder);
-        return newOrder.toDTO();
+        try {
+            OrderDAO.createOrder(newOrder);
+            return newOrder.toDTO();
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     /**

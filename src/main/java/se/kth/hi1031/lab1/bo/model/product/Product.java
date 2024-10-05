@@ -42,12 +42,12 @@ public class Product {
         this.removed = product.isRemoved();
         this.categories = product.getCategories() != null ? product.getCategories()
                                     .stream()
-                                    .map((CategoryDTO c) -> new Category(c))
+                                    .map(Category::new)
                                     .toList() : null;
-        this.images = new ArrayList<>(product.getImages());
+        this.images = product.getImages() != null ? new ArrayList<>(product.getImages()) : null;
         this.properties = product.getProperties() != null ? product.getProperties()
                                     .stream()
-                                    .map((PropertyDTO p) -> new Property(p))
+                                    .map(Property::new)
                                     .toList() : null;
     }
 

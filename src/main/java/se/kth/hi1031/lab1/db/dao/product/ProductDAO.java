@@ -318,9 +318,9 @@ public class ProductDAO {
                     ids[i],
                     names[i],
                     descriptions[i],
-                    prices[i] != null ? prices[i].doubleValue() : Double.valueOf(0),
-                    quantities[i] != null ? quantities[i] : 0,
-                    isRemoved[i] != null ? isRemoved[i] : false,
+                    prices.length > i && prices[i] != null ? prices[i].doubleValue() : Double.valueOf(0),
+                    quantities.length > i && quantities[i] != null ? quantities[i] : 0,
+                    isRemoved.length > i && isRemoved[i] != null ? isRemoved[i] : false,
                     null,
                     null,
                     null
