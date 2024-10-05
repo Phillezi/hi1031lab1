@@ -12,7 +12,6 @@ services:
       - ./target/lab1.war:/usr/local/tomcat/webapps/ROOT.war
     depends_on:
       - db
-      - cdn
     restart: unless-stopped
 
   # The db is our database that we use in our application
