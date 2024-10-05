@@ -45,7 +45,6 @@ public class ControllerServlet extends HttpServlet {
             user = (UserDTO) session.getAttribute("user");
         }
         boolean isLoggedIn = user != null;
-        System.out.println(path);
 
         switch (path) {
             case "/admin": {
@@ -106,7 +105,6 @@ public class ControllerServlet extends HttpServlet {
             user = (UserDTO) session.getAttribute("user");
         }
         boolean isLoggedIn = user != null;
-        System.out.println(action);
 
         switch (action) {
             case "clear-error": {
