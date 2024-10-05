@@ -28,4 +28,3 @@ services:
 
 volumes:
   dbdata:
-  cdn_dbdata:
