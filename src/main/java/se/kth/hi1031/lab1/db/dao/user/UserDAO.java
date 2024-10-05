@@ -62,10 +62,18 @@ public class UserDAO {
     }
 
     public static Optional<UserDAO> getUserByid(int id) throws DAOException {
+        return getUserByid(id, null);
+    }
+
+    public static Optional<UserDAO> getUserByid(int id, Connection conn) throws DAOException {
         Optional<UserDAO> user = Optional.empty();
-        Connection conn = null;
+        boolean isChild = false;
         try {
-            conn = DBConnectionManager.getInstance().getConnection();
+            if (conn == null) {
+                conn = DBConnectionManager.getInstance().getConnection();
+            } else {
+                isChild = true;
+            }
             String query = "SELECT " +
                     "u.id AS user_id, " +
                     "u.name AS user_name, " +
@@ -91,7 +99,9 @@ public class UserDAO {
         } finally {
             if (conn != null) {
                 try {
-                    conn.close();
+                    if (!isChild) {
+                        conn.close();
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -162,6 +172,7 @@ public class UserDAO {
      * @throws DAOException
      */
     public static UserDAO createUser(User user) throws DAOException {
+        UserDAO created = null;
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -187,10 +198,21 @@ public class UserDAO {
                     stmt.setInt(2, userId);
                     stmt.executeUpdate();
                 }
-            }
+                conn.commit();
 
-            conn.commit();
+                Optional<UserDAO> userOptional = getUserByid(userId);
+                if (userOptional.isPresent()) {
+                    created = userOptional.get();
+                }
+            } else {
+                conn.commit();
+            }
         } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                throw new DAOException(ex.getMessage());
+            }
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {
@@ -210,9 +232,7 @@ public class UserDAO {
             }
         }
 
-        user.setPermissions(new ArrayList<>());
-
-        return user.toDAO();
+        return created;
     }
 
     public static UserDAO toDAO(ResultSet rs) throws SQLException {
