@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * Data Transfer Object representing the status of an order.
@@ -19,7 +20,31 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @AllArgsConstructor
-public class StatusDTO {
+public class StatusDTO implements Comparable<StatusDTO>{
     private String status;
     private Timestamp timestamp;
+
+    @Override
+    public int compareTo(StatusDTO other) {
+        int timestampComparison = this.timestamp.compareTo(other.timestamp);
+        if (timestampComparison != 0) {
+            return timestampComparison;
+        }
+        return this.status.compareTo(other.status);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        StatusDTO other = (StatusDTO) obj;
+
+        return Objects.equals(status, other.status) &&
+                Objects.equals(timestamp, other.timestamp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status, timestamp);
+    }
 }

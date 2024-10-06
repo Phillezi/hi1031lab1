@@ -78,9 +78,13 @@
             <form action="${pageContext.request.contextPath}/customer/checkout" method="get">
                 <button type="submit">Go to checkout</button>
             </form>
+            <br />
             <%
                 }
             %>
+            <form action="${pageContext.request.contextPath}/customer/orders" method="get">
+                <button type="submit">Your Orders</button>
+            </form>
         </div>
     </div>
 </div>

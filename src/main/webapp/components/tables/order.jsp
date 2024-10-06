@@ -3,6 +3,9 @@
 <%@ page import="se.kth.hi1031.lab1.ui.dto.order.OrderDTO" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.product.ProductDTO" %>
 <%@ page import="se.kth.hi1031.lab1.ui.dto.order.StatusDTO" %>
+<%@ page import="se.kth.hi1031.lab1.db.dao.order.StatusDAO" %>
+<%@ page import="java.util.Set" %>
+<%@ page import="java.util.HashSet" %>
 
 <table>
   <thead>
@@ -45,10 +48,13 @@
       <ul>
         <%
           if (order.getStatuses() != null) {
+            Set<StatusDTO> displayedStatuses = new HashSet<>();
             for (StatusDTO status : order.getStatuses()) {
+              if (displayedStatuses.add(status)) {
         %>
-        <li><%= status.getStatus() %></li>
+        <li><%= status.getStatus() %> : <%= status.getTimestamp() %></li>
         <%
+              }
             }
           }
         %>

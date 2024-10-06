@@ -112,11 +112,14 @@ public class OrderService {
             List<OrderDAO> orders = OrderDAO.getOrders();
             return orders.stream().map(OrderDAO::toOrder).map(Order::toDTO).toList();
         } else if (user != null && user.getId() != null) {
-            List<OrderDAO> orders = OrderDAO.getOrdersByCustomer(new User(user));
-            System.out.println("found: " + orders);
-            return orders.stream().map(OrderDAO::toOrder).map(Order::toDTO).toList();
+            return getOrdersByCustomer(user);
         }
         throw new PermissionException("User " + user + " cant view orders");
+    }
+
+    public static List<OrderDTO> getOrdersByCustomer(UserDTO user) {
+        List<OrderDAO> orders = OrderDAO.getOrdersByCustomer(new User(user));
+        return orders.stream().map(OrderDAO::toOrder).map(Order::toDTO).toList();
     }
 
     /**
