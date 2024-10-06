@@ -16,8 +16,6 @@ Webbshoppen nås då på [`localhost:8080`](http://localhost:8080).
 
 ## UML diagram
 
-TODO:
-
 ```mermaid
 classDiagram
 namespace ui {
