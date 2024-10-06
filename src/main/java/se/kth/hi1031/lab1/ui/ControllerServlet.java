@@ -127,6 +127,10 @@ public class ControllerServlet extends HttpServlet {
                 ProductController.post(req, resp);
                 break;
             }
+            case "categories": {
+                CategoryController.post(req, resp);
+                break;
+            }
             case "logout": {
                 if (isLoggedIn) {
                     session.invalidate();
