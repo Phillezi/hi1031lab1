@@ -8,14 +8,18 @@ import jakarta.servlet.http.HttpSession;
 import se.kth.hi1031.lab1.bo.service.PermissionException;
 import se.kth.hi1031.lab1.bo.service.ServiceException;
 import se.kth.hi1031.lab1.bo.service.product.CategoryService;
-import se.kth.hi1031.lab1.bo.service.product.ProductService;
 import se.kth.hi1031.lab1.ui.dto.product.CategoryDTO;
 import se.kth.hi1031.lab1.ui.dto.user.RoleDTO;
 import se.kth.hi1031.lab1.ui.dto.user.UserDTO;
 
 import java.io.IOException;
 
+/**
+ * UI Controller that handles incoming requests for managing categories.
+ * Converts from UI related data formats to DTO to send to related Service.
+ */
 public class CategoryController extends HttpServlet {
+
     public static void post(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String operation = req.getParameter("operation");
         HttpSession session = req.getSession(false);
@@ -53,6 +57,7 @@ public class CategoryController extends HttpServlet {
 
         resp.sendRedirect(req.getHeader("Referer"));
     }
+
     private static void addCategory(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
         if (session == null) {

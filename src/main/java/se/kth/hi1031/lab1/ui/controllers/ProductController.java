@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * UI Controller that handles incoming requests that are related to managing products.
+ * Converts from UI related data formats into DTO classes that are handled by the service classes.
+ */
 public class ProductController extends HttpServlet {
     public static void post(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String operation = req.getParameter("operation");

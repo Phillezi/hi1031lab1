@@ -16,7 +16,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * UI Controller that handles actions related to managing users.
+ * Converts from UI related data formats into DTO classes that are handled by the service classes.
+ */
 public class UserController extends HttpServlet {
+    /**
+     * Handles post requests from forms with different user operations.
+     */
     public static void post(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String operation = req.getParameter("operation");
         HttpSession session = req.getSession(false);
@@ -58,6 +65,9 @@ public class UserController extends HttpServlet {
         resp.sendRedirect(req.getHeader("Referer"));
     }
 
+    /**
+     * Handles update user requests.
+     */
     private static void updateUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
         if (session == null) {
@@ -96,6 +106,9 @@ public class UserController extends HttpServlet {
         resp.sendRedirect("/admin/users/");
     }
 
+    /**
+     * Handles delete user requests.
+     */
     private static void deleteUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
         if (session == null) {
@@ -122,6 +135,9 @@ public class UserController extends HttpServlet {
         resp.sendRedirect("/admin/users/");
     }
 
+    /**
+     * Handles add user requests.
+     */
     private static void addUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String name = req.getParameter("name");
         String email = req.getParameter("email");

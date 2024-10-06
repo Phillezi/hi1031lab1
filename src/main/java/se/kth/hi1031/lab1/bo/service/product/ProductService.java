@@ -51,6 +51,18 @@ public class ProductService {
         return products.stream().map(ProductDAO::toProduct).map(Product::toDTO).toList();
     }
 
+    /**
+     * Retrieves a product by its ID.
+     *
+     * <p>This method fetches a product with the given ID from the data source.
+     * If the product exists, it is returned as a {@link ProductDTO}; otherwise,
+     * a {@link ServiceException} is thrown.</p>
+     *
+     * @param id The ID of the product to retrieve.
+     * @return The {@link ProductDTO} representing the product with the given ID.
+     * @throws ServiceException If no product is found with the given ID or if a
+     *                          {@link DAOException} occurs.
+     */
     public static ProductDTO getProductById(int id) {
         try {
             Optional<ProductDAO> productOptional = ProductDAO.getProductById(id);
@@ -64,6 +76,19 @@ public class ProductService {
         }
     }
 
+    /**
+     * Updates an existing product.
+     *
+     * <p>This method checks if the user has the required "admin" role to update
+     * products. If authorized, it updates the product in the data source.</p>
+     *
+     * @param user           The user attempting to update the product, represented
+     *                       as a {@link UserDTO}.
+     * @param productToUpdate The {@link ProductDTO} representing the product to be
+     *                        updated.
+     * @throws PermissionException If the user does not have the required "admin" role.
+     * @throws ServiceException    If a {@link DAOException} occurs during the update.
+     */
     public static void updateProduct(UserDTO user, ProductDTO productToUpdate) {
         if (!AuthMiddleware.userHasOneOf(user, new Role("admin"))) {
             throw new PermissionException("User " + user.getName() + " needs to be admin to update products.");
@@ -76,6 +101,20 @@ public class ProductService {
         }
     }
 
+    /**
+     * Creates a new product.
+     *
+     * <p>This method checks if the user has the required "admin" role to create
+     * products. If authorized, it creates the product in the data source and returns
+     * the newly created product.</p>
+     *
+     * @param user    The user attempting to create the product, represented as a
+     *                {@link UserDTO}.
+     * @param product The {@link ProductDTO} representing the product to be created.
+     * @return The {@link ProductDTO} representing the newly created product.
+     * @throws PermissionException If the user does not have the required "admin" role.
+     * @throws ServiceException    If a {@link DAOException} occurs during the creation.
+     */
     public static ProductDTO createProduct(UserDTO user, ProductDTO product) {
         if (!AuthMiddleware.userHasOneOf(user, new Role("admin"))) {
             throw new PermissionException("User " + user.getName() + " needs to be admin to create products.");
