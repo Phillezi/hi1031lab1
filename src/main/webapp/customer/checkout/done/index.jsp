@@ -14,6 +14,9 @@
             <form action="${pageContext.request.contextPath}/" method="get">
                 <button type="submit">Take me back</button>
             </form>
+            <form action="${pageContext.request.contextPath}/customer/orders" method="get">
+                <button type="submit">Your Orders</button>
+            </form>
         </div>
     </div>
 </div>

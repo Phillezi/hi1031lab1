@@ -35,7 +35,7 @@ public class WarehouseController extends HttpServlet {
                 } catch (PermissionException | ServiceException e) {
                     session.setAttribute("error", e.getMessage());
                 }
-                resp.sendRedirect("/warehouse/orders/pack");
+                resp.sendRedirect(req.getHeader("Referer"));
             }
         }
     }
