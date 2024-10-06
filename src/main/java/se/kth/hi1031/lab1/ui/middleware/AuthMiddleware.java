@@ -20,6 +20,9 @@ public class AuthMiddleware implements Filter {
         Filter.super.init(filterConfig);
     }
 
+    /**
+     * Filters incoming traffic to make sure that users only get access to content they are supposed to be able to access.
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;

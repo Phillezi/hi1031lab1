@@ -10,6 +10,10 @@ public class PropertyDAO {
     private String key;
     private String value;
 
+    /**
+     * Conversion method to convert from a DAO object to a BO object.
+     * @return A BO object of the same attributes, (deep copied).
+     */
     public Property toProperty() {
         return new Property(key, value);
     }

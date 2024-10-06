@@ -29,6 +29,10 @@ public class UserDAO {
     private List<RoleDAO> roles;
     private List<PermissionDAO> permissions;
 
+    /**
+     * Gets all users with all joint attributes related to the user from the database.
+     * @return A list containing all the users in the database.
+     */
     public static List<UserDAO> getUsers() throws DAOException {
         List<UserDAO> users = new ArrayList<>();
         Connection conn = null;
@@ -52,10 +56,22 @@ public class UserDAO {
         return users;
     }
 
+    /**
+     * Wrapper to get user by given id and do it on a new connection.
+     * @param id the id of the user to get.
+     * @return An optional containing the user if found.
+     */
     public static Optional<UserDAO> getUserByid(int id) throws DAOException {
         return getUserByid(id, null);
     }
 
+    /**
+     * Get user by id.
+     * @param id The id of the user to get.
+     * @param conn The connection to use, null if new connection is wanted. Will not commit if connection is provided.
+     *             Is dependant on upstream to commit the transaction.
+     * @return An Optional containing the user if found.
+     */
     public static Optional<UserDAO> getUserByid(int id, Connection conn) throws DAOException {
         Optional<UserDAO> user = Optional.empty();
         boolean isChild = false;
@@ -93,6 +109,11 @@ public class UserDAO {
         return user;
     }
 
+    /**
+     * Method to try to get a user that matches the credentials.
+     * @param credentials The user attributes to match (must contain a cleartext password to compare to the hashed password).
+     * @return An optional containing the user if found and password matches.
+     */
     public static Optional<UserDAO> login(User credentials) throws DAOException {
         Optional<UserDAO> user = Optional.empty();
         Connection conn = null;
@@ -123,11 +144,10 @@ public class UserDAO {
     }
 
     /**
-     * Expects a hashed password!
+     * Creates the given user in the database.
      *
-     * @param user
-     * @return
-     * @throws DAOException
+     * @param user The user to create.
+     * @return The created user.
      */
     public static UserDAO createUser(User user) throws DAOException {
         UserDAO created = null;
@@ -181,6 +201,10 @@ public class UserDAO {
         return created;
     }
 
+    /**
+     * Updates a user
+     * @param user the updated user.
+     */
     public static void updateUser(User user) throws DAOException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -260,6 +284,10 @@ public class UserDAO {
         }
     }
 
+    /**
+     * Deletes a user by the given id.
+     * @param id the id of the user to delete.
+     */
     public static void deleteUserById(int id) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -299,6 +327,12 @@ public class UserDAO {
         }
     }
 
+    /**
+     * Get a user from a resultset.
+     * @param rs The resultset.
+     * @return A List of the UserDAOs
+     * @throws SQLException
+     */
     public static UserDAO toDAO(ResultSet rs) throws SQLException {
         List<PermissionDAO> permissions = null;
         try {
@@ -343,6 +377,10 @@ public class UserDAO {
         return daos;
     }
 
+    /**
+     * Conversion method to convert from a DAO object to a BO object.
+     * @return A BO object of the same attributes, (deep copied).
+     */
     public User toUser() {
         List<Role> roles = this.roles != null ? this.roles.stream().map(RoleDAO::toRole).toList() : null;
         List<Permission> permissions = this.permissions != null ? this.permissions.stream().map(PermissionDAO::toPermission).toList() : null;

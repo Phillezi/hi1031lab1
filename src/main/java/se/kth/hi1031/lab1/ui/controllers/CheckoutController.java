@@ -15,7 +15,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * UI Controller to handle checking out orders.
+ * Converts from UI related data formats into DTO classes that are handled by the service classes.
+ */
 public class CheckoutController extends HttpServlet {
     public static void post(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String deliveryAddress = req.getParameter("deliveryAddress");
@@ -43,7 +46,6 @@ public class CheckoutController extends HttpServlet {
         List<ProductDTO> products = cart.keySet().stream()
                 .map(id -> new ProductDTO(id, null, null, 0, cart.get(id), false, null, null, null))
                 .toList();
-        // TODO: create a better way to make a order
         try {
             OrderService.createOrder(user, user, deliveryAddress, products);
         } catch (PermissionException | ServiceException e) {

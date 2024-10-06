@@ -23,6 +23,7 @@ public class DBConnectionManager {
     /**
      * Private constructor to initialize the connection pool and set the
      * maximum pool size based on environment variables.
+     * Constructor is private since it is a singleton.
      */
     private DBConnectionManager() {
         String maxPoolSizeEnv = System.getenv("DB_MAX_POOL_SIZE");

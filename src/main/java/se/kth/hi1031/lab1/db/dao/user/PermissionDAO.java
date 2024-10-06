@@ -20,6 +20,10 @@ import java.util.List;
 public class PermissionDAO {
     private final String name;
 
+    /**
+     * Gets a list containing all the available permission names in the database.
+     * @return A List of all the available permission names.
+     */
     public static List<String> getAvailablePermissions() {
         List<String> availablePermissions = new ArrayList<>();
         Connection conn = null;
@@ -43,6 +47,10 @@ public class PermissionDAO {
         return availablePermissions;
     }
 
+    /**
+     * Conversion method to convert from a DAO object to a BO object.
+     * @return A BO object of the same attributes, (deep copied).
+     */
     public Permission toPermission() {
         return new Permission(name);
     }

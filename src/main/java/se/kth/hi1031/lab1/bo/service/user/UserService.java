@@ -89,6 +89,14 @@ public class UserService {
         }
     }
 
+    /**
+     * Retrieves a specific user by their ID.
+     *
+     * @param user The authenticated {@link UserDTO} requesting the information.
+     * @param userId The ID of the user to retrieve.
+     * @return A {@link UserDTO} representing the user with the specified ID.
+     * @throws ServiceException If the user lacks permission or the user is not found.
+     */
     public static UserDTO getUserById(UserDTO user, int userId) {
         if (!user.getId().equals(userId) && !AuthMiddleware.userHasOneOf(user, new Role("admin"))) {
             throw new PermissionException("User " + user.getName() + " needs to be admin to get users other than self.");
@@ -105,6 +113,13 @@ public class UserService {
         }
     }
 
+    /**
+     * Updates the specified user information.
+     *
+     * @param user The authenticated {@link UserDTO} requesting the update.
+     * @param userToUpdate The {@link UserDTO} containing updated user data.
+     * @throws ServiceException If the user lacks permission or a data access error occurs.
+     */
     public static void updateUser(UserDTO user, UserDTO userToUpdate) {
         if (!user.getId().equals(userToUpdate.getId()) && !AuthMiddleware.userHasOneOf(user, new Role("admin"))) {
             throw new PermissionException("User " + user.getName() + " needs to be admin to update users other than self.");
@@ -120,6 +135,13 @@ public class UserService {
         }
     }
 
+    /**
+     * Deletes a user by their ID.
+     *
+     * @param user The authenticated {@link UserDTO} requesting the deletion.
+     * @param id The ID of the user to delete.
+     * @throws ServiceException If the user lacks permission or a data access error occurs.
+     */
     public static void deleteUserById(UserDTO user, int id) {
         if (!user.getId().equals(id) && !AuthMiddleware.userHasOneOf(user, new Role("admin"))) {
             throw new PermissionException("User " + user.getName() + " needs to be admin to delete users other than self.");

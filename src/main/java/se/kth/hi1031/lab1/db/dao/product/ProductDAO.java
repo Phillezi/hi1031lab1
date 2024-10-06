@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 
 import static se.kth.hi1031.lab1.db.dao.DBUtil.cleanUp;
 
+/**
+ * DAO (Data Access Object) class for managing the persistence and retrieval of products.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,6 +33,12 @@ public class ProductDAO {
     private List<String> images;
     private List<PropertyDAO> properties;
 
+    /**
+     * Retrieves all products from the database.
+     *
+     * @return A list of ProductDAO objects representing all available products.
+     * @throws DAOException If there is an error accessing the database.
+     */
     public static List<ProductDAO> getAllProducts() throws DAOException {
         List<ProductDAO> products = new ArrayList<>();
         Connection conn = null;
@@ -63,6 +72,13 @@ public class ProductDAO {
         return products;
     }
 
+    /**
+     * Retrieves a product by its ID from the database.
+     *
+     * @param id The ID of the product to retrieve.
+     * @return An Optional containing the ProductDAO object if found, or empty if not found.
+     * @throws DAOException If there is an error accessing the database.
+     */
     public static Optional<ProductDAO> getProductById(int id) throws DAOException {
         Optional<ProductDAO> product = Optional.empty();
         Connection conn = null;
@@ -98,6 +114,11 @@ public class ProductDAO {
         return product;
     }
 
+    /**
+     * Creates a provided product.
+     * @param product The product to create.
+     * @return The created product.
+     */
     public static ProductDAO createProduct(Product product) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -186,11 +207,25 @@ public class ProductDAO {
         return product.toDAO();
     }
 
+    /**
+     * Wrapper to update products but not provide a connection to use.
+     * @param product The product to update.
+     * @param quantity The new quanity of the product.
+     * @return A boolean indicating the result.
+     */
     public static boolean updateProductQuantity(Product product, int quantity) {
         return ProductDAO.updateProductQuantity(product, quantity, null);
     }
 
-    // Can be part of a bigger transaction if the parents connection is set
+    /**
+     * Updates a products quantity.
+     * @param product The product to update.
+     * @param quantity The new quantity to set.
+     * @param conn A connection or null, if connection is provided it will be used else a new connection will be created.
+     *             If connection is provided it is dependent on the upstream caller to commit the update.
+     * @return a boolean to indicate result.
+     * @throws DAOException on failure.
+     */
     public static boolean updateProductQuantity(Product product, int quantity, Connection conn) throws DAOException {
         boolean isChild = false;
         PreparedStatement stmt = null;
@@ -225,10 +260,23 @@ public class ProductDAO {
         }
     }
 
+    /**
+     * Gets the available quantity of a product with a given id.
+     * @param productId The id of the product to get quantity for.
+     * @return The quantity of the product.
+     * @throws DAOException on failure.
+     */
     public static int getProductQuantity(int productId) throws DAOException {
         return getProductQuantity(productId, null);
     }
 
+    /**
+     * Gets the available quantity of a product with a given id.
+     * @param productId The product id to check quantity of.
+     * @param conn An existing connection or null. If connection is provided it will be used, else a new connection will be created.
+     * @return The quantity of the product.
+     * @throws DAOException on failure.
+     */
     public static int getProductQuantity(int productId, Connection conn) throws DAOException {
         boolean isChild = false;
         PreparedStatement stmt = null;
@@ -263,6 +311,12 @@ public class ProductDAO {
         }
     }
 
+    /**
+     * Gets all products by a list of given ids.
+     * @param ids The ids to query products for.
+     * @return A List of all the products.
+     * @throws DAOException on failure.
+     */
     public static List<ProductDAO> getProductsByIds(List<Integer> ids) throws DAOException {
         List<ProductDAO> products = new ArrayList<>();
         Connection conn = null;
@@ -315,6 +369,11 @@ public class ProductDAO {
         return products;
     }
 
+    /**
+     * Updates a product.
+     * @param product The updated product.
+     * @throws DAOException on failure.
+     */
     public static void updateProduct(Product product) throws DAOException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -437,6 +496,11 @@ public class ProductDAO {
         }
     }
 
+    /**
+     * Gets a product from a resultset.
+     * @param rs The resultset to get the product from.
+     * @return The product.
+     */
     public static ProductDAO toDAO(ResultSet rs) throws SQLException {
         Array categoriesArray = rs.getArray("categories");
         List<CategoryDAO> categories = categoriesArray != null
@@ -474,6 +538,11 @@ public class ProductDAO {
         );
     }
 
+    /**
+     * Gets multiple products from a resultset.
+     * @param rs The resultset to get the products from.
+     * @return A List containing all the products.
+     */
     public static List<ProductDAO> toDAOs(ResultSet rs) throws SQLException {
         Integer[] ids = (Integer[]) rs.getArray("products_id").getArray();
         String[] names = (String[]) rs.getArray("products_name").getArray();
@@ -509,7 +578,10 @@ public class ProductDAO {
 
         return daos;
     }
-
+    /**
+     * Conversion method to convert from a DAO object to a BO object.
+     * @return A BO object of the same attributes, (deep copied).
+     */
     public Product toProduct() {
         return new Product(
                 this.id,
@@ -519,7 +591,7 @@ public class ProductDAO {
                 this.quantity,
                 this.removed,
                 this.categories != null ? this.categories.stream().map(CategoryDAO::toCategory).toList() : null,
-                this.images,
+                this.images != null ? new ArrayList<>(this.images) : null,
                 this.properties != null ? this.properties.stream().map(PropertyDAO::toProperty).toList() : null
         );
     }

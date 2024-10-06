@@ -323,8 +323,7 @@ public class DBConnection implements Connection {
      * Closes the database connection and releases it back to the connection pool.
      *
      * <p>This method does not close the underlying database connection directly. Instead, it returns
-     * the connection to the {@link DBConnectionManager} for reuse. It should be used in place of
-     * directly closing the connection to ensure proper management of resources.</p>
+     * the connection to the {@link DBConnectionManager} for reuse.</p>
      *
      * @throws SQLException If a database access error occurs or the connection is already closed.
      */
