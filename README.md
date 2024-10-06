@@ -20,42 +20,242 @@ TODO:
 
 ```mermaid
 classDiagram
-    class DBConnection {
-        - Connection connection
-        + DBConnection()
-        + getConnection() Connection
-        + closeConnection() void
+namespace bo {
+    class AuthMiddleware {
+        +static boolean userHasOneOf(UserDTO user, PermissionDTO... permissions)
+        +static boolean userHasOneOf(UserDTO user, RoleDTO... roles)
+        +static boolean userHasOneOf(UserDTO user, Permission... permissions)
+        +static boolean userHasOneOf(UserDTO user, Role... roles)
+        +static boolean userHasOneOf(User user, Permission... permissions)
+        +static boolean userHasOneOf(User user, Role... roles)
     }
 
-    class DBConnectionManager {
-        - List~DBConnection~ connections
-        + getConnection() DBConnection
-        + releaseConnection(DBConnection) void
+    class Order {
+        +Integer id
+        +Timestamp created
+        +Timestamp delivered
+        +String deliveryAddress
+        +User customer
+        +List~Product~ products
+        +List~Status~ statuses
+        +Order(OrderDTO order)
+        +OrderDTO toDTO()
+        +OrderDAO toDAO()
+    }
+
+    class Status {
+        +String status
+        +Timestamp timestamp
+        +Status(StatusDTO status)
+        +StatusDTO toDTO()
+        +StatusDAO toDAO()
+    }
+
+    class Category {
+        +String name
+        +String description
+        +Category(CategoryDTO category)
+        +CategoryDTO toDTO()
+        +CategoryDAO toDAO()
     }
 
     class Product {
-        - int id
-        - String name
-        - double price
-        + Product(int, String, double)
-        + getId() int
-        + getName() String
-        + getPrice() double
+        +Integer id
+        +String name
+        +String description
+        +double price
+        +int quantity
+        +boolean removed
+        +List~Category~ categories
+        +List~String~ images
+        +List~Property~ properties
+        +Product(ProductDTO product)
+        +ProductDTO toDTO()
+        +ProductDAO toDAO()
     }
 
-    class ProductDAO {
-        - DBConnection dbConnection
-        + saveProduct(Product) boolean
-        + getProductById(int) Product
+    class Property {
+        +String key
+        +String value
+        +Property(PropertyDTO property)
+        +PropertyDTO toDTO()
+        +PropertyDAO toDAO()
     }
 
-    class ProductUI {
-        + displayProduct(Product) void
+    class Permission {
+        +String name
+        +Permission(PermissionDTO permission)
+        +PermissionDTO toDTO()
+        +PermissionDAO toDAO()
+        +int compareTo(Permission p)
+        +boolean equals(Object o)
     }
 
-    DBConnectionManager "1" *--> "0..*" DBConnection : manages
-    DBConnection <-- ProductDAO : uses
-    ProductDAO <-- Product : manages
+    class Role {
+        +String name
+        +List<Permission> permissions
+        +Role(String name)
+        +Role(RoleDTO role)
+        +RoleDTO toDTO()
+        +RoleDAO toDAO()
+        +int compareTo(Role r)
+        +boolean equals(Object o)
+    }
+
+    class User {
+        +Integer id
+        +String name
+        +String email
+        +String password
+        +List<Role> roles
+        +List<Permission> permissions
+        +User(UserDTO user)
+        +UserDTO toDTO()
+        +UserDAO toDAO()
+    }
+
+    class OrderService {
+        +OrderDTO createOrder(UserDTO user, UserDTO customer, String deliveryAddress, List<ProductDTO> products)
+        +List<OrderDTO> getAllOrders(UserDTO user)
+        +Optional<OrderDTO> getOrderById(UserDTO user, int id)
+        +List<OrderDTO> getOrdersWithStatus(UserDTO user, String... statuses)
+    }
+
+    class StatusService {
+        +void setOrderStatus(int orderId, String status, UserDTO user)
+    }
+
+    class CategoryService {
+        +List<String> getAvailableCategories()
+    }
+
+    class ProductService {
+        +List<ProductDTO> getProducts()
+        +List<ProductDTO> getProducts(List<Integer> ids)
+        +ProductDTO getProductById(int id)
+        +void updateProduct(UserDTO user, ProductDTO productToUpdate)
+        +ProductDTO createProduct(UserDTO user, ProductDTO product)
+    }
+
+    class PermissionService {
+        +List<String> getAvailablePermissions()
+    }
+
+    class RoleService {
+        +List<String> getAvailableRoles()
+        +RoleDTO getRole(String name)
+    }
+
+    class UserService {
+        +UserDTO createUser(UserDTO user)
+        +List<UserDTO> getUsers(UserDTO user)
+        +UserDTO login(UserDTO user)
+        +UserDTO getUserById(UserDTO user, int userId)
+        +void updateUser(UserDTO user, UserDTO userToUpdate)
+        +void deleteUserById(UserDTO user, int id)
+    }
+
+    class PermissionException {
+        +PermissionException(String message)
+    }
+
+    class ServiceException {
+        +ServiceException(String message)
+    }
+
+    }
+
+    AuthMiddleware --> UserDTO
+    AuthMiddleware --> PermissionDTO
+    AuthMiddleware --> RoleDTO
+    AuthMiddleware --> User
+    AuthMiddleware --> Permission
+    AuthMiddleware --> Role
+
+    Order --> User
+    Order --> Product
+    Order --> Status
+    Order --> OrderDTO
+    Order --> OrderDAO
+    Order --> Timestamp
+
+    Status --> StatusDTO
+    Status --> StatusDAO
+    Status --> Timestamp
+
+    Category --> CategoryDTO
+    Category --> CategoryDAO
+
+    Product --> ProductDTO
+    Product --> ProductDAO
+    Product --> Category
+    Product --> Property
+    Product --> String
+
+    Property --> PropertyDTO
+    Property --> PropertyDAO
+
+    Permission --> PermissionDTO
+    Permission --> PermissionDAO
+
+    Role --> RoleDTO
+    Role --> RoleDAO
+    Role --> Permission
+
+    User --> UserDTO
+    User --> UserDAO
+    User --> Role
+    User --> Permission
+
+    OrderService --> UserDTO
+    OrderService --> ProductDTO
+    OrderService --> OrderDTO
+    OrderService --> OrderDAO
+    OrderService --> PermissionDTO
+    OrderService --> Status
+    OrderService --> ServiceException
+    OrderService --> PermissionException
+
+    StatusService --> UserDTO
+    StatusService --> Permission
+    StatusService --> PermissionException
+    StatusService --> OrderDAO
+    StatusService --> StatusDAO
+
+    CategoryService --> DAOException
+    CategoryService --> ServiceException
+    CategoryService --> CategoryDAO
+
+    ProductService --> ProductDAO
+    ProductService --> Product
+    ProductService --> ProductDTO
+    ProductService --> UserDTO
+    ProductService --> DAOException
+    ProductService --> PermissionException
+    ProductService --> ServiceException
+    ProductService --> AuthMiddleware
+    ProductService --> Role
+
+    PermissionService --> PermissionDAO
+    PermissionService --> DAOException
+    PermissionService --> ServiceException
+
+    RoleService --> RoleDAO
+    RoleService --> DAOException
+    RoleService --> ServiceException
+    RoleService --> RoleDTO
+
+    UserService --> UserDAO
+    UserService --> DAOException
+    UserService --> ServiceException
+    UserService --> PermissionException
+    UserService --> Role
+    UserService --> UserDTO
+    UserService --> User
+
+    PermissionException --> RuntimeException
+
+    ServiceException --> RuntimeException
 
 ```
 

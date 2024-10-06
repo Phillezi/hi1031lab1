@@ -167,7 +167,9 @@ public class UserDAO {
             }
         } catch (SQLException e) {
             try {
-                conn.rollback();
+                if (conn != null) {
+                    conn.rollback();
+                }
             } catch (SQLException ex) {
                 throw new DAOException(ex.getMessage());
             }
@@ -319,8 +321,6 @@ public class UserDAO {
 
     /**
      * Gets multiple Users from a ResultSet
-     * TODO: get roles and permissions for each user somehow (array in array)
-     *
      * @param rs The resultset.
      * @return A List of the UserDAOs
      * @throws SQLException
