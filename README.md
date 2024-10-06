@@ -20,6 +20,237 @@ TODO:
 
 ```mermaid
 classDiagram
+namespace ui {
+    class CartController {
+        <<Servlet>>
+        + static get(req: HttpServletRequest, resp: HttpServletResponse): void
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class CheckoutController {
+        <<Servlet>>
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class ErrorController {
+        <<Servlet>>
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class LoginController {
+        <<Servlet>>
+        + static get(req: HttpServletRequest, resp: HttpServletResponse): void
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class ProductController {
+        <<Servlet>>
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+        + static addProduct(req: HttpServletRequest, resp: HttpServletResponse): void
+        + static updateProduct(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class RegisterController {
+        <<Servlet>>
+        + static get(req: HttpServletRequest, resp: HttpServletResponse): void
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class UserController {
+        <<Servlet>>
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+        + private static updateUser(req: HttpServletRequest, resp: HttpServletResponse): void
+        + private static deleteUser(req: HttpServletRequest, resp: HttpServletResponse): void
+        + private static addUser(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class WarehouseController {
+        <<Servlet>>
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class OrderDTO {
+        + Integer id
+        + Timestamp created
+        + Timestamp delivered
+        + String deliveryAddress
+        + UserDTO customer
+        + List<ProductDTO> products
+        + List<StatusDTO> statuses
+        + OrderDTO(id: Integer, created: Timestamp, delivered: Timestamp, deliveryAddress: String, customer: UserDTO, products: List<ProductDTO>, statuses: List<StatusDTO>)
+    }
+
+    class StatusDTO {
+        + String status
+        + Timestamp timestamp
+        + StatusDTO(status: String, timestamp: Timestamp)
+    }
+
+    class CategoryDTO {
+        + String name
+        + String description
+        + CategoryDTO(name: String, description: String)
+    }
+
+    class ProductDTO {
+        + Integer id
+        + String name
+        + String description
+        + double price
+        + int quantity
+        + boolean removed
+        + List<CategoryDTO> categories
+        + List<String> images
+        + List<PropertyDTO> properties
+        + ProductDTO(id: Integer, name: String, description: String, price: double, quantity: int, removed: boolean, categories: List<CategoryDTO>, images: List<String>, properties: List<PropertyDTO>)
+    }
+
+    class PropertyDTO {
+        + String key
+        + String value
+        + PropertyDTO(key: String, value: String)
+    }
+
+    class PermissionDTO {
+        + String name
+        + PermissionDTO(name: String)
+        + toString() String
+    }
+
+    class RoleDTO {
+        + String name
+        + List<PermissionDTO> permissions
+        + RoleDTO(name: String, permissions: List<PermissionDTO>)
+        + toString() String
+    }
+
+    class UserDTO {
+        + Integer id
+        + String name
+        + String email
+        + String password
+        + List<RoleDTO> roles
+        + List<PermissionDTO> permissions
+        + UserDTO(id: Integer, name: String, email: String, password: String, roles: List<RoleDTO>, permissions: List<PermissionDTO>)
+        + toString() String
+    }
+
+    class ui-AuthMiddleware {
+        + void init(FilterConfig filterConfig) throws ServletException
+        + void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
+        + void destroy()
+    }
+
+    class ControllerServlet {
+        + void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+        + void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+        - UserDTO getCurrentUser(HttpServletRequest req)
+        - boolean hasRole(UserDTO user, String role)
+        - boolean hasPermission(UserDTO user, String permission)
+        - void redirectToLogin(HttpServletResponse resp, HttpServletRequest req) throws IOException
+        - void handleUnauthorizedAccess(boolean isLoggedIn, HttpServletRequest req, HttpServletResponse resp) throws IOException
+    }
+}
+
+    CartController --|> HttpServlet : extends
+    CartController --> HttpServletRequest : uses
+    CartController --> HttpServletResponse : uses
+    CartController --> HttpSession : uses
+    CartController --> Map : uses
+    Map <|-- HashMap : implements
+
+    CheckoutController --|> HttpServlet : extends
+    CheckoutController --> HttpServletRequest : uses
+    CheckoutController --> HttpServletResponse : uses
+    CheckoutController --> HttpSession : uses
+    CheckoutController --> UserDTO : uses
+    CheckoutController --> ProductDTO : uses
+    CheckoutController --> OrderService : uses
+    CheckoutController --> PermissionException : uses
+    CheckoutController --> ServiceException : uses
+
+    ErrorController --|> HttpServlet : extends
+    ErrorController --> HttpServletRequest : uses
+    ErrorController --> HttpServletResponse : uses
+    ErrorController --> HttpSession : uses
+
+    LoginController --|> HttpServlet : extends
+    LoginController --> HttpServletRequest : uses
+    LoginController --> HttpServletResponse : uses
+    LoginController --> HttpSession : uses
+    LoginController --> UserService : uses
+    LoginController --> UserDTO : creates
+    LoginController --> ServiceException : throws
+
+    ProductController --|> HttpServlet : extends
+    ProductController --> HttpServletRequest : uses
+    ProductController --> HttpServletResponse : uses
+    ProductController --> HttpSession : uses
+    ProductController --> UserDTO : uses
+    ProductController --> RoleDTO : uses
+    ProductController --> ProductService : uses
+    ProductController --> ProductDTO : creates
+    ProductController --> CategoryDTO : creates
+    ProductController --> PermissionException : catches
+    ProductController --> ServiceException : catches
+
+    RegisterController --|> HttpServlet : extends
+    RegisterController --> HttpServletRequest : uses
+    RegisterController --> HttpServletResponse : uses
+    RegisterController --> HttpSession : uses
+    RegisterController --> UserService : uses
+    RegisterController --> RoleService : uses
+    RegisterController --> UserDTO : creates
+    RegisterController --> RoleDTO : creates
+    RegisterController --> ServiceException : catches
+
+    UserController --|> HttpServlet : extends
+    UserController --> HttpServletRequest : uses
+    UserController --> HttpServletResponse : uses
+    UserController --> HttpSession : uses
+    UserController --> UserService : uses
+    UserController --> UserDTO : creates
+    UserController --> RoleDTO : creates
+    UserController --> PermissionException : catches
+    UserController --> ServiceException : catches
+
+    WarehouseController --|> HttpServlet : extends
+    WarehouseController --> HttpServletRequest : uses
+    WarehouseController --> HttpServletResponse : uses
+    WarehouseController --> HttpSession : uses
+    WarehouseController --> StatusService : uses
+    WarehouseController --> UserDTO : uses
+    WarehouseController --> PermissionException : catches
+    WarehouseController --> ServiceException : catches
+
+    OrderDTO --> UserDTO : has
+    OrderDTO --> ProductDTO : has
+    OrderDTO --> StatusDTO : has
+
+    ProductDTO --> CategoryDTO : has
+    ProductDTO --> PropertyDTO : has
+
+    RoleDTO --> PermissionDTO : has
+
+    UserDTO --> RoleDTO : has
+    UserDTO --> PermissionDTO : has
+
+    ui-AuthMiddleware ..> UserDTO : uses
+    ui-AuthMiddleware ..> RoleDTO : uses
+    ui-AuthMiddleware ..> PermissionDTO : uses
+
+    ControllerServlet ..> UserDTO : uses
+    ControllerServlet ..> RoleDTO : uses
+    ControllerServlet ..> PermissionDTO : uses
+    ControllerServlet ..> ErrorController : uses
+    ControllerServlet ..> RegisterController : uses
+    ControllerServlet ..> LoginController : uses
+    ControllerServlet ..> UserController : uses
+    ControllerServlet ..> ProductController : uses
+    ControllerServlet ..> CartController : uses
+    ControllerServlet ..> CheckoutController : uses
+    ControllerServlet ..> WarehouseController : uses
+
 namespace bo {
     class AuthMiddleware {
         +static boolean userHasOneOf(UserDTO user, PermissionDTO... permissions)

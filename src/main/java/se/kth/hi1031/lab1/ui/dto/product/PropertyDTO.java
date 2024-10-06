@@ -7,8 +7,10 @@ import lombok.Setter;
 /**
  * Data Transfer Object representing a property of a product.
  *
- * <p>The PropertyDTO class encapsulates a key-value pair that represents
- * a specific characteristic or feature of a product.</p>
+ * <p>
+ * The PropertyDTO class encapsulates a key-value pair that represents
+ * a specific characteristic or feature of a product.
+ * </p>
  */
 @Getter
 @Setter
