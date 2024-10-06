@@ -257,6 +257,225 @@ namespace bo {
 
     ServiceException --> RuntimeException
 
+    namespace db {
+    class OrderDAO {
+        +Integer id
+        +Timestamp created
+        +Timestamp delivered
+        +String deliveryAddress
+        +UserDAO customer
+        +List<ProductDAO> products
+        +List<StatusDAO> statuses
+        +OrderDAO(Order order)
+        +static List<OrderDAO> getOrders()
+        +static Optional<OrderDAO> getOrderById(int id)
+        +static List<OrderDAO> getOrdersByCustomer(User customer)
+        +static OrderDAO createOrder(Order order) throws DAOException
+        +static List<OrderDAO> getOrdersByStatus(String... statuses) throws DAOException
+        +static List<OrderDAO> getOrdersByStatus(Connection conn, String... statuses) throws DAOException
+    }
+
+    class StatusDAO {
+        - String status
+        - Timestamp timestamp
+        + StatusDAO(String status, Timestamp timestamp)
+        + static StatusDAO createStatus(int orderId, Status status)
+        + static StatusDAO createStatus(int orderId, Status status, Connection conn)
+        + static StatusDAO toDAO(ResultSet rs)
+        + static List<StatusDAO> toDAOs(ResultSet rs)
+        + Status toStatus()
+    }
+
+    class CategoryDAO {
+        - String name
+        - String description
+        + CategoryDAO(String name, String description)
+        + static List<String> getAvailableCategories()
+        + Category toCategory()
+    }
+
+    class ProductDAO {
+        +Integer id
+        +String name
+        +String description
+        +double price
+        +int quantity
+        +boolean removed
+        +List<CategoryDAO> categories
+        +List<String> images
+        +List<PropertyDAO> properties
+        +static List<ProductDAO> getAllProducts() throws DAOException
+        +static Optional<ProductDAO> getProductById(int id) throws DAOException
+        +static ProductDAO createProduct(Product product)
+        +static boolean updateProductQuantity(Product product, int quantity)
+        +static int getProductQuantity(int productId) throws DAOException
+        +static List<ProductDAO> getProductsByIds(List<Integer> ids) throws DAOException
+        +static void updateProduct(Product product) throws DAOException
+    }
+
+    class PropertyDAO {
+        +String key
+        +String value
+        +Property toProperty()
+    }
+
+    class PermissionDAO {
+        +String name
+        +static List<String> getAvailablePermissions()
+        +Permission toPermission()
+    }
+
+    class RoleDAO {
+        +String name
+        +List<PermissionDAO> permissions
+        +Role toRole()
+        +static List<String> getAvailableRoles()
+        +static RoleDAO getRole(String name)
+    }
+
+    class UserDAO {
+        +Integer id
+        +String name
+        +String email
+        +String password
+        +List<RoleDAO> roles
+        +List<PermissionDAO> permissions
+        +static List<UserDAO> getUsers()
+        +static Optional<UserDAO> getUserByid(int id)
+        +static Optional<UserDAO> login(User credentials)
+        +static UserDAO createUser(User user)
+        +static void updateUser(User user)
+        +static void deleteUserById(int id)
+        +User toUser()
+    }
+
+    class DBUtil {
+        +cleanUp(Connection conn, PreparedStatement stmt, ResultSet rs)
+    }
+
+    class DAOException {
+        +DAOException(String message)
+    }
+
+    class DBConnection {
+        +DBConnection(DBConnectionManager parent)
+        +boolean getAutoCommit() throws SQLException
+        +void setAutoCommit(boolean autoCommit) throws SQLException
+        +void commit() throws SQLException
+        +void rollback() throws SQLException
+        +Statement createStatement() throws SQLException
+        +PreparedStatement prepareStatement(String sql) throws SQLException
+        +CallableStatement prepareCall(String sql) throws SQLException
+        +String nativeSQL(String sql) throws SQLException
+        +boolean isClosed() throws SQLException
+        +DatabaseMetaData getMetaData() throws SQLException
+        +void setReadOnly(boolean readOnly) throws SQLException
+        +boolean isReadOnly() throws SQLException
+        +void setCatalog(String catalog) throws SQLException
+        +String getCatalog() throws SQLException
+        +void setTransactionIsolation(int level) throws SQLException
+        +int getTransactionIsolation() throws SQLException
+        +SQLWarning getWarnings() throws SQLException
+        +void clearWarnings() throws SQLException
+        +Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException
+        +PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException
+        +CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException
+        +Map<String, Class<?>> getTypeMap() throws SQLException
+        +void setTypeMap(Map<String, Class<?>> map) throws SQLException
+        +void setHoldability(int holdability) throws SQLException
+        +int getHoldability() throws SQLException
+        +Savepoint setSavepoint() throws SQLException
+        +Savepoint setSavepoint(String name) throws SQLException
+        +void rollback(Savepoint savepoint) throws SQLException
+        +void releaseSavepoint(Savepoint savepoint) throws SQLException
+        +Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException
+        +PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException
+        +CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException
+        +void setClientInfo(String name, String value) throws SQLClientInfoException
+        +void setClientInfo(Properties properties) throws SQLClientInfoException
+        +String getClientInfo(String name) throws SQLException
+        +Properties getClientInfo() throws SQLException
+        +Array createArrayOf(String typeName, Object[] elements) throws SQLException
+        +Blob createBlob() throws SQLException
+        +Clob createClob() throws SQLException
+        +NClob createNClob() throws SQLException
+        +SQLXML createSQLXML() throws SQLException
+        +boolean isValid(int timeout) throws SQLException
+        +void setSchema(String schema) throws SQLException
+        +String getSchema() throws SQLException
+        +void abort(Executor executor) throws SQLException
+        +void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException
+        +int getNetworkTimeout() throws SQLException
+        +<T> T unwrap(Class<T> iface) throws SQLException
+        +boolean isWrapperFor(Class<?> iface) throws SQLException
+        +PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException
+        +PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException
+        +PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException
+        +Struct createStruct(String typeName, Object[] attributes) throws SQLException
+        +void close() throws SQLException
+        +void closeConnection() throws SQLException
+    }
+
+    class DBConnectionManager {
+        - static instance: DBConnectionManager
+        - connectionPool: List<DBConnection>
+        - usedConnections: List<DBConnection>
+        - MAX_POOL_SIZE: int
+        + DBConnectionManager()
+        + static getInstance(): DBConnectionManager
+        - initializePool(): void
+        + getConnection(): Connection
+        + releaseConnection(connection: Connection): void
+        + closePool(): void
+    }
+
+    }
+
+    StatusDAO --|> Status : uses
+    StatusDAO --> DBConnectionManager : uses
+    StatusDAO --> DAOException : throws
+    StatusDAO --> Connection : uses
+    StatusDAO --> PreparedStatement : uses
+    StatusDAO --> ResultSet : uses
+
+    CategoryDAO --> Category : converts to
+    CategoryDAO --> DBConnectionManager : uses
+    CategoryDAO --> DAOException : throws
+    CategoryDAO --> Connection : uses
+    CategoryDAO --> PreparedStatement : uses
+    CategoryDAO --> ResultSet : uses
+
+    ProductDAO --> "0..*" CategoryDAO : contains
+    ProductDAO --> "0..*" PropertyDAO : contains
+    ProductDAO --> "0..*" String : contains images
+    ProductDAO --> "1" Product : converts to
+    Product --> "0..*" Category : has
+    Product --> "0..*" Property : has
+
+    PropertyDAO --> Property : converts to
+
+    PermissionDAO --> Permission : converts to
+    PermissionDAO --> DAOException : throws
+    PermissionDAO --> DBConnectionManager : uses
+
+    RoleDAO --> Role : converts to
+    RoleDAO --> PermissionDAO : contains
+    RoleDAO --> DAOException : throws
+    RoleDAO --> DBConnectionManager : uses
+
+    UserDAO --> RoleDAO : has
+    UserDAO --> PermissionDAO : has
+    UserDAO --> User : converts to
+    RoleDAO --> User : has
+    PermissionDAO --> User : grants
+
+    DAOException --> RuntimeException : extends
+
+    DBConnection --> DBConnectionManager : uses
+    DBConnection ..> Connection : implements
+
+    DBConnectionManager "1" -- "0..*" DBConnection : manages >
+
 ```
 
 ## DB
