@@ -1,0 +1,31 @@
+services:
+  hi1031lab1db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: webshop
+      KTHCLOUD_CORES: 0.1
+      KTHCLOUD_RAM: 0.1
+      PORT: 5432
+    volumes:
+      - ./db/init/:/docker-entrypoint-initdb.d/
+      - data:/var/lib/postgresql/
+    restart: unless-stopped
+
+  hi1031-webshop:
+    image: phillezi/hi1031lab1:latest
+    environment:
+      DB_URI: jdbc:postgresql://hi1031lab1db:5432/webshop
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+      KTHCLOUD_CORES: 1.2
+      KTHCLOUD_RAM: 2
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  data:

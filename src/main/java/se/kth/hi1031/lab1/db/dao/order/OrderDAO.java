@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * DAO (Data Access Object) class for managing the persistence and retrieval of {@link Order} entities.
+ * DAO (Data Access Object) class for managing the persistence and retrieval of
+ * {@link Order} entities.
  */
 @Getter
 @Setter
@@ -106,7 +107,8 @@ public class OrderDAO {
      * Retrieves an order by its ID.
      *
      * @param id The ID of the order.
-     * @return An {@link Optional} containing the {@link OrderDAO} if found, otherwise an empty optional.
+     * @return An {@link Optional} containing the {@link OrderDAO} if found,
+     *         otherwise an empty optional.
      */
     public static Optional<OrderDAO> getOrderById(int id) {
         Optional<OrderDAO> order = Optional.empty();
@@ -122,7 +124,7 @@ public class OrderDAO {
                     "ARRAY_AGG(DISTINCT p.name) AS products_name, " +
                     "ARRAY_AGG(DISTINCT p.description) AS products_description, " +
                     "ARRAY_AGG(DISTINCT op.product_price) AS products_price, " +
-                    "ARRAY_AGG(DISTINCT p.quantity) AS products_quantity, " +
+                    "ARRAY_AGG(DISTINCT op.product_quantity) AS products_quantity, " +
                     "ARRAY_AGG(DISTINCT p.removed) AS products_removed, " +
                     "ARRAY_AGG(DISTINCT os.status) AS statuses_status, " +
                     "ARRAY_AGG(DISTINCT os.timestamp) AS statuses_timestamp, " +
@@ -160,7 +162,8 @@ public class OrderDAO {
      * Retrieves all orders for a specific customer.
      *
      * @param customer The customer whose orders should be retrieved.
-     * @return A list of {@link OrderDAO} objects representing the customer's orders.
+     * @return A list of {@link OrderDAO} objects representing the customer's
+     *         orders.
      */
     public static List<OrderDAO> getOrdersByCustomer(User customer) {
         List<OrderDAO> orders = new ArrayList<>();
@@ -176,7 +179,7 @@ public class OrderDAO {
                     "ARRAY_AGG(DISTINCT p.name) AS products_name, " +
                     "ARRAY_AGG(DISTINCT p.description) AS products_description, " +
                     "ARRAY_AGG(DISTINCT op.product_price) AS products_price, " +
-                    "ARRAY_AGG(DISTINCT p.quantity) AS products_quantity, " +
+                    "ARRAY_AGG(DISTINCT op.product_quantity) AS products_quantity, " +
                     "ARRAY_AGG(DISTINCT p.removed) AS products_removed, " +
                     "ARRAY_AGG(os.status ORDER BY os.timestamp ASC) AS statuses_status, " +
                     "ARRAY_AGG(os.timestamp ORDER BY os.timestamp ASC) AS statuses_timestamp, " +
@@ -238,11 +241,12 @@ public class OrderDAO {
                 order.setId(id);
 
                 for (Product product : order.getProducts()) {
-                    String productsQuery = "INSERT INTO ordered_products (order_id, product_id, product_price) VALUES (?, ?, ?)";
+                    String productsQuery = "INSERT INTO ordered_products (order_id, product_id, product_price, product_quantity) VALUES (?, ?, ?, ?)";
                     stmt = conn.prepareStatement(productsQuery);
                     stmt.setInt(1, id);
                     stmt.setInt(2, product.getId());
                     stmt.setBigDecimal(3, BigDecimal.valueOf(product.getPrice()));
+                    stmt.setInt(4, product.getQuantity());
 
                     stmt.executeUpdate();
 
@@ -290,7 +294,8 @@ public class OrderDAO {
      * Retrieves a list of orders based on the provided statuses.
      *
      * @param statuses The statuses to filter the orders.
-     * @return A list of {@link OrderDAO} objects representing orders with the specified statuses.
+     * @return A list of {@link OrderDAO} objects representing orders with the
+     *         specified statuses.
      * @throws DAOException If an error occurs while accessing the database.
      */
     public static List<OrderDAO> getOrdersByStatus(String... statuses) throws DAOException {
@@ -298,11 +303,14 @@ public class OrderDAO {
     }
 
     /**
-     * Retrieves a list of orders based on the provided statuses, using the given database connection.
+     * Retrieves a list of orders based on the provided statuses, using the given
+     * database connection.
      *
-     * @param conn    The database connection to use. If null, a new connection will be created.
+     * @param conn     The database connection to use. If null, a new connection
+     *                 will be created.
      * @param statuses The statuses to filter the orders.
-     * @return A list of {@link OrderDAO} objects representing orders with the specified statuses.
+     * @return A list of {@link OrderDAO} objects representing orders with the
+     *         specified statuses.
      * @throws DAOException If an error occurs while accessing the database.
      */
     public static List<OrderDAO> getOrdersByStatus(Connection conn, String... statuses) throws DAOException {
@@ -327,7 +335,7 @@ public class OrderDAO {
                     "ARRAY_AGG(DISTINCT p.name) AS products_name, " +
                     "ARRAY_AGG(DISTINCT p.description) AS products_description, " +
                     "ARRAY_AGG(DISTINCT op.product_price) AS products_price, " +
-                    "ARRAY_AGG(DISTINCT p.quantity) AS products_quantity, " +
+                    "ARRAY_AGG(DISTINCT op.product_quantity) AS products_quantity, " +
                     "ARRAY_AGG(DISTINCT p.removed) AS products_removed, " +
                     "ARRAY_AGG(os.status ORDER BY os.timestamp ASC) AS statuses_status, " +
                     "ARRAY_AGG(os.timestamp ORDER BY os.timestamp ASC) AS statuses_timestamp, " +
@@ -385,7 +393,8 @@ public class OrderDAO {
      * Transforms a ResultSet into an OrderDAO object.
      *
      * @param rs The ResultSet containing the order data.
-     * @return An {@link OrderDAO} object populated with the data from the ResultSet.
+     * @return An {@link OrderDAO} object populated with the data from the
+     *         ResultSet.
      * @throws SQLException If an error occurs while accessing the ResultSet.
      */
     public static OrderDAO toDAO(ResultSet rs) throws SQLException {
@@ -416,7 +425,6 @@ public class OrderDAO {
                 this.deliveryAddress,
                 this.customer != null ? this.customer.toUser() : null,
                 this.products != null ? this.products.stream().map(ProductDAO::toProduct).toList() : null,
-                this.statuses != null ? this.statuses.stream().map(StatusDAO::toStatus).toList() : null
-        );
+                this.statuses != null ? this.statuses.stream().map(StatusDAO::toStatus).toList() : null);
     }
 }

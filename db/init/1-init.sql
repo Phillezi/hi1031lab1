@@ -79,15 +79,32 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    available_status (
-        name VARCHAR PRIMARY KEY
-    );
+    available_status (name VARCHAR PRIMARY KEY);
 
-INSERT INTO available_status (name) VALUES ( 'received' );
-INSERT INTO available_status (name) VALUES ( 'packed' );
-INSERT INTO available_status (name) VALUES ( 'shipped' );
-INSERT INTO available_status (name) VALUES ( 'delivered' );
-INSERT INTO available_status (name) VALUES ( 'error' );
+INSERT INTO
+    available_status (name)
+VALUES
+    ('received');
+
+INSERT INTO
+    available_status (name)
+VALUES
+    ('packed');
+
+INSERT INTO
+    available_status (name)
+VALUES
+    ('shipped');
+
+INSERT INTO
+    available_status (name)
+VALUES
+    ('delivered');
+
+INSERT INTO
+    available_status (name)
+VALUES
+    ('error');
 
 CREATE TABLE
     orders (
@@ -114,6 +131,7 @@ CREATE TABLE
         product_id INT,
         order_id INT,
         product_price DECIMAL(10, 2),
+        product_quantity INT DEFAULT 1,
         FOREIGN KEY (product_id) REFERENCES products (id),
         FOREIGN KEY (order_id) REFERENCES orders (id),
         PRIMARY KEY (product_id, order_id)
