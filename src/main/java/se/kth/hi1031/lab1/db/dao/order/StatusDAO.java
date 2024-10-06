@@ -17,6 +17,9 @@ import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
+/**
+ * DAO (Data Access Object) class for managing the persistence and retrieval of {@link Status} entities.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -25,10 +28,26 @@ public class StatusDAO {
     private String status;
     private Timestamp timestamp;
 
+    /**
+     * Creates a new StatusDAO instance with the specified order ID and Status.
+     *
+     * @param orderId The ID of the order associated with the status.
+     * @param status  The Status object containing the status information.
+     * @return A new StatusDAO instance representing the specified status.
+     */
     public static StatusDAO createStatus(int orderId, Status status) {
         return createStatus(orderId, status, null);
     }
 
+    /**
+     * Creates a new status in the database for the specified order.
+     *
+     * @param orderId The ID of the order associated with the status.
+     * @param status  The Status object containing the status information.
+     * @param conn    The database connection to use. If null, a new connection will be created.
+     * @return A new StatusDAO instance representing the created status.
+     * @throws DAOException If an error occurs while accessing the database.
+     */
     public static StatusDAO createStatus(int orderId, Status status, Connection conn) {
         boolean isChild = false;
         PreparedStatement stmt = null;
@@ -68,6 +87,13 @@ public class StatusDAO {
         return status.toDAO();
     }
 
+    /**
+     * Transforms a ResultSet into a StatusDAO object.
+     *
+     * @param rs The ResultSet containing the status data.
+     * @return A StatusDAO object populated with the data from the ResultSet.
+     * @throws SQLException If an error occurs while accessing the ResultSet.
+     */
     public static StatusDAO toDAO(ResultSet rs) throws SQLException {
         return new StatusDAO(
                 rs.getString("status_status"),
@@ -75,6 +101,13 @@ public class StatusDAO {
         );
     }
 
+    /**
+     * Converts the statuses stored in a ResultSet into a list of StatusDAO objects.
+     *
+     * @param rs The ResultSet containing the statuses.
+     * @return A list of StatusDAO objects representing the statuses in the ResultSet.
+     * @throws SQLException If an error occurs while accessing the ResultSet.
+     */
     public static List<StatusDAO> toDAOs(ResultSet rs) throws SQLException {
         String[] statusArr = (String[]) rs.getArray("statuses_status").getArray();
         Timestamp[] timestampArr = (Timestamp[]) rs.getArray("statuses_timestamp").getArray();
@@ -93,6 +126,11 @@ public class StatusDAO {
         return daos;
     }
 
+    /**
+     * Converts this StatusDAO instance back into a Status object.
+     *
+     * @return A Status object representing this StatusDAO.
+     */
     public Status toStatus() {
         return new Status(this.status, this.timestamp);
     }

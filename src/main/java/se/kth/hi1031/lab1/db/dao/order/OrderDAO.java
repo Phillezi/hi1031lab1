@@ -20,6 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * DAO (Data Access Object) class for managing the persistence and retrieval of {@link Order} entities.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -33,6 +36,11 @@ public class OrderDAO {
     private List<ProductDAO> products;
     private List<StatusDAO> statuses;
 
+    /**
+     * Constructs an OrderDAO object from an {@link Order} object.
+     *
+     * @param order The order object to be transformed into DAO representation.
+     */
     public OrderDAO(Order order) {
         this.id = order.getId();
         this.created = order.getCreated();
@@ -43,6 +51,11 @@ public class OrderDAO {
         this.statuses = order.getStatuses().stream().map(Status::toDAO).toList();
     }
 
+    /**
+     * Retrieves a list of all orders from the database.
+     *
+     * @return A list of {@link OrderDAO} objects representing all orders.
+     */
     public static List<OrderDAO> getOrders() {
         List<OrderDAO> orders = new ArrayList<>();
         Connection conn = null;
@@ -89,6 +102,12 @@ public class OrderDAO {
         return orders;
     }
 
+    /**
+     * Retrieves an order by its ID.
+     *
+     * @param id The ID of the order.
+     * @return An {@link Optional} containing the {@link OrderDAO} if found, otherwise an empty optional.
+     */
     public static Optional<OrderDAO> getOrderById(int id) {
         Optional<OrderDAO> order = Optional.empty();
         Connection conn = null;
@@ -137,6 +156,12 @@ public class OrderDAO {
         return order;
     }
 
+    /**
+     * Retrieves all orders for a specific customer.
+     *
+     * @param customer The customer whose orders should be retrieved.
+     * @return A list of {@link OrderDAO} objects representing the customer's orders.
+     */
     public static List<OrderDAO> getOrdersByCustomer(User customer) {
         List<OrderDAO> orders = new ArrayList<>();
         Connection conn = null;
@@ -185,6 +210,13 @@ public class OrderDAO {
         return orders;
     }
 
+    /**
+     * Creates a new order in the database.
+     *
+     * @param order The {@link Order} object to be persisted.
+     * @return The persisted {@link OrderDAO} object.
+     * @throws DAOException If an error occurs during the database operation.
+     */
     public static OrderDAO createOrder(Order order) throws DAOException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -254,10 +286,25 @@ public class OrderDAO {
         return order.toDAO();
     }
 
+    /**
+     * Retrieves a list of orders based on the provided statuses.
+     *
+     * @param statuses The statuses to filter the orders.
+     * @return A list of {@link OrderDAO} objects representing orders with the specified statuses.
+     * @throws DAOException If an error occurs while accessing the database.
+     */
     public static List<OrderDAO> getOrdersByStatus(String... statuses) throws DAOException {
         return OrderDAO.getOrdersByStatus(null, statuses);
     }
 
+    /**
+     * Retrieves a list of orders based on the provided statuses, using the given database connection.
+     *
+     * @param conn    The database connection to use. If null, a new connection will be created.
+     * @param statuses The statuses to filter the orders.
+     * @return A list of {@link OrderDAO} objects representing orders with the specified statuses.
+     * @throws DAOException If an error occurs while accessing the database.
+     */
     public static List<OrderDAO> getOrdersByStatus(Connection conn, String... statuses) throws DAOException {
         boolean isChild = false;
         PreparedStatement stmt = null;
@@ -334,7 +381,13 @@ public class OrderDAO {
         return orders;
     }
 
-
+    /**
+     * Transforms a ResultSet into an OrderDAO object.
+     *
+     * @param rs The ResultSet containing the order data.
+     * @return An {@link OrderDAO} object populated with the data from the ResultSet.
+     * @throws SQLException If an error occurs while accessing the ResultSet.
+     */
     public static OrderDAO toDAO(ResultSet rs) throws SQLException {
         UserDAO customer = UserDAO.toDAO(rs);
         List<ProductDAO> products = ProductDAO.toDAOs(rs);
@@ -350,6 +403,11 @@ public class OrderDAO {
                 statuses);
     }
 
+    /**
+     * Converts this OrderDAO instance back into an Order object.
+     *
+     * @return An {@link Order} object representing this OrderDAO.
+     */
     public Order toOrder() {
         return new Order(
                 this.id,

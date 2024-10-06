@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * DAO (Data Access Object) class for managing the persistence and retrieval of product categories.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,6 +26,11 @@ public class CategoryDAO {
     private String name;
     private String description;
 
+    /**
+     * Retrieves a list of available category names from the database.
+     *
+     * @return A list of available category names.
+     */
     public static List<String> getAvailableCategories() {
         List<String> availableCategories = new ArrayList<>();
         Connection conn = null;
@@ -47,6 +55,11 @@ public class CategoryDAO {
         return availableCategories;
     }
 
+    /**
+     * Retrieves all categories from the database.
+     *
+     * @return A list of CategoryDAO objects representing the available categories.
+     */
     public static List<CategoryDAO> getCategories() {
         List<CategoryDAO> availableCategories = new ArrayList<>();
         Connection conn = null;
@@ -70,6 +83,12 @@ public class CategoryDAO {
         return availableCategories;
     }
 
+    /**
+     * Retrieves a category by its name from the database.
+     *
+     * @param name The name of the category to retrieve.
+     * @return An Optional containing the CategoryDAO object if found, or empty if not found.
+     */
     public static Optional<CategoryDAO> getCategoryByName(String name) {
         Optional<CategoryDAO> category = Optional.empty();
         Connection conn = null;
@@ -94,6 +113,11 @@ public class CategoryDAO {
         return category;
     }
 
+    /**
+     * Creates a new category in the database.
+     *
+     * @param category The Category object to be created.
+     */
     public static void createCategory(Category category) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -114,6 +138,11 @@ public class CategoryDAO {
         }
     }
 
+    /**
+     * Updates an existing category in the database.
+     *
+     * @param category The Category object containing updated information.
+     */
     public static void updateCategory(Category category) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -134,6 +163,11 @@ public class CategoryDAO {
         }
     }
 
+    /**
+     * Converts this CategoryDAO instance to a Category object.
+     *
+     * @return A Category object representing this CategoryDAO.
+     */
     public Category toCategory() {
         return new Category(name, description);
     }
