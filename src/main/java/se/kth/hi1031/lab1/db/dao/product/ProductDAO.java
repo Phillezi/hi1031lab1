@@ -14,6 +14,8 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static se.kth.hi1031.lab1.db.dao.DBUtil.cleanUp;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -31,6 +33,8 @@ public class ProductDAO {
     public static List<ProductDAO> getAllProducts() throws DAOException {
         List<ProductDAO> products = new ArrayList<>();
         Connection conn = null;
+        ResultSet rs = null;
+        PreparedStatement stmt = null;
         try {
             conn = DBConnectionManager.getInstance().getConnection();
             String query = "SELECT " +
@@ -45,8 +49,8 @@ public class ProductDAO {
                     "LEFT JOIN product_properties pp ON p.id = pp.product_id " +
                     "GROUP BY p.id";
 
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
+            stmt = conn.prepareStatement(query);
+            rs = stmt.executeQuery();
 
             while (rs.next()) {
                 products.add(toDAO(rs));
@@ -54,14 +58,7 @@ public class ProductDAO {
         } catch (SQLException e) {
             throw new DAOException(e.getMessage());
         } finally {
-            if (conn != null) {
-                // TODO: mark as free to use
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            cleanUp(conn, stmt, rs);
         }
         return products;
     }
@@ -69,6 +66,8 @@ public class ProductDAO {
     public static Optional<ProductDAO> getProductById(int id) throws DAOException {
         Optional<ProductDAO> product = Optional.empty();
         Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
             conn = DBConnectionManager.getInstance().getConnection();
             String query = "SELECT " +
@@ -84,9 +83,9 @@ public class ProductDAO {
                     "WHERE p.id = ? " +
                     "GROUP BY p.id";
 
-            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt = conn.prepareStatement(query);
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
 
             while (rs.next()) {
                 product = Optional.of(toDAO(rs));
@@ -94,14 +93,7 @@ public class ProductDAO {
         } catch (SQLException e) {
             throw new DAOException(e.getMessage());
         } finally {
-            if (conn != null) {
-                // TODO: mark as free to use
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            cleanUp(conn, stmt, rs);
         }
         return product;
     }
@@ -189,19 +181,11 @@ public class ProductDAO {
                     e.printStackTrace();
                 }
             }
-            try {
-                if (rs != null)
-                    rs.close();
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            cleanUp(conn, stmt, rs);
         }
         return product.toDAO();
     }
 
-    // Wrap to make it
     public static boolean updateProductQuantity(Product product, int quantity) {
         return ProductDAO.updateProductQuantity(product, quantity, null);
     }
@@ -230,6 +214,9 @@ public class ProductDAO {
                 try {
                     if (!isChild) {
                         conn.close();
+                    }
+                    if (stmt != null) {
+                        stmt.close();
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
@@ -272,19 +259,15 @@ public class ProductDAO {
                     ex.printStackTrace();
                 }
             }
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            cleanUp(null, stmt, rs);
         }
     }
 
     public static List<ProductDAO> getProductsByIds(List<Integer> ids) throws DAOException {
         List<ProductDAO> products = new ArrayList<>();
         Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
 
         if (ids == null || ids.isEmpty()) {
             return products;
@@ -310,13 +293,13 @@ public class ProductDAO {
                     "WHERE p.id IN (" + placeholders + ") " +
                     "GROUP BY p.id";
 
-            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt = conn.prepareStatement(query);
 
             for (int i = 0; i < ids.size(); i++) {
                 stmt.setInt(i + 1, ids.get(i));
             }
 
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
 
             while (rs.next()) {
                 products.add(toDAO(rs));
@@ -325,13 +308,8 @@ public class ProductDAO {
         } catch (SQLException e) {
             throw new DAOException(e.getMessage());
         } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            cleanUp(conn, stmt, rs);
+
         }
 
         return products;
@@ -455,12 +433,7 @@ public class ProductDAO {
                     e.printStackTrace();
                 }
             }
-            try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            cleanUp(conn, stmt, rs);
         }
     }
 

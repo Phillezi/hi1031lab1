@@ -79,7 +79,6 @@ public class OrderDAO {
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {
-                // TODO: mark as free to use
                 try {
                     conn.close();
                 } catch (SQLException e) {
@@ -87,7 +86,6 @@ public class OrderDAO {
                 }
             }
         }
-        orders.stream().map(OrderDAO::toString).forEach(System.out::println);
         return orders;
     }
 
@@ -129,7 +127,6 @@ public class OrderDAO {
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {
-                // TODO: mark as free to use
                 try {
                     conn.close();
                 } catch (SQLException e) {
@@ -178,7 +175,6 @@ public class OrderDAO {
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {
-                // TODO: mark as free to use
                 try {
                     conn.close();
                 } catch (SQLException e) {
@@ -237,66 +233,6 @@ public class OrderDAO {
             } catch (SQLException ex) {
                 throw new DAOException(ex.getMessage());
             }
-            throw new DAOException(e.getMessage());
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                if (rs != null)
-                    rs.close();
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return order.toDAO();
-    }
-
-    public static OrderDAO createOrder(Order order, Connection conn) throws DAOException {
-        if (conn == null) {
-            throw new DAOException("No connection to database");
-        }
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            String query = "INSERT INTO orders (created_at, delivered_at, delivery_address, customer_id) VALUES (?, ?, ?, ?) RETURNING id";
-            stmt = conn.prepareStatement(query);
-            stmt.setTimestamp(1, order.getCreated());
-            stmt.setTimestamp(2, order.getDelivered());
-            stmt.setString(3, order.getDeliveryAddress());
-            stmt.setInt(4, order.getCustomer().getId());
-
-            rs = stmt.executeQuery();
-            if (rs.next()) {
-                Integer id = rs.getInt("id");
-                order.setId(id);
-
-                for (Product product : order.getProducts()) {
-                    String productsQuery = "INSERT INTO ordered_products (order_id, product_id) VALUES (?, ?)";
-                    stmt = conn.prepareStatement(productsQuery);
-                    stmt.setInt(1, id);
-                    stmt.setInt(2, product.getId());
-
-                    stmt.executeUpdate();
-                }
-
-                for (Status status : order.getStatuses()) {
-                    String statusQuery = "INSERT INTO order_status (order_id, status, timestamp) VALUES (?, ?, ?)";
-                    stmt = conn.prepareStatement(statusQuery);
-                    stmt.setInt(1, id);
-                    stmt.setString(2, status.getStatus());
-                    stmt.setTimestamp(3, status.getTimestamp());
-
-                    stmt.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
             throw new DAOException(e.getMessage());
         } finally {
             if (conn != null) {

@@ -8,6 +8,8 @@ import se.kth.hi1031.lab1.bo.model.user.User;
 import se.kth.hi1031.lab1.db.DAOException;
 import se.kth.hi1031.lab1.db.DBConnectionManager;
 
+import static se.kth.hi1031.lab1.db.dao.DBUtil.cleanUp;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,19 +32,14 @@ public class UserDAO {
     public static List<UserDAO> getUsers() throws DAOException {
         List<UserDAO> users = new ArrayList<>();
         Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
             conn = DBConnectionManager.getInstance().getConnection();
-            String query = "SELECT " +
-                    "u.id AS user_id, u.name AS user_name, u.email AS user_email, u.hashed_pw AS user_hashed_pw, " +
-                    "ARRAY_AGG(DISTINCT r.role) AS user_roles, " +
-                    "ARRAY_AGG(DISTINCT p.permission) AS user_role_permissions " +
-                    "FROM user_t u " +
-                    "LEFT JOIN roles r ON u.id = r.user_id " +
-                    "LEFT JOIN permissions_t p ON r.role = p.role " +
-                    "GROUP BY u.id";
+            String query = "SELECT " + "u.id AS user_id, u.name AS user_name, u.email AS user_email, u.hashed_pw AS user_hashed_pw, " + "ARRAY_AGG(DISTINCT r.role) AS user_roles, " + "ARRAY_AGG(DISTINCT p.permission) AS user_role_permissions " + "FROM user_t u " + "LEFT JOIN roles r ON u.id = r.user_id " + "LEFT JOIN permissions_t p ON r.role = p.role " + "GROUP BY u.id";
 
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
+            stmt = conn.prepareStatement(query);
+            rs = stmt.executeQuery();
 
             while (rs.next()) {
                 users.add(toDAO(rs));
@@ -50,13 +47,7 @@ public class UserDAO {
         } catch (SQLException e) {
             throw new DAOException(e.getMessage());
         } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            cleanUp(conn, stmt, rs);
         }
         return users;
     }
@@ -68,28 +59,19 @@ public class UserDAO {
     public static Optional<UserDAO> getUserByid(int id, Connection conn) throws DAOException {
         Optional<UserDAO> user = Optional.empty();
         boolean isChild = false;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
             if (conn == null) {
                 conn = DBConnectionManager.getInstance().getConnection();
             } else {
                 isChild = true;
             }
-            String query = "SELECT " +
-                    "u.id AS user_id, " +
-                    "u.name AS user_name, " +
-                    "u.email AS user_email, " +
-                    "u.hashed_pw AS user_hashed_pw, " +
-                    "ARRAY_AGG(DISTINCT r.role) AS user_roles, " +
-                    "ARRAY_AGG(DISTINCT p.permission) AS user_role_permissions " +
-                    "FROM user_t u " +
-                    "LEFT JOIN roles r ON u.id = r.user_id " +
-                    "LEFT JOIN permissions_t p ON r.role = p.role " +
-                    "WHERE u.id = ? " +
-                    "GROUP BY u.id";
+            String query = "SELECT " + "u.id AS user_id, " + "u.name AS user_name, " + "u.email AS user_email, " + "u.hashed_pw AS user_hashed_pw, " + "ARRAY_AGG(DISTINCT r.role) AS user_roles, " + "ARRAY_AGG(DISTINCT p.permission) AS user_role_permissions " + "FROM user_t u " + "LEFT JOIN roles r ON u.id = r.user_id " + "LEFT JOIN permissions_t p ON r.role = p.role " + "WHERE u.id = ? " + "GROUP BY u.id";
 
-            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt = conn.prepareStatement(query);
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
 
             while (rs.next()) {
                 user = Optional.of(toDAO(rs));
@@ -106,6 +88,7 @@ public class UserDAO {
                     e.printStackTrace();
                 }
             }
+            cleanUp(null, stmt, rs);
         }
         return user;
     }
@@ -117,18 +100,7 @@ public class UserDAO {
         ResultSet rs = null;
         try {
             conn = DBConnectionManager.getInstance().getConnection();
-            String query = "SELECT " +
-                    "u.id AS user_id, " +
-                    "u.name AS user_name, " +
-                    "u.email AS user_email, " +
-                    "u.hashed_pw AS user_hashed_pw, " +
-                    "ARRAY_AGG(DISTINCT r.role) AS user_roles, " +
-                    "ARRAY_AGG(DISTINCT p.permission) AS user_role_permissions " +
-                    "FROM user_t u " +
-                    "LEFT JOIN roles r ON u.id = r.user_id " +
-                    "LEFT JOIN permissions_t p ON r.role = p.role " +
-                    "WHERE u.email = ? " +
-                    "GROUP BY u.id";
+            String query = "SELECT " + "u.id AS user_id, " + "u.name AS user_name, " + "u.email AS user_email, " + "u.hashed_pw AS user_hashed_pw, " + "ARRAY_AGG(DISTINCT r.role) AS user_roles, " + "ARRAY_AGG(DISTINCT p.permission) AS user_role_permissions " + "FROM user_t u " + "LEFT JOIN roles r ON u.id = r.user_id " + "LEFT JOIN permissions_t p ON r.role = p.role " + "WHERE u.email = ? " + "GROUP BY u.id";
 
             stmt = conn.prepareStatement(query);
             stmt.setString(1, credentials.getEmail());
@@ -145,21 +117,7 @@ public class UserDAO {
         } catch (SQLException e) {
             throw new DAOException(e.getMessage());
         } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                if (rs != null)
-                    rs.close();
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            cleanUp(conn, stmt, rs);
         }
         return user;
     }
@@ -215,21 +173,7 @@ public class UserDAO {
             }
             throw new DAOException(e.getMessage());
         } finally {
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                if (rs != null)
-                    rs.close();
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            cleanUp(conn, stmt, rs);
         }
 
         return created;
@@ -310,11 +254,7 @@ public class UserDAO {
                     e.printStackTrace();
                 }
             }
-            try {
-                if (stmt != null) stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            cleanUp(conn, stmt, null);
         }
     }
 
@@ -353,11 +293,7 @@ public class UserDAO {
                     e.printStackTrace();
                 }
             }
-            try {
-                if (stmt != null) stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            cleanUp(conn, stmt, null);
         }
     }
 
@@ -365,9 +301,7 @@ public class UserDAO {
         List<PermissionDAO> permissions = null;
         try {
             Array permsArr = rs.getArray("user_role_permissions");
-            permissions = Arrays.stream((String[]) permsArr.getArray())
-                    .map(PermissionDAO::new)
-                    .collect(Collectors.toList());
+            permissions = Arrays.stream((String[]) permsArr.getArray()).map(PermissionDAO::new).collect(Collectors.toList());
         } catch (SQLException ignored) {
 
         }
@@ -375,20 +309,12 @@ public class UserDAO {
         List<RoleDAO> roles = null;
         try {
             Array rolesArr = rs.getArray("user_roles");
-            roles = Arrays.stream((String[]) rolesArr.getArray())
-                    .map((String role) -> new RoleDAO(role, new ArrayList<>()))
-                    .collect(Collectors.toList());
+            roles = Arrays.stream((String[]) rolesArr.getArray()).map((String role) -> new RoleDAO(role, new ArrayList<>())).collect(Collectors.toList());
         } catch (SQLException ignored) {
 
         }
 
-        return new UserDAO(
-                rs.getInt("user_id"),
-                rs.getString("user_name"),
-                rs.getString("user_email"),
-                rs.getString("user_hashed_pw"),
-                roles,
-                permissions);
+        return new UserDAO(rs.getInt("user_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_hashed_pw"), roles, permissions);
     }
 
     /**
@@ -405,22 +331,13 @@ public class UserDAO {
         String[] names = (String[]) rs.getArray("users_name").getArray();
         String[] passwords = (String[]) rs.getArray("users_password").getArray();
 
-        if (ids == null ||
-                names == null ||
-                emails == null ||
-                passwords == null) {
+        if (ids == null || names == null || emails == null || passwords == null) {
             return null;
         }
 
         List<UserDAO> daos = new ArrayList<>();
         for (int i = 0; i < ids.length; i++) {
-            daos.add(new UserDAO(
-                    ids[i],
-                    emails[i],
-                    names[i],
-                    passwords[i],
-                    null,
-                    null));
+            daos.add(new UserDAO(ids[i], emails[i], names[i], passwords[i], null, null));
         }
 
         return daos;

@@ -9,7 +9,7 @@ Om du har [`docker`](https://docker.com/) installerat kan du köra applikationen
 ```bash
 git clone https://github.com/Phillezi/hi1031lab1.git && \
 cd hi1031lab1 && \
-docker compose up -d
+docker compose up
 ```
 
 Webbshoppen nås då på [`localhost:8080`](http://localhost:8080).
