@@ -20,42 +20,692 @@ TODO:
 
 ```mermaid
 classDiagram
-    class DBConnection {
-        - Connection connection
-        + DBConnection()
-        + getConnection() Connection
-        + closeConnection() void
+namespace ui {
+    class CartController {
+        <<Servlet>>
+        + static get(req: HttpServletRequest, resp: HttpServletResponse): void
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
     }
 
-    class DBConnectionManager {
-        - List~DBConnection~ connections
-        + getConnection() DBConnection
-        + releaseConnection(DBConnection) void
+    class CheckoutController {
+        <<Servlet>>
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class ErrorController {
+        <<Servlet>>
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class LoginController {
+        <<Servlet>>
+        + static get(req: HttpServletRequest, resp: HttpServletResponse): void
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class ProductController {
+        <<Servlet>>
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+        + static addProduct(req: HttpServletRequest, resp: HttpServletResponse): void
+        + static updateProduct(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class RegisterController {
+        <<Servlet>>
+        + static get(req: HttpServletRequest, resp: HttpServletResponse): void
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class UserController {
+        <<Servlet>>
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+        + private static updateUser(req: HttpServletRequest, resp: HttpServletResponse): void
+        + private static deleteUser(req: HttpServletRequest, resp: HttpServletResponse): void
+        + private static addUser(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class WarehouseController {
+        <<Servlet>>
+        + static post(req: HttpServletRequest, resp: HttpServletResponse): void
+    }
+
+    class OrderDTO {
+        + Integer id
+        + Timestamp created
+        + Timestamp delivered
+        + String deliveryAddress
+        + UserDTO customer
+        + List<ProductDTO> products
+        + List<StatusDTO> statuses
+        + OrderDTO(id: Integer, created: Timestamp, delivered: Timestamp, deliveryAddress: String, customer: UserDTO, products: List<ProductDTO>, statuses: List<StatusDTO>)
+    }
+
+    class StatusDTO {
+        + String status
+        + Timestamp timestamp
+        + StatusDTO(status: String, timestamp: Timestamp)
+    }
+
+    class CategoryDTO {
+        + String name
+        + String description
+        + CategoryDTO(name: String, description: String)
+    }
+
+    class ProductDTO {
+        + Integer id
+        + String name
+        + String description
+        + double price
+        + int quantity
+        + boolean removed
+        + List<CategoryDTO> categories
+        + List<String> images
+        + List<PropertyDTO> properties
+        + ProductDTO(id: Integer, name: String, description: String, price: double, quantity: int, removed: boolean, categories: List<CategoryDTO>, images: List<String>, properties: List<PropertyDTO>)
+    }
+
+    class PropertyDTO {
+        + String key
+        + String value
+        + PropertyDTO(key: String, value: String)
+    }
+
+    class PermissionDTO {
+        + String name
+        + PermissionDTO(name: String)
+        + toString() String
+    }
+
+    class RoleDTO {
+        + String name
+        + List<PermissionDTO> permissions
+        + RoleDTO(name: String, permissions: List<PermissionDTO>)
+        + toString() String
+    }
+
+    class UserDTO {
+        + Integer id
+        + String name
+        + String email
+        + String password
+        + List<RoleDTO> roles
+        + List<PermissionDTO> permissions
+        + UserDTO(id: Integer, name: String, email: String, password: String, roles: List<RoleDTO>, permissions: List<PermissionDTO>)
+        + toString() String
+    }
+
+    class ui-AuthMiddleware {
+        + void init(FilterConfig filterConfig) throws ServletException
+        + void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
+        + void destroy()
+    }
+
+    class ControllerServlet {
+        + void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+        + void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+        - UserDTO getCurrentUser(HttpServletRequest req)
+        - boolean hasRole(UserDTO user, String role)
+        - boolean hasPermission(UserDTO user, String permission)
+        - void redirectToLogin(HttpServletResponse resp, HttpServletRequest req) throws IOException
+        - void handleUnauthorizedAccess(boolean isLoggedIn, HttpServletRequest req, HttpServletResponse resp) throws IOException
+    }
+}
+
+    CartController --|> HttpServlet : extends
+    CartController --> HttpServletRequest : uses
+    CartController --> HttpServletResponse : uses
+    CartController --> HttpSession : uses
+    CartController --> Map : uses
+    Map <|-- HashMap : implements
+
+    CheckoutController --|> HttpServlet : extends
+    CheckoutController --> HttpServletRequest : uses
+    CheckoutController --> HttpServletResponse : uses
+    CheckoutController --> HttpSession : uses
+    CheckoutController --> UserDTO : uses
+    CheckoutController --> ProductDTO : uses
+    CheckoutController --> OrderService : uses
+    CheckoutController --> PermissionException : uses
+    CheckoutController --> ServiceException : uses
+
+    ErrorController --|> HttpServlet : extends
+    ErrorController --> HttpServletRequest : uses
+    ErrorController --> HttpServletResponse : uses
+    ErrorController --> HttpSession : uses
+
+    LoginController --|> HttpServlet : extends
+    LoginController --> HttpServletRequest : uses
+    LoginController --> HttpServletResponse : uses
+    LoginController --> HttpSession : uses
+    LoginController --> UserService : uses
+    LoginController --> UserDTO : creates
+    LoginController --> ServiceException : throws
+
+    ProductController --|> HttpServlet : extends
+    ProductController --> HttpServletRequest : uses
+    ProductController --> HttpServletResponse : uses
+    ProductController --> HttpSession : uses
+    ProductController --> UserDTO : uses
+    ProductController --> RoleDTO : uses
+    ProductController --> ProductService : uses
+    ProductController --> ProductDTO : creates
+    ProductController --> CategoryDTO : creates
+    ProductController --> PermissionException : catches
+    ProductController --> ServiceException : catches
+
+    RegisterController --|> HttpServlet : extends
+    RegisterController --> HttpServletRequest : uses
+    RegisterController --> HttpServletResponse : uses
+    RegisterController --> HttpSession : uses
+    RegisterController --> UserService : uses
+    RegisterController --> RoleService : uses
+    RegisterController --> UserDTO : creates
+    RegisterController --> RoleDTO : creates
+    RegisterController --> ServiceException : catches
+
+    UserController --|> HttpServlet : extends
+    UserController --> HttpServletRequest : uses
+    UserController --> HttpServletResponse : uses
+    UserController --> HttpSession : uses
+    UserController --> UserService : uses
+    UserController --> UserDTO : creates
+    UserController --> RoleDTO : creates
+    UserController --> PermissionException : catches
+    UserController --> ServiceException : catches
+
+    WarehouseController --|> HttpServlet : extends
+    WarehouseController --> HttpServletRequest : uses
+    WarehouseController --> HttpServletResponse : uses
+    WarehouseController --> HttpSession : uses
+    WarehouseController --> StatusService : uses
+    WarehouseController --> UserDTO : uses
+    WarehouseController --> PermissionException : catches
+    WarehouseController --> ServiceException : catches
+
+    OrderDTO --> UserDTO : has
+    OrderDTO --> ProductDTO : has
+    OrderDTO --> StatusDTO : has
+
+    ProductDTO --> CategoryDTO : has
+    ProductDTO --> PropertyDTO : has
+
+    RoleDTO --> PermissionDTO : has
+
+    UserDTO --> RoleDTO : has
+    UserDTO --> PermissionDTO : has
+
+    ui-AuthMiddleware ..> UserDTO : uses
+    ui-AuthMiddleware ..> RoleDTO : uses
+    ui-AuthMiddleware ..> PermissionDTO : uses
+
+    ControllerServlet ..> UserDTO : uses
+    ControllerServlet ..> RoleDTO : uses
+    ControllerServlet ..> PermissionDTO : uses
+    ControllerServlet ..> ErrorController : uses
+    ControllerServlet ..> RegisterController : uses
+    ControllerServlet ..> LoginController : uses
+    ControllerServlet ..> UserController : uses
+    ControllerServlet ..> ProductController : uses
+    ControllerServlet ..> CartController : uses
+    ControllerServlet ..> CheckoutController : uses
+    ControllerServlet ..> WarehouseController : uses
+
+namespace bo {
+    class AuthMiddleware {
+        +static boolean userHasOneOf(UserDTO user, PermissionDTO... permissions)
+        +static boolean userHasOneOf(UserDTO user, RoleDTO... roles)
+        +static boolean userHasOneOf(UserDTO user, Permission... permissions)
+        +static boolean userHasOneOf(UserDTO user, Role... roles)
+        +static boolean userHasOneOf(User user, Permission... permissions)
+        +static boolean userHasOneOf(User user, Role... roles)
+    }
+
+    class Order {
+        +Integer id
+        +Timestamp created
+        +Timestamp delivered
+        +String deliveryAddress
+        +User customer
+        +List~Product~ products
+        +List~Status~ statuses
+        +Order(OrderDTO order)
+        +OrderDTO toDTO()
+        +OrderDAO toDAO()
+    }
+
+    class Status {
+        +String status
+        +Timestamp timestamp
+        +Status(StatusDTO status)
+        +StatusDTO toDTO()
+        +StatusDAO toDAO()
+    }
+
+    class Category {
+        +String name
+        +String description
+        +Category(CategoryDTO category)
+        +CategoryDTO toDTO()
+        +CategoryDAO toDAO()
     }
 
     class Product {
-        - int id
+        +Integer id
+        +String name
+        +String description
+        +double price
+        +int quantity
+        +boolean removed
+        +List~Category~ categories
+        +List~String~ images
+        +List~Property~ properties
+        +Product(ProductDTO product)
+        +ProductDTO toDTO()
+        +ProductDAO toDAO()
+    }
+
+    class Property {
+        +String key
+        +String value
+        +Property(PropertyDTO property)
+        +PropertyDTO toDTO()
+        +PropertyDAO toDAO()
+    }
+
+    class Permission {
+        +String name
+        +Permission(PermissionDTO permission)
+        +PermissionDTO toDTO()
+        +PermissionDAO toDAO()
+        +int compareTo(Permission p)
+        +boolean equals(Object o)
+    }
+
+    class Role {
+        +String name
+        +List<Permission> permissions
+        +Role(String name)
+        +Role(RoleDTO role)
+        +RoleDTO toDTO()
+        +RoleDAO toDAO()
+        +int compareTo(Role r)
+        +boolean equals(Object o)
+    }
+
+    class User {
+        +Integer id
+        +String name
+        +String email
+        +String password
+        +List<Role> roles
+        +List<Permission> permissions
+        +User(UserDTO user)
+        +UserDTO toDTO()
+        +UserDAO toDAO()
+    }
+
+    class OrderService {
+        +OrderDTO createOrder(UserDTO user, UserDTO customer, String deliveryAddress, List<ProductDTO> products)
+        +List<OrderDTO> getAllOrders(UserDTO user)
+        +Optional<OrderDTO> getOrderById(UserDTO user, int id)
+        +List<OrderDTO> getOrdersWithStatus(UserDTO user, String... statuses)
+    }
+
+    class StatusService {
+        +void setOrderStatus(int orderId, String status, UserDTO user)
+    }
+
+    class CategoryService {
+        +List<String> getAvailableCategories()
+    }
+
+    class ProductService {
+        +List<ProductDTO> getProducts()
+        +List<ProductDTO> getProducts(List<Integer> ids)
+        +ProductDTO getProductById(int id)
+        +void updateProduct(UserDTO user, ProductDTO productToUpdate)
+        +ProductDTO createProduct(UserDTO user, ProductDTO product)
+    }
+
+    class PermissionService {
+        +List<String> getAvailablePermissions()
+    }
+
+    class RoleService {
+        +List<String> getAvailableRoles()
+        +RoleDTO getRole(String name)
+    }
+
+    class UserService {
+        +UserDTO createUser(UserDTO user)
+        +List<UserDTO> getUsers(UserDTO user)
+        +UserDTO login(UserDTO user)
+        +UserDTO getUserById(UserDTO user, int userId)
+        +void updateUser(UserDTO user, UserDTO userToUpdate)
+        +void deleteUserById(UserDTO user, int id)
+    }
+
+    class PermissionException {
+        +PermissionException(String message)
+    }
+
+    class ServiceException {
+        +ServiceException(String message)
+    }
+
+    }
+
+    AuthMiddleware --> UserDTO
+    AuthMiddleware --> PermissionDTO
+    AuthMiddleware --> RoleDTO
+    AuthMiddleware --> User
+    AuthMiddleware --> Permission
+    AuthMiddleware --> Role
+
+    Order --> User
+    Order --> Product
+    Order --> Status
+    Order --> OrderDTO
+    Order --> OrderDAO
+    Order --> Timestamp
+
+    Status --> StatusDTO
+    Status --> StatusDAO
+    Status --> Timestamp
+
+    Category --> CategoryDTO
+    Category --> CategoryDAO
+
+    Product --> ProductDTO
+    Product --> ProductDAO
+    Product --> Category
+    Product --> Property
+    Product --> String
+
+    Property --> PropertyDTO
+    Property --> PropertyDAO
+
+    Permission --> PermissionDTO
+    Permission --> PermissionDAO
+
+    Role --> RoleDTO
+    Role --> RoleDAO
+    Role --> Permission
+
+    User --> UserDTO
+    User --> UserDAO
+    User --> Role
+    User --> Permission
+
+    OrderService --> UserDTO
+    OrderService --> ProductDTO
+    OrderService --> OrderDTO
+    OrderService --> OrderDAO
+    OrderService --> PermissionDTO
+    OrderService --> Status
+    OrderService --> ServiceException
+    OrderService --> PermissionException
+
+    StatusService --> UserDTO
+    StatusService --> Permission
+    StatusService --> PermissionException
+    StatusService --> OrderDAO
+    StatusService --> StatusDAO
+
+    CategoryService --> DAOException
+    CategoryService --> ServiceException
+    CategoryService --> CategoryDAO
+
+    ProductService --> ProductDAO
+    ProductService --> Product
+    ProductService --> ProductDTO
+    ProductService --> UserDTO
+    ProductService --> DAOException
+    ProductService --> PermissionException
+    ProductService --> ServiceException
+    ProductService --> AuthMiddleware
+    ProductService --> Role
+
+    PermissionService --> PermissionDAO
+    PermissionService --> DAOException
+    PermissionService --> ServiceException
+
+    RoleService --> RoleDAO
+    RoleService --> DAOException
+    RoleService --> ServiceException
+    RoleService --> RoleDTO
+
+    UserService --> UserDAO
+    UserService --> DAOException
+    UserService --> ServiceException
+    UserService --> PermissionException
+    UserService --> Role
+    UserService --> UserDTO
+    UserService --> User
+
+    PermissionException --> RuntimeException
+
+    ServiceException --> RuntimeException
+
+    namespace db {
+    class OrderDAO {
+        +Integer id
+        +Timestamp created
+        +Timestamp delivered
+        +String deliveryAddress
+        +UserDAO customer
+        +List<ProductDAO> products
+        +List<StatusDAO> statuses
+        +OrderDAO(Order order)
+        +static List<OrderDAO> getOrders()
+        +static Optional<OrderDAO> getOrderById(int id)
+        +static List<OrderDAO> getOrdersByCustomer(User customer)
+        +static OrderDAO createOrder(Order order) throws DAOException
+        +static List<OrderDAO> getOrdersByStatus(String... statuses) throws DAOException
+        +static List<OrderDAO> getOrdersByStatus(Connection conn, String... statuses) throws DAOException
+    }
+
+    class StatusDAO {
+        - String status
+        - Timestamp timestamp
+        + StatusDAO(String status, Timestamp timestamp)
+        + static StatusDAO createStatus(int orderId, Status status)
+        + static StatusDAO createStatus(int orderId, Status status, Connection conn)
+        + static StatusDAO toDAO(ResultSet rs)
+        + static List<StatusDAO> toDAOs(ResultSet rs)
+        + Status toStatus()
+    }
+
+    class CategoryDAO {
         - String name
-        - double price
-        + Product(int, String, double)
-        + getId() int
-        + getName() String
-        + getPrice() double
+        - String description
+        + CategoryDAO(String name, String description)
+        + static List<String> getAvailableCategories()
+        + Category toCategory()
     }
 
     class ProductDAO {
-        - DBConnection dbConnection
-        + saveProduct(Product) boolean
-        + getProductById(int) Product
+        +Integer id
+        +String name
+        +String description
+        +double price
+        +int quantity
+        +boolean removed
+        +List<CategoryDAO> categories
+        +List<String> images
+        +List<PropertyDAO> properties
+        +static List<ProductDAO> getAllProducts() throws DAOException
+        +static Optional<ProductDAO> getProductById(int id) throws DAOException
+        +static ProductDAO createProduct(Product product)
+        +static boolean updateProductQuantity(Product product, int quantity)
+        +static int getProductQuantity(int productId) throws DAOException
+        +static List<ProductDAO> getProductsByIds(List<Integer> ids) throws DAOException
+        +static void updateProduct(Product product) throws DAOException
     }
 
-    class ProductUI {
-        + displayProduct(Product) void
+    class PropertyDAO {
+        +String key
+        +String value
+        +Property toProperty()
     }
 
-    DBConnectionManager "1" *--> "0..*" DBConnection : manages
-    DBConnection <-- ProductDAO : uses
-    ProductDAO <-- Product : manages
+    class PermissionDAO {
+        +String name
+        +static List<String> getAvailablePermissions()
+        +Permission toPermission()
+    }
+
+    class RoleDAO {
+        +String name
+        +List<PermissionDAO> permissions
+        +Role toRole()
+        +static List<String> getAvailableRoles()
+        +static RoleDAO getRole(String name)
+    }
+
+    class UserDAO {
+        +Integer id
+        +String name
+        +String email
+        +String password
+        +List<RoleDAO> roles
+        +List<PermissionDAO> permissions
+        +static List<UserDAO> getUsers()
+        +static Optional<UserDAO> getUserByid(int id)
+        +static Optional<UserDAO> login(User credentials)
+        +static UserDAO createUser(User user)
+        +static void updateUser(User user)
+        +static void deleteUserById(int id)
+        +User toUser()
+    }
+
+    class DBUtil {
+        +cleanUp(Connection conn, PreparedStatement stmt, ResultSet rs)
+    }
+
+    class DAOException {
+        +DAOException(String message)
+    }
+
+    class DBConnection {
+        +DBConnection(DBConnectionManager parent)
+        +boolean getAutoCommit() throws SQLException
+        +void setAutoCommit(boolean autoCommit) throws SQLException
+        +void commit() throws SQLException
+        +void rollback() throws SQLException
+        +Statement createStatement() throws SQLException
+        +PreparedStatement prepareStatement(String sql) throws SQLException
+        +CallableStatement prepareCall(String sql) throws SQLException
+        +String nativeSQL(String sql) throws SQLException
+        +boolean isClosed() throws SQLException
+        +DatabaseMetaData getMetaData() throws SQLException
+        +void setReadOnly(boolean readOnly) throws SQLException
+        +boolean isReadOnly() throws SQLException
+        +void setCatalog(String catalog) throws SQLException
+        +String getCatalog() throws SQLException
+        +void setTransactionIsolation(int level) throws SQLException
+        +int getTransactionIsolation() throws SQLException
+        +SQLWarning getWarnings() throws SQLException
+        +void clearWarnings() throws SQLException
+        +Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException
+        +PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException
+        +CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException
+        +Map<String, Class<?>> getTypeMap() throws SQLException
+        +void setTypeMap(Map<String, Class<?>> map) throws SQLException
+        +void setHoldability(int holdability) throws SQLException
+        +int getHoldability() throws SQLException
+        +Savepoint setSavepoint() throws SQLException
+        +Savepoint setSavepoint(String name) throws SQLException
+        +void rollback(Savepoint savepoint) throws SQLException
+        +void releaseSavepoint(Savepoint savepoint) throws SQLException
+        +Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException
+        +PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException
+        +CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException
+        +void setClientInfo(String name, String value) throws SQLClientInfoException
+        +void setClientInfo(Properties properties) throws SQLClientInfoException
+        +String getClientInfo(String name) throws SQLException
+        +Properties getClientInfo() throws SQLException
+        +Array createArrayOf(String typeName, Object[] elements) throws SQLException
+        +Blob createBlob() throws SQLException
+        +Clob createClob() throws SQLException
+        +NClob createNClob() throws SQLException
+        +SQLXML createSQLXML() throws SQLException
+        +boolean isValid(int timeout) throws SQLException
+        +void setSchema(String schema) throws SQLException
+        +String getSchema() throws SQLException
+        +void abort(Executor executor) throws SQLException
+        +void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException
+        +int getNetworkTimeout() throws SQLException
+        +<T> T unwrap(Class<T> iface) throws SQLException
+        +boolean isWrapperFor(Class<?> iface) throws SQLException
+        +PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException
+        +PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException
+        +PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException
+        +Struct createStruct(String typeName, Object[] attributes) throws SQLException
+        +void close() throws SQLException
+        +void closeConnection() throws SQLException
+    }
+
+    class DBConnectionManager {
+        - static instance: DBConnectionManager
+        - connectionPool: List<DBConnection>
+        - usedConnections: List<DBConnection>
+        - MAX_POOL_SIZE: int
+        + DBConnectionManager()
+        + static getInstance(): DBConnectionManager
+        - initializePool(): void
+        + getConnection(): Connection
+        + releaseConnection(connection: Connection): void
+        + closePool(): void
+    }
+
+    }
+
+    StatusDAO --|> Status : uses
+    StatusDAO --> DBConnectionManager : uses
+    StatusDAO --> DAOException : throws
+    StatusDAO --> Connection : uses
+    StatusDAO --> PreparedStatement : uses
+    StatusDAO --> ResultSet : uses
+
+    CategoryDAO --> Category : converts to
+    CategoryDAO --> DBConnectionManager : uses
+    CategoryDAO --> DAOException : throws
+    CategoryDAO --> Connection : uses
+    CategoryDAO --> PreparedStatement : uses
+    CategoryDAO --> ResultSet : uses
+
+    ProductDAO --> "0..*" CategoryDAO : contains
+    ProductDAO --> "0..*" PropertyDAO : contains
+    ProductDAO --> "0..*" String : contains images
+    ProductDAO --> "1" Product : converts to
+    Product --> "0..*" Category : has
+    Product --> "0..*" Property : has
+
+    PropertyDAO --> Property : converts to
+
+    PermissionDAO --> Permission : converts to
+    PermissionDAO --> DAOException : throws
+    PermissionDAO --> DBConnectionManager : uses
+
+    RoleDAO --> Role : converts to
+    RoleDAO --> PermissionDAO : contains
+    RoleDAO --> DAOException : throws
+    RoleDAO --> DBConnectionManager : uses
+
+    UserDAO --> RoleDAO : has
+    UserDAO --> PermissionDAO : has
+    UserDAO --> User : converts to
+    RoleDAO --> User : has
+    PermissionDAO --> User : grants
+
+    DAOException --> RuntimeException : extends
+
+    DBConnection --> DBConnectionManager : uses
+    DBConnection ..> Connection : implements
+
+    DBConnectionManager "1" -- "0..*" DBConnection : manages >
 
 ```
 
