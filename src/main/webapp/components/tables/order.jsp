@@ -34,7 +34,7 @@
           if (order.getProducts() != null) {
             for (ProductDTO product : order.getProducts()) {
         %>
-        <li><%= product.getName() %> (ID: <%= product.getId() %>) Amt: <%= product.getQuantity() %>/li>
+        <li><%= product.getName() %> (ID: <%= product.getId() %>) Amt: <%= product.getQuantity() %> </li>
         <%
             }
           }
