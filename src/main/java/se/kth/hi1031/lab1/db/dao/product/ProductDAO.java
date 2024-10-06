@@ -591,7 +591,7 @@ public class ProductDAO {
                 this.quantity,
                 this.removed,
                 this.categories != null ? this.categories.stream().map(CategoryDAO::toCategory).toList() : null,
-                new ArrayList<>(this.images),
+                this.images != null ? new ArrayList<>(this.images) : null,
                 this.properties != null ? this.properties.stream().map(PropertyDAO::toProperty).toList() : null
         );
     }
