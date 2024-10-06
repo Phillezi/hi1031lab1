@@ -2,6 +2,8 @@
 
 Det här repot är skapat för labb 1 i kursen HI1031 och är byggt med hjälp av Java Enterprise (Jakarta) och trelagersarkitektur med MVC. Applikationen hanterar produkter, användare (med olika roller) och beställningar genom en tydligt separerad arkitektur där logik, dataåtkomst och användargränsnitt hålls åtskilda.
 
+Webshoppen finns att nå på: [hi1031-webshop.app.cloud.cbh.kth.se](https://hi1031-webshop.app.cloud.cbh.kth.se/).
+
 ## Köra applikationen
 
 Om du har [`docker`](https://docker.com/) installerat kan du köra applikationen genom att klona repot och sedan använda docker compose för att köra igång tomcatservern och dbn.
